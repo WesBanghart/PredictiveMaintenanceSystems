@@ -1,7 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SystemAPI", "SystemAPI\SystemAPI.csproj", "{3199EE63-DD92-463A-8EA8-8A8569DD1F60}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SystemAPI", "SystemAPI\SystemAPI.csproj", "{3199EE63-DD92-463A-8EA8-8A8569DD1F60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelService", "ModelService\ModelService.csproj", "{1CE21C83-CDCD-4812-B693-5FABB44799E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +16,15 @@ Global
 		{3199EE63-DD92-463A-8EA8-8A8569DD1F60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3199EE63-DD92-463A-8EA8-8A8569DD1F60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3199EE63-DD92-463A-8EA8-8A8569DD1F60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE21C83-CDCD-4812-B693-5FABB44799E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CE21C83-CDCD-4812-B693-5FABB44799E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE21C83-CDCD-4812-B693-5FABB44799E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE21C83-CDCD-4812-B693-5FABB44799E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A4523519-307B-4029-B414-72113FA8DCF1}
 	EndGlobalSection
 EndGlobal
