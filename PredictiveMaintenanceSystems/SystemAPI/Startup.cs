@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using SystemAPI.Models;
+using Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore;
 
 namespace SystemAPI
 {
@@ -29,7 +30,7 @@ namespace SystemAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<APIContext>(opt => 
-                opt.UseInMemoryDatabase("PredictiveMaintenanceDB"));
+                opt.UseSqlServer(Configuration.GetConnectionString("Production")));
             services.AddControllers();
         }
 
