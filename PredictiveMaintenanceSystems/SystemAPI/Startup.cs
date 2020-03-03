@@ -30,7 +30,7 @@ namespace SystemAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<APIContext>(opt => 
-                opt.UseSqlServer(Configuration.GetConnectionString("Production")));
+                opt.UseSqlServer(Configuration.GetConnectionString("Development")));
             services.AddControllers();
         }
 
