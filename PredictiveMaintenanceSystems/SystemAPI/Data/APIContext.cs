@@ -15,13 +15,10 @@ namespace SystemAPI.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SessionModel>(eb =>
-                {
-                    eb.HasNoKey();
-                });
+            modelBuilder.Entity<SessionModel>(eb => { eb.HasNoKey(); });
         }
         public DbSet<UserModel> UserModels { get; set; }
-        public DbSet<SessionModel> SessionModels { get; set; }
+       // public DbSet<SessionModel> SessionModels { get; set; }
         public DbSet<MlModelModel> MlModelModels { get; set; }
         public DbSet<TenantModel> TenantModels { get; set; }
     }
