@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModelRunnerService\ModelRunnerService.csproj" />
-    <ProjectReference Include="..\ModelServicesLibrary\ModelServicesLibrary.csproj" />
+    <ProjectReference Include="..\SchedulerRunnerService\SchedulerRunnerService.csproj" />
+    <ProjectReference Include="..\SchedulerServicesLibrary\SchedulerServicesLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SchedulerServicesLibrary
 {
-    public class Scheduler
+    public class SchedulerDbView
     {
     }
 }

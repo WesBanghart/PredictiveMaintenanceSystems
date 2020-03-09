@@ -16,13 +16,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ModelServices", "ModelServi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SchedulerServices", "SchedulerServices", "{5646EF78-392F-4F08-8136-2A249C13FAA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelRunnerService", "ModelRunnerService\ModelRunnerService.csproj", "{29FA3226-1AB7-4E7A-86F4-123A87ECAB17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelRunnerService", "ModelRunnerService\ModelRunnerService.csproj", "{29FA3226-1AB7-4E7A-86F4-123A87ECAB17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelServicesLibrary", "ModelServicesLibrary\ModelServicesLibrary.csproj", "{CD37532D-513D-489F-90B6-22C258E35D0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelServicesLibrary", "ModelServicesLibrary\ModelServicesLibrary.csproj", "{CD37532D-513D-489F-90B6-22C258E35D0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerRunnerService", "SchedulerRunnerService\SchedulerRunnerService.csproj", "{B892A2E4-914A-4C9B-933E-DFE5380350ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerRunnerService", "SchedulerRunnerService\SchedulerRunnerService.csproj", "{B892A2E4-914A-4C9B-933E-DFE5380350ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerServicesLibrary", "SchedulerServicesLibrary\SchedulerServicesLibrary.csproj", "{A51A4772-D6C1-4BF6-96E3-24881AE0E56D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerServicesLibrary", "SchedulerServicesLibrary\SchedulerServicesLibrary.csproj", "{A51A4772-D6C1-4BF6-96E3-24881AE0E56D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerServicesTest", "SchedulerServicesTest\SchedulerServicesTest.csproj", "{9D7E4973-E23B-4B86-B616-07685823D115}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,15 +68,21 @@ Global
 		{A51A4772-D6C1-4BF6-96E3-24881AE0E56D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A51A4772-D6C1-4BF6-96E3-24881AE0E56D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A51A4772-D6C1-4BF6-96E3-24881AE0E56D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D7E4973-E23B-4B86-B616-07685823D115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7E4973-E23B-4B86-B616-07685823D115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7E4973-E23B-4B86-B616-07685823D115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7E4973-E23B-4B86-B616-07685823D115}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{888B6C38-C3A9-4E9B-9375-1D528ADC95B4} = {03F8F532-C55E-4CC2-9263-16EFBECCDBE4}
 		{29FA3226-1AB7-4E7A-86F4-123A87ECAB17} = {03F8F532-C55E-4CC2-9263-16EFBECCDBE4}
 		{CD37532D-513D-489F-90B6-22C258E35D0B} = {03F8F532-C55E-4CC2-9263-16EFBECCDBE4}
 		{B892A2E4-914A-4C9B-933E-DFE5380350ED} = {5646EF78-392F-4F08-8136-2A249C13FAA2}
 		{A51A4772-D6C1-4BF6-96E3-24881AE0E56D} = {5646EF78-392F-4F08-8136-2A249C13FAA2}
+		{9D7E4973-E23B-4B86-B616-07685823D115} = {5646EF78-392F-4F08-8136-2A249C13FAA2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4523519-307B-4029-B414-72113FA8DCF1}
