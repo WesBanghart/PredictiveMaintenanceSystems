@@ -6,7 +6,7 @@ using System.Text;
 namespace EFDataModels
 {
     [NotMapped]
-    class SessionTable
+    public class SessionTable
     {
         public float Version { get; set; }
     }

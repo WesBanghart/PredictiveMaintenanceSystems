@@ -7,26 +7,34 @@ using System.Text;
 namespace EFDataModels
 {
     [Table("scheduler_tbl")]
-    class SchedulerTable
+    public class SchedulerTable
     {
+        //Primary key for scheduler entries
         [Key]
-        public string ScheduleId { get; set; }
-
-        //[ForeignKey]
-        public string ModelId { get; set; }
-
-        //[ForeignKey]
-        public string UserId { get; set; }
-
-        //[ForeignKey]
-        public string TenantId { get; set; }
-
+        public Guid ScheduleId { get; set; }
+        //The configuration of the scheduler
         public string ScheduleConfiguration { get; set; }
-
-        public DateTime? LastRan { get; set; }
-
-        public DateTime Created { get; set; }
-
+        //Represents if the scheduler should be ran or skipped
         public bool IsScheduled { get; set; }
+        //The datetime the scheduler was last ran
+        public DateTime? LastRan { get; set; }
+        //The datetime the scheduler entry was created
+        public DateTime Created { get; set; }
+        //The datetime the scheduler entry was last updated
+        public DateTime? LastUpdated { get; set; }
+
+        //Timestamp value, used as a concurrency token, value is automatically generated on insert/update
+        [Timestamp]
+        public byte[] Timestamp { get; set; }
+
+        //Represents the relationship to a single model entity
+        public Guid ModelId { get; set; }
+        public ModelTable Model { get; set; }
+        //Represents the relationship to a single user entity
+        public Guid UserId { get; set; }
+        public UserTable User { get; set; }
+        //Represents the relationship to a single tenant entity
+        public Guid TenantId { get; set; }
+        public TenantTable Tenant { get; set; }
     }
 }

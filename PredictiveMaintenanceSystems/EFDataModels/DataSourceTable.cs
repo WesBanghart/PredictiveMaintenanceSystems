@@ -1,34 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace EFDataModels
 {
-    [Table("models_tbl")]
-    public class ModelTable
+    public class DataSourceTable
     {
-        //Primary key for model entries
+        //Primary key for datasource entries
         [Key]
-        public Guid ModelId { get; set; }
-        //The name of the model
-        public string ModelName { get; set; }
-        //The JSON configuration string of the model
+        public Guid DataSourceId { get; set; }
+        //The name of the data source
+        public string DataSourceName { get; set; }
+        //The JSON configuration string of the data source
         public string Configuration { get; set; }
-        //The saved zipfile of the model
-        public byte[] File { get; set; }
-        //The datetime when the model entry was created
+        //The connection string of the data source
+        public string ConnectionString { get; set; }
+        //The datetime when the datasource entry was created
         public DateTime Created { get; set; }
-        //The datetime when the model entry was last updated
+        //The datetime when the datasource entry was last updated
         public DateTime? LastUpdated { get; set; }
 
         //Timestamp value, used as a concurrency token, value is automatically generated on insert/update
         [Timestamp]
         public byte[] Timestamp { get; set; }
 
-        //Represents the many-to-many models/datasources relationship
-        public ICollection<DataSourceTable> DataSources { get; set; }
+        //Represents of the many-to-many datasources/models relationship
+        public ICollection<ModelTable> Models { get; set; }
         //Represents the relationship to a single user entity
         public Guid UserId { get; set; }
         public UserTable User { get; set; }
