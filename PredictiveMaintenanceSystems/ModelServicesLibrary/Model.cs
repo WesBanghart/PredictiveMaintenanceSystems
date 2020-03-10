@@ -21,29 +21,27 @@ namespace ModelServicesLibrary
 
 
         //------------- PUBLIC CRUD OPERATIONS ---------------------------------------------
-        public bool CreateModel(string ModelJson)
+        public bool RunModel(Guid ModelId)
         {
             throw new NotImplementedException();
         }
 
-        public bool ReadModel(Guid ModelId)
+        public bool UpdateModel(Guid ModelId)
         {
             throw new NotImplementedException();
         }
 
-        //TODO: determine the necessity of read model by model name
-        //public bool ReadModel(string ModelName) { }
-
-        public bool UpdateModel(string ModelJson)
+        public bool UpdateAndRunModel(Guid ModelId)
         {
             throw new NotImplementedException();
         }
 
-        public bool DeleteModel(Guid ModelId)
-        {
-            throw new NotImplementedException();
-        }
 
+        //--------------- PRIVATE DATABASE ACCESSORS -----------------------------------------
+        private bool _RetrieveModel(Guid ModelId)
+        {
+
+        }
 
         //--------------- PRIVATE PARSE FUNCTIONS --------------------------------------------
         private bool _ParseModelJSON()

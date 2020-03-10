@@ -1,0 +1,10 @@
+﻿{
+  "profiles": {
+    "ModelUpdateQueueHostedService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
