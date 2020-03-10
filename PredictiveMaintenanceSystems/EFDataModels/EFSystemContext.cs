@@ -18,6 +18,8 @@ namespace EFDataModels
         //The Scheduler table entries
         public DbSet<SchedulerTable> Schedulers { get; set; }
 
+        public EFSystemContext() { }
+
         public EFSystemContext(DbContextOptions<EFSystemContext> options) : base(options) { }
 
     }
