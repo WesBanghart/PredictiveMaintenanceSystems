@@ -51,6 +51,11 @@ namespace ModelServicesLibrary
             throw new NotImplementedException();
         }
 
+        private bool _ParseAppendJSON()
+        {
+            throw new NotImplementedException();
+        }
+
 
         //--------------- PRIVATE DATA LOAD FUNCTIONS ----------------------------------------
         private bool _LoadFromDatabase()
@@ -450,13 +455,6 @@ namespace ModelServicesLibrary
 
         //=============== CLUSTERING FUNCTIONS ================================================
         private bool _KMeansTrainer()
-        {
-            throw new NotImplementedException();
-        }
-
-
-        //=============== FORECASTING FUNCTIONS ===============================================
-        private bool _ForecastBySsa()
         {
             throw new NotImplementedException();
         }
