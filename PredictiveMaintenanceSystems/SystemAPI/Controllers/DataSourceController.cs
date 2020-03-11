@@ -11,48 +11,48 @@ namespace SystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class DataSourceController : ControllerBase
     {
         private readonly EFSystemContext _context;
 
-        public UserController(EFSystemContext context)
+        public DataSourceController(EFSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/User
+        // GET: api/DataSource
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserTable>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<DataSourceTable>>> GetDataSources()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.DataSources.ToListAsync();
         }
 
-        // GET: api/User/5
+        // GET: api/DataSource/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserTable>> GetUserTable(Guid id)
+        public async Task<ActionResult<DataSourceTable>> GetDataSourceTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
+            var dataSourceTable = await _context.DataSources.FindAsync(id);
 
-            if (userTable == null)
+            if (dataSourceTable == null)
             {
                 return NotFound();
             }
 
-            return userTable;
+            return dataSourceTable;
         }
 
-        // PUT: api/User/5
+        // PUT: api/DataSource/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserTable(Guid id, UserTable userTable)
+        public async Task<IActionResult> PutDataSourceTable(Guid id, DataSourceTable dataSourceTable)
         {
-            if (id != userTable.UserId)
+            if (id != dataSourceTable.DataSourceId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userTable).State = EntityState.Modified;
+            _context.Entry(dataSourceTable).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserTableExists(id))
+                if (!DataSourceTableExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/User
+        // POST: api/DataSource
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<UserTable>> PostUserTable(UserTable userTable)
+        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable(DataSourceTable dataSourceTable)
         {
-            _context.Users.Add(userTable);
+            _context.DataSources.Add(dataSourceTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserTable", new { id = userTable.UserId }, userTable);
+            return CreatedAtAction("GetDataSourceTable", new { id = dataSourceTable.DataSourceId }, dataSourceTable);
         }
 
-        // DELETE: api/User/5
+        // DELETE: api/DataSource/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UserTable>> DeleteUserTable(Guid id)
+        public async Task<ActionResult<DataSourceTable>> DeleteDataSourceTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
-            if (userTable == null)
+            var dataSourceTable = await _context.DataSources.FindAsync(id);
+            if (dataSourceTable == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(userTable);
+            _context.DataSources.Remove(dataSourceTable);
             await _context.SaveChangesAsync();
 
-            return userTable;
+            return dataSourceTable;
         }
 
-        private bool UserTableExists(Guid id)
+        private bool DataSourceTableExists(Guid id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return _context.DataSources.Any(e => e.DataSourceId == id);
         }
     }
 }

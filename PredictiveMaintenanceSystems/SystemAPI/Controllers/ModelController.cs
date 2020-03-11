@@ -11,48 +11,48 @@ namespace SystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class ModelController : ControllerBase
     {
         private readonly EFSystemContext _context;
 
-        public UserController(EFSystemContext context)
+        public ModelController(EFSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/User
+        // GET: api/Model
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserTable>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<ModelTable>>> GetModels()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Models.ToListAsync();
         }
 
-        // GET: api/User/5
+        // GET: api/Model/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserTable>> GetUserTable(Guid id)
+        public async Task<ActionResult<ModelTable>> GetModelTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
+            var modelTable = await _context.Models.FindAsync(id);
 
-            if (userTable == null)
+            if (modelTable == null)
             {
                 return NotFound();
             }
 
-            return userTable;
+            return modelTable;
         }
 
-        // PUT: api/User/5
+        // PUT: api/Model/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserTable(Guid id, UserTable userTable)
+        public async Task<IActionResult> PutModelTable(Guid id, ModelTable modelTable)
         {
-            if (id != userTable.UserId)
+            if (id != modelTable.ModelId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userTable).State = EntityState.Modified;
+            _context.Entry(modelTable).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserTableExists(id))
+                if (!ModelTableExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/User
+        // POST: api/Model
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<UserTable>> PostUserTable(UserTable userTable)
+        public async Task<ActionResult<ModelTable>> PostModelTable(ModelTable modelTable)
         {
-            _context.Users.Add(userTable);
+            _context.Models.Add(modelTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserTable", new { id = userTable.UserId }, userTable);
+            return CreatedAtAction("GetModelTable", new { id = modelTable.ModelId }, modelTable);
         }
 
-        // DELETE: api/User/5
+        // DELETE: api/Model/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UserTable>> DeleteUserTable(Guid id)
+        public async Task<ActionResult<ModelTable>> DeleteModelTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
-            if (userTable == null)
+            var modelTable = await _context.Models.FindAsync(id);
+            if (modelTable == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(userTable);
+            _context.Models.Remove(modelTable);
             await _context.SaveChangesAsync();
 
-            return userTable;
+            return modelTable;
         }
 
-        private bool UserTableExists(Guid id)
+        private bool ModelTableExists(Guid id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return _context.Models.Any(e => e.ModelId == id);
         }
     }
 }

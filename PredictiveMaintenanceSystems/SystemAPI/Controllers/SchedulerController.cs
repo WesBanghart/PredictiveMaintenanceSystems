@@ -11,48 +11,48 @@ namespace SystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class SchedulerController : ControllerBase
     {
         private readonly EFSystemContext _context;
 
-        public UserController(EFSystemContext context)
+        public SchedulerController(EFSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/User
+        // GET: api/Scheduler
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserTable>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<SchedulerTable>>> GetSchedulers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Schedulers.ToListAsync();
         }
 
-        // GET: api/User/5
+        // GET: api/Scheduler/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserTable>> GetUserTable(Guid id)
+        public async Task<ActionResult<SchedulerTable>> GetSchedulerTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
+            var schedulerTable = await _context.Schedulers.FindAsync(id);
 
-            if (userTable == null)
+            if (schedulerTable == null)
             {
                 return NotFound();
             }
 
-            return userTable;
+            return schedulerTable;
         }
 
-        // PUT: api/User/5
+        // PUT: api/Scheduler/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserTable(Guid id, UserTable userTable)
+        public async Task<IActionResult> PutSchedulerTable(Guid id, SchedulerTable schedulerTable)
         {
-            if (id != userTable.UserId)
+            if (id != schedulerTable.ScheduleId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userTable).State = EntityState.Modified;
+            _context.Entry(schedulerTable).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserTableExists(id))
+                if (!SchedulerTableExists(id))
                 {
                     return NotFound();
                 }
@@ -73,37 +73,37 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/User
+        // POST: api/Scheduler
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<UserTable>> PostUserTable(UserTable userTable)
+        public async Task<ActionResult<SchedulerTable>> PostSchedulerTable(SchedulerTable schedulerTable)
         {
-            _context.Users.Add(userTable);
+            _context.Schedulers.Add(schedulerTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserTable", new { id = userTable.UserId }, userTable);
+            return CreatedAtAction("GetSchedulerTable", new { id = schedulerTable.ScheduleId }, schedulerTable);
         }
 
-        // DELETE: api/User/5
+        // DELETE: api/Scheduler/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UserTable>> DeleteUserTable(Guid id)
+        public async Task<ActionResult<SchedulerTable>> DeleteSchedulerTable(Guid id)
         {
-            var userTable = await _context.Users.FindAsync(id);
-            if (userTable == null)
+            var schedulerTable = await _context.Schedulers.FindAsync(id);
+            if (schedulerTable == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(userTable);
+            _context.Schedulers.Remove(schedulerTable);
             await _context.SaveChangesAsync();
 
-            return userTable;
+            return schedulerTable;
         }
 
-        private bool UserTableExists(Guid id)
+        private bool SchedulerTableExists(Guid id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return _context.Schedulers.Any(e => e.ScheduleId == id);
         }
     }
 }

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SystemAPI.Data;
-using SystemAPI.Models;
+using EFDataModels;
 
 namespace SystemAPI.Controllers
 {
@@ -14,46 +13,46 @@ namespace SystemAPI.Controllers
     [ApiController]
     public class TenantController : ControllerBase
     {
-        private readonly APIContext _context;
+        private readonly EFSystemContext _context;
 
-        public TenantController(APIContext context)
+        public TenantController(EFSystemContext context)
         {
             _context = context;
         }
 
         // GET: api/Tenant
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TenantModel>>> GetTenantModels()
+        public async Task<ActionResult<IEnumerable<TenantTable>>> GetTenants()
         {
-            return await _context.TenantModels.ToListAsync();
+            return await _context.Tenants.ToListAsync();
         }
 
         // GET: api/Tenant/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TenantModel>> GetTenantModel(string id)
+        public async Task<ActionResult<TenantTable>> GetTenantTable(Guid id)
         {
-            var tenantModel = await _context.TenantModels.FindAsync(id);
+            var tenantTable = await _context.Tenants.FindAsync(id);
 
-            if (tenantModel == null)
+            if (tenantTable == null)
             {
                 return NotFound();
             }
 
-            return tenantModel;
+            return tenantTable;
         }
 
         // PUT: api/Tenant/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTenantModel(string id, TenantModel tenantModel)
+        public async Task<IActionResult> PutTenantTable(Guid id, TenantTable tenantTable)
         {
-            if (id != tenantModel.TenantId)
+            if (id != tenantTable.TenantId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(tenantModel).State = EntityState.Modified;
+            _context.Entry(tenantTable).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +60,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TenantModelExists(id))
+                if (!TenantTableExists(id))
                 {
                     return NotFound();
                 }
@@ -78,47 +77,33 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<TenantModel>> PostTenantModel(TenantModel tenantModel)
+        public async Task<ActionResult<TenantTable>> PostTenantTable(TenantTable tenantTable)
         {
-            _context.TenantModels.Add(tenantModel);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (TenantModelExists(tenantModel.TenantId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _context.Tenants.Add(tenantTable);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTenantModel", new { id = tenantModel.TenantId }, tenantModel);
+            return CreatedAtAction("GetTenantTable", new { id = tenantTable.TenantId }, tenantTable);
         }
 
         // DELETE: api/Tenant/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TenantModel>> DeleteTenantModel(string id)
+        public async Task<ActionResult<TenantTable>> DeleteTenantTable(Guid id)
         {
-            var tenantModel = await _context.TenantModels.FindAsync(id);
-            if (tenantModel == null)
+            var tenantTable = await _context.Tenants.FindAsync(id);
+            if (tenantTable == null)
             {
                 return NotFound();
             }
 
-            _context.TenantModels.Remove(tenantModel);
+            _context.Tenants.Remove(tenantTable);
             await _context.SaveChangesAsync();
 
-            return tenantModel;
+            return tenantTable;
         }
 
-        private bool TenantModelExists(string id)
+        private bool TenantTableExists(Guid id)
         {
-            return _context.TenantModels.Any(e => e.TenantId == id);
+            return _context.Tenants.Any(e => e.TenantId == id);
         }
     }
 }
