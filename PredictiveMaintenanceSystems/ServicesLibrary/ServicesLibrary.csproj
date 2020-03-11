@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Run\" />
     <Folder Include="Model\Update\" />
     <Folder Include="Scheduler\" />
   </ItemGroup>
