@@ -29,7 +29,7 @@ namespace SystemAPI.Controllers
 
         // GET: api/Tenant/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TenantTable>> GetTenantTable(Guid id)
+        public async Task<ActionResult<TenantTable>> GetTenant(Guid id)
         {
             var tenantTable = await _context.Tenants.FindAsync(id);
 
@@ -42,10 +42,8 @@ namespace SystemAPI.Controllers
         }
 
         // PUT: api/Tenant/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTenantTable(Guid id, TenantTable tenantTable)
+        public async Task<IActionResult> PutTenant(Guid id, TenantTable tenantTable)
         {
             if (id != tenantTable.TenantId)
             {
@@ -74,20 +72,27 @@ namespace SystemAPI.Controllers
         }
 
         // POST: api/Tenant
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<TenantTable>> PostTenantTable(TenantTable tenantTable)
+        public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
         {
-            _context.Tenants.Add(tenantTable);
+
+            TenantTable newTable = new TenantTable
+            {
+                TenantId = new Guid(),
+                Company = company,
+                ContactName = contactName,
+                ContactEmail = contactEmail,
+                ContactPhone = contactPhone
+            };
+            _context.Tenants.Add(newTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTenantTable", new { id = tenantTable.TenantId }, tenantTable);
+            return CreatedAtAction("GetTenant", new { id = newTable.TenantId }, newTable);
         }
 
         // DELETE: api/Tenant/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TenantTable>> DeleteTenantTable(Guid id)
+        public async Task<ActionResult<TenantTable>> DeleteTenant(Guid id)
         {
             var tenantTable = await _context.Tenants.FindAsync(id);
             if (tenantTable == null)

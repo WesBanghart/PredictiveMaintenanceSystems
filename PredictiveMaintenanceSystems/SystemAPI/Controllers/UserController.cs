@@ -29,7 +29,7 @@ namespace SystemAPI.Controllers
 
         // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserTable>> GetUserTable(Guid id)
+        public async Task<ActionResult<UserTable>> GetUser(Guid id)
         {
             var userTable = await _context.Users.FindAsync(id);
 
@@ -42,10 +42,8 @@ namespace SystemAPI.Controllers
         }
 
         // PUT: api/User/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserTable(Guid id, UserTable userTable)
+        public async Task<IActionResult> PutUser(Guid id, UserTable userTable)
         {
             if (id != userTable.UserId)
             {
@@ -60,7 +58,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserTableExists(id))
+                if (!UserTable(id))
                 {
                     return NotFound();
                 }
@@ -74,20 +72,29 @@ namespace SystemAPI.Controllers
         }
 
         // POST: api/User
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<UserTable>> PostUserTable(UserTable userTable)
+        public async Task<ActionResult<UserTable>> PostUser(string userName, string email, string firstName, string lastName, Guid tenantID)
         {
-            _context.Users.Add(userTable);
+            UserTable newUser = new UserTable
+            {
+                UserId = new Guid(),
+                TenantId = tenantID,
+                UserName = userName,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Created = DateTime.Now,
+                LastUpdate = DateTime.Now,
+            };
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserTable", new { id = userTable.UserId }, userTable);
+            return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
         }
 
         // DELETE: api/User/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<UserTable>> DeleteUserTable(Guid id)
+        public async Task<ActionResult<UserTable>> DeleteUser(Guid id)
         {
             var userTable = await _context.Users.FindAsync(id);
             if (userTable == null)
@@ -101,7 +108,7 @@ namespace SystemAPI.Controllers
             return userTable;
         }
 
-        private bool UserTableExists(Guid id)
+        private bool UserTable(Guid id)
         {
             return _context.Users.Any(e => e.UserId == id);
         }

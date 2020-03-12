@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar';
 import {red} from '@material-ui/core/colors'
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC = (props) => {
     const classes = useStyles();
 
     return (
@@ -21,7 +21,7 @@ const UserProfile: React.FC = () => {
                             </Avatar>
                         }
                         title={
-                            <Typography gutterBottom variant="h5" component="h2">John Smith</Typography>
+                            <Typography gutterBottom variant="h5" component="h2">{props.userData.firstName} {props.userData.lastName}</Typography>
                         }
                         subheader={
                             <Typography variant="body2" color="textSecondary" component="h3">
