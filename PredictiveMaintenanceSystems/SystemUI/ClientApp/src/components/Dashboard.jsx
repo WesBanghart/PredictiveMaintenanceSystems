@@ -12,7 +12,7 @@ import Devices from './DataSource';
 import UserProfile from './UserProfile';
 import Workflow from './Workflow';
 
-const Dashboard: React.FC = (props) => {
+const Dashboard: React.FC = () => {
     const classes = useStyles();
     return (
         <BrowserRouter>
@@ -24,7 +24,7 @@ const Dashboard: React.FC = (props) => {
                         paper: classes.drawerPaper,
                     }}
                 >
-                    <UserProfile userData = {props.userData}/>
+                    <UserProfile/>
                     <Navigation/>
                 </Drawer>
                 <main className={classes.content}>

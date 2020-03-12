@@ -18,16 +18,16 @@ import './custom.css'
 import './components/Workflow.scss'
 
 export default class App extends Component {
-    constructor(props)
-    {
-        super(props)
-        this.state = 
-        {
-            error: null,
-            isLoaded:false,
-            user: []
-        }
-    }
+    // constructor(props)
+    // {
+    //     super(props)
+    //     this.state = 
+    //     {
+    //         error: null,
+    //         isLoaded:false,
+    //         user: []
+    //     }
+    // }
     static displayName = App.name;
 
     // nextPath(path) {
@@ -53,18 +53,18 @@ export default class App extends Component {
     //     tenant: null
     // }
     
-    componentDidMount() {
-        fetch("https://localhost:5001/api/User")
-        .then(res => res.json())
-        .then((result) => {
-            this.setState(
-                {
-                    user: result.items,
-                    isLoaded: true
-                })
-        })
-        .catch(console.log)
-    }
+    // componentDidMount() {
+    //     fetch("https://localhost:5001/api/User")
+    //     .then(res => res.json())
+    //     .then((result) => {
+    //         this.setState(
+    //             {
+    //                 user: result.items,
+    //                 isLoaded: true
+    //             })
+    //     })
+    //     .catch(console.log)
+    // }
 
     // handleLogin() {
     //   this.dashboardLogin = true;
@@ -81,18 +81,10 @@ export default class App extends Component {
     // }
 
     render() {
-        const { error, isLoaded, user } = this.state;
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
         } else {
-            if(!isLoaded) {
-            return <div>Loading... {user}</div>;
-            }
-            if(isLoaded)
-            {
-                return (<Dashboard userData = {user}/>);
-            }
-
+            return (<Dashboard />);
         }
     }
 }
