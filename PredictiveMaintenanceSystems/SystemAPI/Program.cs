@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ServicesLibrary.Model;
 
 namespace SystemAPI
 {
@@ -13,14 +15,18 @@ namespace SystemAPI
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            //var backgroundTaskQueue = host.Services.GetRequiredService<BackgroundTaskQueue>();
+            host.Run();
         }
+
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    
                 });
     }
 }

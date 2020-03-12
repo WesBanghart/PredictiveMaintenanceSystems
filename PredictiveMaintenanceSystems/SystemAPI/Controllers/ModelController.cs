@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
+using ServicesLibrary;
+using ServicesLibrary.Model.Run;
+using ServicesLibrary.Model.Update;
 
 namespace SystemAPI.Controllers
 {
@@ -14,10 +17,12 @@ namespace SystemAPI.Controllers
     public class ModelController : ControllerBase
     {
         private readonly EFSystemContext _context;
+        private readonly ServicesLibrary.Model.BackgroundTaskQueue backgroundTaskQueue;
 
-        public ModelController(EFSystemContext context)
+        public ModelController(EFSystemContext context, ServicesLibrary.Model.BackgroundTaskQueue queue)
         {
             _context = context;
+            backgroundTaskQueue = queue;
         }
 
         // GET: api/Model
@@ -129,9 +134,11 @@ namespace SystemAPI.Controllers
 
             _context.Entry(updatedModel).State = EntityState.Modified;
 
+
             try
             {
                 await _context.SaveChangesAsync();
+                backgroundTaskQueue.QueueModelRunWorkItem(modelId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -165,6 +172,7 @@ namespace SystemAPI.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                backgroundTaskQueue.QueueModelUpdateWorkItem(modelId);
             }
             catch (DbUpdateConcurrencyException)
             {
