@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EFDataModels\EFDataModels.csproj" />
-    <ProjectReference Include="..\ModelRunQueueHostedService\ModelQueueHostedService.csproj" />
+    <ProjectReference Include="..\ModelQueueHostedService\ModelQueueHostedService.csproj" />
   </ItemGroup>
 
 
