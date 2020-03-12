@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ModelRunQueueHostedService
+namespace ModelQueueHostedService
 {
     public class Program
     {
@@ -18,7 +18,7 @@ namespace ModelRunQueueHostedService
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<Worker>();
+                    services.AddHostedService<ModelQueueWorker>();
                 });
     }
 }
