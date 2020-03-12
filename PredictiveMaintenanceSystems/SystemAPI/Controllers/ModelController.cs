@@ -29,7 +29,7 @@ namespace SystemAPI.Controllers
 
         // GET: api/Model/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ModelTable>> GetModelTable(Guid id)
+        public async Task<ActionResult<ModelTable>> GetModel(Guid id)
         {
             var modelTable = await _context.Models.FindAsync(id);
 
@@ -42,10 +42,8 @@ namespace SystemAPI.Controllers
         }
 
         // PUT: api/Model/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutModelTable(Guid id, ModelTable modelTable)
+        public async Task<IActionResult> PutModel(Guid id, ModelTable modelTable)
         {
             if (id != modelTable.ModelId)
             {
@@ -60,7 +58,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ModelTableExists(id))
+                if (!ModelExists(id))
                 {
                     return NotFound();
                 }
@@ -74,15 +72,113 @@ namespace SystemAPI.Controllers
         }
 
         // POST: api/Model
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<ModelTable>> PostModelTable(ModelTable modelTable)
+        public async Task<ActionResult<ModelTable>> PostModel(ModelTable modelTable)
         {
             _context.Models.Add(modelTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetModelTable", new { id = modelTable.ModelId }, modelTable);
+            return CreatedAtAction("GetModel", new { id = modelTable.ModelId }, modelTable);
+        }
+
+        // Put: api/Model/
+        [HttpPut("{id}/Save")]
+        public async Task<ActionResult<ModelTable>> PutModelSave(Guid modelId, string configuration)
+        {
+            if (!ModelExists(modelId))
+            {
+                return BadRequest();
+            }
+
+            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
+            updatedModel.Configuration = configuration;
+            updatedModel.LastUpdated = DateTime.Now;
+
+            _context.Entry(updatedModel).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModelExists(modelId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/Save-And-Run")]
+        public async Task<ActionResult<ModelTable>> PutModelSaveAndRun(Guid modelId, string configuration)
+        {
+            if (!ModelExists(modelId))
+            {
+                return BadRequest();
+            }
+
+            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
+            updatedModel.Configuration = configuration;
+            updatedModel.LastUpdated = DateTime.Now;
+
+            _context.Entry(updatedModel).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModelExists(modelId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/Save-And-Train")]
+        public async Task<ActionResult<ModelTable>> PutModelSaveAndTrain(Guid modelId, string configuration)
+        {
+            if (!ModelExists(modelId))
+            {
+                return BadRequest();
+            }
+
+            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
+            updatedModel.Configuration = configuration;
+            updatedModel.LastUpdated = DateTime.Now;
+
+            _context.Entry(updatedModel).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ModelExists(modelId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         // DELETE: api/Model/5
@@ -101,7 +197,7 @@ namespace SystemAPI.Controllers
             return modelTable;
         }
 
-        private bool ModelTableExists(Guid id)
+        private bool ModelExists(Guid id)
         {
             return _context.Models.Any(e => e.ModelId == id);
         }
