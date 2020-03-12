@@ -18,67 +18,44 @@ import './custom.css'
 import './components/Workflow.scss'
 
 export default class App extends Component {
-    // constructor(props)
-    // {
-    //     super(props)
-    //     this.state = 
-    //     {
-    //         error: null,
-    //         isLoaded:false,
-    //         user: []
-    //     }
-    // }
+    constructor(props)
+    {
+        super(props)
+        this.state = 
+        {
+            isLoaded:false,
+            user: []
+        }
+    }
     static displayName = App.name;
-
-    // nextPath(path) {
-    //   this.props.history.push(path);
-    // }
 
     dashboardLogin = true;
 
-    // user =
-    // {
-    //     userId: "",
-    //     userName: "",
-    //     email: "",
-    //     firstName: "",
-    //     lastName: "",
-    //     created: "",
-    //     lastUpdate: "",
-    //     timestamp: "",
-    //     model: null,
-    //     dataSources: null,
-    //     schedulers: null,
-    //     tenantId: "",
-    //     tenant: null
-    // }
+    getUser = async (url) =>
+    {
+        const responce  = fetch(url, 
+            {
+                // Default options are marked with *
+                method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                mode: 'no-cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *client
+            });
+            
+        const resp =  await responce.json;
+        console.log(resp)
+        return resp
+    }
     
-    // componentDidMount() {
-    //     fetch("https://localhost:5001/api/User")
-    //     .then(res => res.json())
-    //     .then((result) => {
-    //         this.setState(
-    //             {
-    //                 user: result.items,
-    //                 isLoaded: true
-    //             })
-    //     })
-    //     .catch(console.log)
-    // }
-
-    // handleLogin() {
-    //   this.dashboardLogin = true;
-    //   this.nextPath('/Dashboard');
-    // }
-
-    // userLoginRedirect() {
-    //   return (<BrowserRouter>
-    //     <Switch>
-    //       <Route path='/' Component={UserLogin} />
-    //       <Route path='/Dashboard' Component={Dashboard} />
-    //     </Switch>
-    //   </BrowserRouter>)
-    // }
+    componentDidMount()
+    {
+        this.state.user = this.getUser("https://localhost:5001/api/User");
+    }
 
     render() {
         if (!this.dashboardLogin) {
