@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFDataModels", "EFDataModel
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{221F8023-4523-4E83-87A6-6B954548938F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelQueueHostedService", "ModelRunQueueHostedService\ModelQueueHostedService.csproj", "{DC047B38-9CFD-4A80-8D60-4F2DE183E018}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelQueueHostedService", "ModelQueueHostedService\ModelQueueHostedService.csproj", "{DC047B38-9CFD-4A80-8D60-4F2DE183E018}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesLibrary", "ServicesLibrary\ServicesLibrary.csproj", "{9E578990-21F4-4D46-8650-A822F10A6194}"
 EndProject
