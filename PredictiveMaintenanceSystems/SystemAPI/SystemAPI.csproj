@@ -22,4 +22,7 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Temp\" />
+  </ItemGroup>
 </Project>
