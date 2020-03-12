@@ -1,7 +1,8 @@
 async function getData() {
     try {
-        let response = await fetch('localhost:3001/Data/MLData.json');
+        let response = await fetch('https://localhost:5001/api/User');
         let responseJson = await response.json();
+        console.log(responseJson)
         return responseJson;
     } catch(error) {
         console.error(error);

@@ -2,14 +2,16 @@ import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
-import CardHeader from '@material-ui/core/CardHeader';
+import CardHeader from '@material-ui/core/CardHeader'
 import Typography from '@material-ui/core/Typography'
-import Avatar from '@material-ui/core/Avatar';
+import Avatar from '@material-ui/core/Avatar'
 import {red} from '@material-ui/core/colors'
+import getData from './JSONHandler'
+
+
 
 const UserProfile: React.FC = () => {
     const classes = useStyles();
-
     return (
         <div>
             <Card className={classes.card}>

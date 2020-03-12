@@ -11,6 +11,7 @@ import Settings from './Settings';
 import Devices from './DataSource';
 import UserProfile from './UserProfile';
 import Workflow from './Workflow';
+import getData from './JSONHandler';
 
 const Dashboard: React.FC = () => {
     const classes = useStyles();
