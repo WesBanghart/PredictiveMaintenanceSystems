@@ -13,7 +13,8 @@ import UserProfile from './UserProfile';
 import Workflow from './Workflow';
 import getData from './JSONHandler';
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC = (data) => {
+    console.log(data)
     const classes = useStyles();
     return (
         <BrowserRouter>
@@ -25,7 +26,7 @@ const Dashboard: React.FC = () => {
                         paper: classes.drawerPaper,
                     }}
                 >
-                    <UserProfile/>
+                    <UserProfile data={data}/>
                     <Navigation/>
                 </Drawer>
                 <main className={classes.content}>

@@ -10,7 +10,7 @@ import getData from './JSONHandler'
 
 
 
-const UserProfile: React.FC = () => {
+const UserProfile: React.FC = (data) => {
     const classes = useStyles();
     return (
         <div>

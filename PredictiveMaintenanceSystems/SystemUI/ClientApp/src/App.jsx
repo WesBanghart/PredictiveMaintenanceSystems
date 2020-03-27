@@ -18,6 +18,15 @@ import './custom.css'
 import './components/Workflow.scss'
 
 export default class App extends Component {
+    constructor(props)
+    {
+        super(props)
+        this.state = 
+        {
+            isLoaded: false,
+            user: []
+        }
+    }
     static displayName = App.name;
 
     // nextPath(path) {
@@ -39,12 +48,29 @@ export default class App extends Component {
     //     </Switch>
     //   </BrowserRouter>)
     // }
+    getUser = async () =>
+    {
+        try {
+            let response = await fetch('https://localhost:5001/api/User');
+            let responseJson = await response.json();
+            return responseJson[0];
+        } catch(error) {
+            console.error(error);
+        }
+    }
+    
+    componentDidMount()
+    {
+        console.log(this.getUser());
+        this.setState({user: this.getUser().then()});
+    }
 
     render() {
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
         } else {
             return (<Dashboard/>);
+            return (<Dashboard data={this.state.user}/>);
         }
     }
 }
