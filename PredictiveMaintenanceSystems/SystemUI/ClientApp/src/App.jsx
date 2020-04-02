@@ -20,7 +20,7 @@ import './components/Workflow.scss'
 export default class App extends Component {
     constructor(props)
     {
-        super(props)
+        super(props);
         this.state = 
         {
             isLoaded:false,
@@ -31,37 +31,18 @@ export default class App extends Component {
 
     dashboardLogin = true;
 
-    getUser = async (url) =>
-    {
-        const responce  = fetch(url, 
-            {
-                // Default options are marked with *
-                method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                mode: 'no-cors', // no-cors, *cors, same-origin
-                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: 'same-origin', // include, *same-origin, omit
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                redirect: 'follow', // manual, *follow, error
-                referrerPolicy: 'no-referrer', // no-referrer, *client
-            });
-            
-        const resp =  await responce.json;
-        console.log(resp)
-        return resp
-    }
-    
     componentDidMount()
     {
-        this.state.user = this.getUser("https://localhost:5001/api/User");
-    }
+        fetch("https://localhost:5001/api/User").then(function(response) {
+            return response.json();
+        }).then(jsonData => this.setState({user: jsonData[0]}))
+    };
 
     render() {
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
         } else {
-            return (<Dashboard />);
+            return (<Dashboard userData = {this.state.user}/>);
         }
     }
 }
