@@ -10,6 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from "@material-ui/icons/Save";
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import green from "@material-ui/core/colors/green";
+import RunModelAlert from "./RunModelAlert";
 
 
 const ColorButton = withStyles((theme) => ({
@@ -40,12 +41,18 @@ class SimpleModel extends React.Component {
         super();
         this.state = {
             dataSource: "",
-            transform: "",
+            transformation: "",
             algorithm: "",
+            postId: "",
+            errorMessage: "",
+            showRunModelAlert: false,
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
         this.setAlgorithm = this.setAlgorithm.bind(this);
+        this.verifyMenuSelections = this.verifyMenuSelections.bind(this);
+        this.postData = this.postData.bind(this);
+        this.runModelVerification = this.runModelVerification.bind(this);
     }
 
     setDataSource(event) {
@@ -60,10 +67,53 @@ class SimpleModel extends React.Component {
         this.setState({algorithm: event.target.value});
     }
 
+    verifyMenuSelections() {
+        if(!this.state.dataSource || this.state.dataSource.length === 0) {
+            return false;
+        }
+        else if(!this.state.transformation || this.state.transformation.length === 0){
+            return false;
+        }
+        else return !(!this.state.algorithm || this.state.algorithm.length === 0);
+    }
+
+    postData() {
+        const requestOptions = {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(this.state)
+        };
+        fetch("https://localhost:5001/api/", requestOptions).then(async response => {
+            const data = await response.json();
+            if(!response.ok) {
+                const error = (data && data.message) || response.status;
+                return Promise.reject(error);
+            }
+            this.setState({postId: data.id});
+        }).catch(error => {
+            this.setState({errorMessage: error});
+            console.log("There was an error!", error)
+        });
+    }
+
+    runModelVerification() {
+        if(this.verifyMenuSelections()) {
+            this.postData();
+        }
+        else {
+            this.setState({showRunModelAlert: true});
+        }
+    }
+
     render()
     {
         const {classes} = this.props;
         return (
+            <div>
+                {this.state.showRunModelAlert ?
+                    <RunModelAlert /> :
+                    null
+                }
             <div>
                 <Button
                     variant="contained"
@@ -78,6 +128,7 @@ class SimpleModel extends React.Component {
                     color="primary"
                     className={classes.button}
                     startIcon={<DirectionsRunIcon />}
+                    onClick={() => this.runModelVerification()}
                 >
                     Run
                 </ColorButton>
@@ -102,9 +153,9 @@ class SimpleModel extends React.Component {
                         <MenuItem value="">
                             <em>Please Select a Data Source</em>
                         </MenuItem>
-                        <MenuItem value={"Source1"}>Source 1</MenuItem>
-                        <MenuItem value={"Source2"}>Source 2</MenuItem>
-                        <MenuItem value={"Source3"}>Source 3</MenuItem>
+                        <MenuItem value="Source1">Source 1</MenuItem>
+                        <MenuItem value="Source2">Source 2</MenuItem>
+                        <MenuItem value="Source3">Source 3</MenuItem>
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
@@ -120,9 +171,9 @@ class SimpleModel extends React.Component {
                         <MenuItem value="">
                             <em>Please Select a Transformation</em>
                         </MenuItem>
-                        <MenuItem value={"Transformation1"}>Transformation 1</MenuItem>
-                        <MenuItem value={"Transformation2"}>Transformation 2</MenuItem>
-                        <MenuItem value={"Transformation3"}>Transformation 3</MenuItem>
+                        <MenuItem value="Transformation1">Transformation 1</MenuItem>
+                        <MenuItem value="Transformation2">Transformation 2</MenuItem>
+                        <MenuItem value="Transformation3">Transformation 3</MenuItem>
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
@@ -138,12 +189,13 @@ class SimpleModel extends React.Component {
                         <MenuItem value="">
                             <em>Please Select a Algorithm</em>
                         </MenuItem>
-                        <MenuItem value={"Algorithm1"}>Algorithm 1</MenuItem>
-                        <MenuItem value={"Algorithm2"}>Algorithm 2</MenuItem>
-                        <MenuItem value={"Algorithm3"}>Algorithm 3</MenuItem>
+                        <MenuItem value="Algorithm1">Algorithm 1</MenuItem>
+                        <MenuItem value="Algorithm2">Algorithm 2</MenuItem>
+                        <MenuItem value="Algorithm3">Algorithm 3</MenuItem>
                     </Select>
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
+            </div>
             </div>
             </div>
         );
