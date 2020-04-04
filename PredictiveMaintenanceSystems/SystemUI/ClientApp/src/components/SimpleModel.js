@@ -11,6 +11,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import green from "@material-ui/core/colors/green";
 import RunModelAlert from "./RunModelAlert";
+import SaveModelAlert from "./SaveModelAlert";
 
 
 const ColorButton = withStyles((theme) => ({
@@ -46,6 +47,9 @@ class SimpleModel extends React.Component {
             postId: "",
             errorMessage: "",
             showRunModelAlert: false,
+            showSaveModelAlert: false,
+            saveModelStatus: "",
+            models: "",
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
@@ -53,6 +57,8 @@ class SimpleModel extends React.Component {
         this.verifyMenuSelections = this.verifyMenuSelections.bind(this);
         this.postData = this.postData.bind(this);
         this.runModelVerification = this.runModelVerification.bind(this);
+        this.saveModel = this.saveModel.bind(this);
+        this.modelSelection = this.modelSelection.bind(this);
     }
 
     setDataSource(event) {
@@ -78,22 +84,28 @@ class SimpleModel extends React.Component {
     }
 
     postData() {
-        const requestOptions = {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(this.state)
-        };
-        fetch("https://localhost:5001/api/", requestOptions).then(async response => {
-            const data = await response.json();
-            if(!response.ok) {
-                const error = (data && data.message) || response.status;
-                return Promise.reject(error);
-            }
-            this.setState({postId: data.id});
-        }).catch(error => {
-            this.setState({errorMessage: error});
-            console.log("There was an error!", error)
-        });
+        try {
+            const requestOptions = {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(this.state)
+            };
+            fetch("https://localhost:5001/api/", requestOptions).then(async response => {
+                const data = await response.json();
+                if(!response.ok) {
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                this.setState({postId: data.id});
+            }).catch(error => {
+                this.setState({errorMessage: error});
+                console.log("There was an error!", error)
+            });
+            return true;
+        } catch {
+            return false;
+        }
+
     }
 
     runModelVerification() {
@@ -105,6 +117,17 @@ class SimpleModel extends React.Component {
         }
     }
 
+    saveModel() {
+        if(this.postData()) {
+            this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
+        }
+        this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+    }
+
+    modelSelection() {
+
+    }
+
     render()
     {
         const {classes} = this.props;
@@ -114,12 +137,17 @@ class SimpleModel extends React.Component {
                     <RunModelAlert /> :
                     null
                 }
+                {this.state.showSaveModelAlert ?
+                    <SaveModelAlert status={this.state.saveModelStatus} /> :
+                    null
+                }
             <div>
                 <Button
                     variant="contained"
                     color="primary"
                     className={classes.button}
                     startIcon={<SaveIcon />}
+                    onClick={() => this.saveModel()}
                 >
                     Save
                 </Button>
@@ -130,7 +158,7 @@ class SimpleModel extends React.Component {
                     startIcon={<DirectionsRunIcon />}
                     onClick={() => this.runModelVerification()}
                 >
-                    Run
+                    Save & Run
                 </ColorButton>
                 <Button
                     variant="contained"
@@ -141,6 +169,21 @@ class SimpleModel extends React.Component {
                     Delete
                 </Button>
             <div>
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="model-selection">Model</InputLabel>
+                    <Select
+                        labelId="model-selection"
+                        id="model-selection"
+                        value={this.state.models}
+                        onChange={this.modelSelection()}
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Ten</MenuItem>
+                    </Select>
+                    <FormHelperText>Optional</FormHelperText>
+                </FormControl>
                 <FormControl required className={classes.formControl}>
                     <InputLabel id="data-source-selection">Data Source</InputLabel>
                     <Select

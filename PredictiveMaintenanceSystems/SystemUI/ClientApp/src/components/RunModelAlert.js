@@ -15,8 +15,8 @@ const useStyles = (theme) => ({
 });
 
 class RunModelAlert extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
           open: true,
         };
@@ -28,7 +28,6 @@ class RunModelAlert extends React.Component {
     }
 
     render() {
-        console.log("runModelAlert");
         const {classes} = this.props;
         return (
             <div className={classes.root}>
@@ -47,7 +46,7 @@ class RunModelAlert extends React.Component {
                             </IconButton>
                         }
                     ><AlertTitle>Error</AlertTitle>
-                        Please fill out all the fields.
+                        Please fill out all the required fields.
                     </Alert>
                 </Collapse>
             </div>
