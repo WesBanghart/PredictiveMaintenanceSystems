@@ -1,49 +1,109 @@
 ﻿using EFDataModels;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.ML;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace ModelServicesLibrary
+namespace ServicesLibrary.Model
 {
-    public class Model
+    public class ModelTaskController
     {
         private EFSystemContext _context;
 
         public string ModelJson { get; set; }
         public string ModelConfiguration { get; set; }
         public MLContext MLContext { get; set; }
-        public IDataView DataView { get; set; }
+        public IDataView TrainDataView { get; set; }
+        public IDataView TestDataView { get; set; }
         public ITransformer Transformer { get; set; }
 
-        public Model(EFSystemContext context)
+        public ModelTaskController(EFSystemContext context)
         {
             _context = context;
         }
 
 
-        //------------- PUBLIC CRUD OPERATIONS ---------------------------------------------
-        public bool CreateModel(string ModelJson)
+        //------------- PUBLIC OPERATIONS ----------------------------------------------------
+        public async Task<bool> RunModel(Guid ModelId, CancellationToken cancellationToken)
+        {
+            if (await UpdateModel(ModelId, cancellationToken))
+            {
+                var results = Transformer.Transform(TestDataView);
+                //TODO: save results
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> UpdateModel(Guid ModelId, CancellationToken cancellationToken)
+        {
+            if (_RetrieveModel(ModelId))
+            {
+                if (_ParseModelJSON())
+                {
+                    byte[] modelZip = _SaveModel(ModelId);
+                    var modelEntry = await _context.FindAsync<EFDataModels.ModelTable>(ModelId, cancellationToken);
+                    modelEntry.File = modelZip;
+                    modelEntry.LastUpdated = DateTime.Now;
+                    _context.Entry(modelEntry).State = EntityState.Modified;
+                    
+                    try
+                    {
+                        await _context.SaveChangesAsync(cancellationToken);
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        //TODO: log exception
+                        return false;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        //--------------- PRIVATE DATABASE ACCESSORS -----------------------------------------
+        private bool _RetrieveModel(Guid ModelId)
         {
             throw new NotImplementedException();
         }
 
-        public bool ReadModel(Guid ModelId)
+        private byte[] _SaveModel(Guid ModelId)
         {
-            throw new NotImplementedException();
+            string tempZip = $"temp/{ModelId}_temp.zip";
+            string tempDir = $"temp/{ModelId}_temp/";
+
+            MLContext.Model.Save(Transformer, TrainDataView.Schema, tempZip);
+
+            if (Directory.Exists(tempDir))
+            {
+                Directory.Delete(tempDir, true);
+            }
+
+            Directory.CreateDirectory(tempDir);
+            ZipFile.ExtractToDirectory(tempZip, tempDir);
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                using (ZipArchive zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+                {
+                    foreach (string file in Directory.EnumerateFiles(tempDir))
+                    {
+                        zipArchive.CreateEntryFromFile($"{tempDir}{file}", file);
+                    }
+
+                    return memoryStream.ToArray();
+                }
+            }
         }
-
-        //TODO: determine the necessity of read model by model name
-        //public bool ReadModel(string ModelName) { }
-
-        public bool UpdateModel(string ModelJson)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteModel(Guid ModelId)
-        {
-            throw new NotImplementedException();
-        }
-
 
         //--------------- PRIVATE PARSE FUNCTIONS --------------------------------------------
         private bool _ParseModelJSON()
@@ -118,7 +178,7 @@ namespace ModelServicesLibrary
             throw new NotImplementedException();
         }
 
-        private bool _NormalizeLogMeanVariance ()
+        private bool _NormalizeLogMeanVariance()
         {
             throw new NotImplementedException();
         }
@@ -437,7 +497,7 @@ namespace ModelServicesLibrary
             throw new NotImplementedException();
         }
 
-        private bool _FieldAwareFactorizationMachineTrainer ()
+        private bool _FieldAwareFactorizationMachineTrainer()
         {
             throw new NotImplementedException();
         }
@@ -496,7 +556,7 @@ namespace ModelServicesLibrary
             throw new NotImplementedException();
         }
 
-        private bool _ImageClassificationTrainer ()
+        private bool _ImageClassificationTrainer()
         {
             throw new NotImplementedException();
         }

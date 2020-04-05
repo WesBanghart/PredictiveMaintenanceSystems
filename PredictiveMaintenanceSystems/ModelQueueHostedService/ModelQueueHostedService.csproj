@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UserSecretsId>dotnet-ModelRunnerService-0FBE9554-40B8-4541-A9CD-03C0E8D4D37D</UserSecretsId>
+    <UserSecretsId>dotnet-ModelRunQueueHostedService-91C704C8-9A0F-4742-938E-5CB00EAE4B0E</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModelServicesLibrary\ModelServicesLibrary.csproj" />
+    <ProjectReference Include="..\ServicesLibrary\ServicesLibrary.csproj" />
   </ItemGroup>
 </Project>

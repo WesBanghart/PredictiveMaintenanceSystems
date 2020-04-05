@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "ModelService": {
+    "ModelRunQueueHostedService": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
