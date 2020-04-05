@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -37,6 +37,14 @@ const styles = theme => ({
     },
 });
 
+const savedModels = {
+    model1: {
+        dataSource: "Source2",
+        transformation: "Transformation3",
+        algorithm: "Algorithm1",
+    }
+};
+
 class SimpleModel extends React.Component {
     constructor() {
         super();
@@ -49,7 +57,7 @@ class SimpleModel extends React.Component {
             showRunModelAlert: false,
             showSaveModelAlert: false,
             saveModelStatus: "",
-            models: "",
+            selectedModel: "",
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
@@ -58,7 +66,7 @@ class SimpleModel extends React.Component {
         this.postData = this.postData.bind(this);
         this.runModelVerification = this.runModelVerification.bind(this);
         this.saveModel = this.saveModel.bind(this);
-        this.modelSelection = this.modelSelection.bind(this);
+        this.setModel = this.setModel.bind(this);
     }
 
     setDataSource(event) {
@@ -73,22 +81,38 @@ class SimpleModel extends React.Component {
         this.setState({algorithm: event.target.value});
     }
 
+    setModel(event) {
+        if (!event.target.value || event.target.value.length === 0) {
+            this.setState({
+                selectedModel: event.target.value,
+                dataSource: "",
+                transformation: "",
+                algorithm: "",
+            });
+        } else {
+            this.setState({
+                selectedModel: event.target.value,
+                dataSource: savedModels[event.target.value]["dataSource"],
+                transformation: savedModels[event.target.value]["transformation"],
+                algorithm: savedModels[event.target.value]["algorithm"],
+            });
+        }
+    }
+
     verifyMenuSelections() {
-        if(!this.state.dataSource || this.state.dataSource.length === 0) {
+        if (!this.state.dataSource || this.state.dataSource.length === 0) {
             return false;
-        }
-        else if(!this.state.transformation || this.state.transformation.length === 0){
+        } else if (!this.state.transformation || this.state.transformation.length === 0) {
             return false;
-        }
-        else return !(!this.state.algorithm || this.state.algorithm.length === 0);
+        } else return !(!this.state.algorithm || this.state.algorithm.length === 0);
     }
 
     postData() {
         try {
             const requestOptions = {
-                method: "POST",
+                method: "PUT",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(this.state)
+                body: JSON.stringify(this.state),
             };
             fetch("https://localhost:5001/api/", requestOptions).then(async response => {
                 const data = await response.json();
@@ -122,10 +146,6 @@ class SimpleModel extends React.Component {
             this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
         }
         this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
-    }
-
-    modelSelection() {
-
     }
 
     render()
@@ -174,13 +194,13 @@ class SimpleModel extends React.Component {
                     <Select
                         labelId="model-selection"
                         id="model-selection"
-                        value={this.state.models}
-                        onChange={this.modelSelection()}
+                        value={this.state.selectedModel}
+                        onChange={this.setModel}
                     >
                         <MenuItem value="">
                             <em>None</em>
                         </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value="model1">Model 1</MenuItem>
                     </Select>
                     <FormHelperText>Optional</FormHelperText>
                 </FormControl>
