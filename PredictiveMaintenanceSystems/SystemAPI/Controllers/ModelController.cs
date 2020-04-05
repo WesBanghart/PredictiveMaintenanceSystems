@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using ServicesLibrary;
+using ServicesLibrary.Interfaces;
 using ServicesLibrary.Model.Run;
 using ServicesLibrary.Model.Update;
 
@@ -17,9 +21,11 @@ namespace SystemAPI.Controllers
     public class ModelController : ControllerBase
     {
         private readonly EFSystemContext _context;
-        private readonly ServicesLibrary.Model.BackgroundTaskQueue backgroundTaskQueue;
+        //private readonly ServicesLibrary.Model.BackgroundTaskQueue backgroundTaskQueue;
+        private readonly IBackgroundTaskQueue backgroundTaskQueue;
+        private List<string> _modelOptions = new List<string> {"save", "saveandrun", "saveandtrain"};
 
-        public ModelController(EFSystemContext context, ServicesLibrary.Model.BackgroundTaskQueue queue)
+        public ModelController(EFSystemContext context, IBackgroundTaskQueue queue)
         {
             _context = context;
             backgroundTaskQueue = queue;
@@ -46,16 +52,110 @@ namespace SystemAPI.Controllers
             return modelTable;
         }
 
-        // PUT: api/Model/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutModel(Guid id, ModelTable modelTable)
+        // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
+        // POST: api/Model
+        [HttpPost]
+        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, Guid tenantId, string option = "save" , List<Guid> dataSourceIdList = null)
         {
-            if (id != modelTable.ModelId)
+            option = option.Replace("\"", "");
+            if (!_modelOptions.Contains(option))
             {
-                return BadRequest();
+                return BadRequest("Invalid option: valid values are: \"save\", \"saveandrun\", \"saveandtrain\"");
+            }
+            //Check if Tenant and User Id exists
+            if (await _context.Users.FindAsync(userId) == null)
+            {
+                return NotFound();
+            }
+            if (await _context.Tenants.FindAsync(tenantId) == null)
+            {
+                return NotFound();
             }
 
-            _context.Entry(modelTable).State = EntityState.Modified;
+            List<DataSourceTable> dataSources = new List<DataSourceTable>();
+
+            //Handle data sources
+            if (dataSourceIdList != null && dataSourceIdList.Count > 0)
+            {
+                foreach (var guid in dataSourceIdList)
+                {
+                    var dataSource = await _context.DataSources.FindAsync(guid);
+                    //collect data sources
+                    if (dataSource == null)
+                    {
+                        return NotFound();
+                    }
+                    dataSources.Append(dataSource);
+                }
+            }
+
+            //Create new Model object
+            ModelTable newModel = new ModelTable
+            {
+                ModelName = modelName,
+                Configuration = configuration,
+                ModelId = new Guid(),
+                File = null,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now,
+                DataSources = dataSources
+            };
+            _context.Models.Add(newModel);
+            await _context.SaveChangesAsync();
+
+            //Run the model if the option is selected
+            if (option.Equals("saveandrun"))
+            {
+                try
+                {
+                    backgroundTaskQueue.QueueModelRunWorkItem(newModel.ModelId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            //Train the model if the option is selected
+            if (option.Equals("saveandtrain"))
+            {
+                try
+                {
+                    backgroundTaskQueue.QueueModelUpdateWorkItem(newModel.ModelId);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            return CreatedAtAction("GetModel", new { id = newModel.ModelId }, newModel);
+        }
+
+        // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
+        // PUT: api/Model/5
+        [HttpPut]
+        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save")
+        {
+            option = option.Replace("\"", "");
+            if (!_modelOptions.Contains(option))
+            {
+                return BadRequest("Invalid option: valid values are: \"save\", \"saveandrun\", \"saveandtrain\"");
+            }
+
+            //patch models
+
+            var model = await _context.Models.FindAsync(id);
+
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+
+            model.Configuration = configuration;
+            model.LastUpdated = DateTime.Now;
+
+            _context.Entry(model).State = EntityState.Modified;
 
             try
             {
@@ -69,120 +169,33 @@ namespace SystemAPI.Controllers
                 }
                 else
                 {
+                    return BadRequest("Error encountered while saving changes.");
                     throw;
                 }
             }
 
-            return NoContent();
-        }
-
-        // POST: api/Model
-        [HttpPost]
-        public async Task<ActionResult<ModelTable>> PostModel(ModelTable modelTable)
-        {
-            _context.Models.Add(modelTable);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetModel", new { id = modelTable.ModelId }, modelTable);
-        }
-
-        // Put: api/Model/
-        [HttpPut("{id}/Save")]
-        public async Task<ActionResult<ModelTable>> PutModelSave(Guid modelId, string configuration)
-        {
-            if (!ModelExists(modelId))
+            //Run the model if the option is selected
+            if (option.Equals("saveandrun"))
             {
-                return BadRequest();
-            }
-
-            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
-            updatedModel.Configuration = configuration;
-            updatedModel.LastUpdated = DateTime.Now;
-
-            _context.Entry(updatedModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ModelExists(modelId))
+                try
                 {
-                    return NotFound();
+                    backgroundTaskQueue.QueueModelRunWorkItem(model.ModelId);
                 }
-                else
+                catch (Exception e)
                 {
-                    throw;
+                    Console.WriteLine(e);
                 }
             }
-
-            return NoContent();
-        }
-
-        [HttpPut("{id}/Save-And-Run")]
-        public async Task<ActionResult<ModelTable>> PutModelSaveAndRun(Guid modelId, string configuration)
-        {
-            if (!ModelExists(modelId))
+            //Train the model if the option is selected
+            if (option.Equals("saveandtrain"))
             {
-                return BadRequest();
-            }
-
-            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
-            updatedModel.Configuration = configuration;
-            updatedModel.LastUpdated = DateTime.Now;
-
-            _context.Entry(updatedModel).State = EntityState.Modified;
-
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                backgroundTaskQueue.QueueModelRunWorkItem(modelId);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ModelExists(modelId))
+                try
                 {
-                    return NotFound();
+                    backgroundTaskQueue.QueueModelUpdateWorkItem(model.ModelId);
                 }
-                else
+                catch (Exception e)
                 {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        [HttpPut("{id}/Save-And-Train")]
-        public async Task<ActionResult<ModelTable>> PutModelSaveAndTrain(Guid modelId, string configuration)
-        {
-            if (!ModelExists(modelId))
-            {
-                return BadRequest();
-            }
-
-            ModelTable updatedModel = await _context.Models.FindAsync(modelId);
-            updatedModel.Configuration = configuration;
-            updatedModel.LastUpdated = DateTime.Now;
-
-            _context.Entry(updatedModel).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                backgroundTaskQueue.QueueModelUpdateWorkItem(modelId);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ModelExists(modelId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    Console.WriteLine(e);
                 }
             }
 
@@ -209,5 +222,6 @@ namespace SystemAPI.Controllers
         {
             return _context.Models.Any(e => e.ModelId == id);
         }
+
     }
 }
