@@ -68,8 +68,8 @@ let passedThroughModels = [
     }];
 
 class SimpleModel extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             dataSource: "",
             transformation: "",
