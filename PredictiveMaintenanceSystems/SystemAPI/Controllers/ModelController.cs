@@ -72,6 +72,17 @@ namespace SystemAPI.Controllers
                 return NotFound();
             }
 
+            //Create new Model object
+            ModelTable newModel = new ModelTable
+            {
+                ModelName = modelName,
+                Configuration = configuration,
+                ModelId = new Guid(),
+                File = null,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now,
+            };
+
             List<DataSourceTable> newDataSources = new List<DataSourceTable>();
 
             //Handle data sources
@@ -86,20 +97,12 @@ namespace SystemAPI.Controllers
                         return NotFound($"Error: data source {guid} not found");
                     }
                     newDataSources.Append(dataSource);
+                    dataSource.Models.Append(newModel);
                 }
             }
 
-            //Create new Model object
-            ModelTable newModel = new ModelTable
-            {
-                ModelName = modelName,
-                Configuration = configuration,
-                ModelId = new Guid(),
-                File = null,
-                Created = DateTime.Now,
-                LastUpdated = DateTime.Now,
-                DataSources = newDataSources
-            };
+            newModel.DataSources = newDataSources;
+           
             _context.Models.Add(newModel);
             await _context.SaveChangesAsync();
 
