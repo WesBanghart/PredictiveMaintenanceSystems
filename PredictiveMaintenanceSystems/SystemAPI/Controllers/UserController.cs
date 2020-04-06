@@ -43,12 +43,20 @@ namespace SystemAPI.Controllers
 
         // PUT: api/User/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, UserTable userTable)
+        public async Task<IActionResult> PutUser(Guid id, string userName, string email, string firstName, string lastName)
         {
-            if (id != userTable.UserId)
+            if (UserTable(id))
             {
-                return BadRequest();
+                return BadRequest($"User with {id} does not exist.");
             }
+
+            var userTable = await _context.Users.FindAsync(id);
+
+            userTable.UserName = userName;
+            userTable.Email = email;
+            userTable.FirstName = firstName;
+            userTable.LastName = lastName;
+            userTable.LastUpdate = DateTime.Now;
 
             _context.Entry(userTable).State = EntityState.Modified;
 
@@ -75,10 +83,16 @@ namespace SystemAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<UserTable>> PostUser(string userName, string email, string firstName, string lastName, Guid tenantID)
         {
+            var tenant = await _context.Tenants.FindAsync(tenantID);
+            if (tenant == null)
+            {
+                return NotFound($"Tenant with ID: {tenantID} not found.");
+            }
             UserTable newUser = new UserTable
             {
                 UserId = new Guid(),
                 TenantId = tenantID,
+                Tenant = tenant,
                 UserName = userName,
                 Email = email,
                 FirstName = firstName,
@@ -101,6 +115,14 @@ namespace SystemAPI.Controllers
             {
                 return NotFound();
             }
+
+            var tenantTable = await _context.Tenants.FindAsync(userTable.TenantId);
+            if(tenantTable == null)
+            {
+                return NotFound("Error: Assosiated Tentant Table not found.");
+            }
+
+            tenantTable.Users.Remove(userTable);
 
             _context.Users.Remove(userTable);
             await _context.SaveChangesAsync();

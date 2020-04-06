@@ -160,29 +160,16 @@ namespace SystemAPI.Controllers
             //TODO: break this into another api call because this is costly if we are adding data sources.
             if (dataSources != null && dataSources.Count > 0)
             {
-                var modelDataSources = model.DataSources;
-                // Iterate through the data sources
-                foreach (var dataSourceId in dataSources)
+                foreach (var dataSource in dataSources)
                 {
-                    // Iterate through the models
-                    foreach (var modelDataSource in modelDataSources)
+                    // Add the Data source to the model if it is not present
+                    if (!DataSourceInModel(model, dataSource))
                     {
-                        if (modelDataSource.DataSourceId != dataSourceId)
-                        {
-                            var dataSource = await _context.DataSources.FindAsync(dataSourceId);
-                            if (dataSource != null)
-                            {
-                                // Adding both the model and data source
-                                model.DataSources.Add(dataSource);
-                                modelDataSource.Models.Add(model);
-                            }
-                            else
-                            {
-                                return NotFound($"Error: Data Source: {dataSourceId} not found");
-                            }
-                        }
+                        var ds = await _context.DataSources.FindAsync(dataSource);
+                        model.DataSources.Add(ds);
+                        ds.Models.Add(model);
                     }
-                }
+                }              
             }
 
 
@@ -241,9 +228,24 @@ namespace SystemAPI.Controllers
         public async Task<ActionResult<ModelTable>> DeleteModelTable(Guid id)
         {
             var modelTable = await _context.Models.FindAsync(id);
+
+            //Need to remove references to this model in other tables
+
             if (modelTable == null)
             {
                 return NotFound();
+            }
+
+            //Iterate through datasources and remove models with the modelId
+            for (int i = 0; i < _context.DataSources.Count(); i++)
+            {
+                for (int j = 0; j < _context.DataSources.ElementAt(i).Models.Count; j++)
+                {
+                    if (_context.DataSources.ElementAt(i).Models.ElementAt(j).ModelId == id)
+                    {
+                        _context.DataSources.ElementAt(i).Models.Remove(_context.DataSources.ElementAt(i).Models.ElementAt(j));
+                    }
+                }
             }
 
             _context.Models.Remove(modelTable);
@@ -255,6 +257,18 @@ namespace SystemAPI.Controllers
         private bool ModelExists(Guid id)
         {
             return _context.Models.Any(e => e.ModelId == id);
+        }
+
+        private bool DataSourceInModel(ModelTable model, Guid dataSourceId)
+        {
+            foreach (var dataSource in model.DataSources)
+            {
+                if (dataSource.DataSourceId == dataSourceId)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
