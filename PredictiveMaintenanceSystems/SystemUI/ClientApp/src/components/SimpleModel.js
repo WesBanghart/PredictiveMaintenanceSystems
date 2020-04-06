@@ -12,6 +12,7 @@ import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import green from "@material-ui/core/colors/green";
 import RunModelAlert from "./RunModelAlert";
 import SaveModelAlert from "./SaveModelAlert";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
 
 const ColorButton = withStyles((theme) => ({
@@ -37,13 +38,34 @@ const styles = theme => ({
     },
 });
 
-const savedModels = {
-    model1: {
-        dataSource: "Source2",
-        transformation: "Transformation3",
-        algorithm: "Algorithm1",
-    }
-};
+let passedThroughModels = [
+    {
+        "modelId":"90f4df6d-a844-44fd-ccd7-08d7c6aabda2",
+        "modelName":"\"My_Model_1\"",
+        "configuration":"\"{}\"",
+        "file":null,
+        "created":"2020-03-12T10:28:12.401512",
+        "lastUpdated":"2020-04-05T16:36:03.0274553",
+        "timestamp":"AAAAAAAAE44=",
+        "dataSources":null,
+        "userId":"8c166ec3-482d-41ca-75aa-08d7c61e9044",
+        "user":null,
+        "tenantId":"9eae9863-ae02-479e-9d72-08d7c61e4856",
+        "tenant":null
+    },
+    {"modelId":"df218369-2571-400b-ccd8-08d7c6aabda2",
+        "modelName":"\"My_Model_2\"",
+        "configuration":"\"{JSON STRING}\"",
+        "file":null,
+        "created":"2020-03-12T10:28:40.463769",
+        "lastUpdated":"2020-03-12T10:28:40.463733",
+        "timestamp":"AAAAAAAAD6w=",
+        "dataSources":null,
+        "userId":"8c166ec3-482d-41ca-75aa-08d7c61e9044",
+        "user":null,
+        "tenantId":"9eae9863-ae02-479e-9d72-08d7c61e4856",
+        "tenant":null
+    }];
 
 class SimpleModel extends React.Component {
     constructor() {
@@ -58,6 +80,7 @@ class SimpleModel extends React.Component {
             showSaveModelAlert: false,
             saveModelStatus: "",
             selectedModel: "",
+            savedModels: passedThroughModels,
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
@@ -67,6 +90,8 @@ class SimpleModel extends React.Component {
         this.runModelVerification = this.runModelVerification.bind(this);
         this.saveModel = this.saveModel.bind(this);
         this.setModel = this.setModel.bind(this);
+        this.localModelSave = this.localModelSave.bind(this);
+        this.putData = this.putData.bind(this);
     }
 
     setDataSource(event) {
@@ -82,21 +107,7 @@ class SimpleModel extends React.Component {
     }
 
     setModel(event) {
-        if (!event.target.value || event.target.value.length === 0) {
-            this.setState({
-                selectedModel: event.target.value,
-                dataSource: "",
-                transformation: "",
-                algorithm: "",
-            });
-        } else {
-            this.setState({
-                selectedModel: event.target.value,
-                dataSource: savedModels[event.target.value]["dataSource"],
-                transformation: savedModels[event.target.value]["transformation"],
-                algorithm: savedModels[event.target.value]["algorithm"],
-            });
-        }
+        this.setState({selectedModel: event.target.value});
     }
 
     verifyMenuSelections() {
@@ -108,6 +119,30 @@ class SimpleModel extends React.Component {
     }
 
     postData() {
+        try {
+            const requestOptions = {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(this.state),
+            };
+            fetch("https://localhost:5001/api/", requestOptions).then(async response => {
+                const data = await response.json();
+                if(!response.ok) {
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                this.setState({postId: data.id});
+            }).catch(error => {
+                this.setState({errorMessage: error});
+                console.log("There was an error!", error)
+            });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    putData() {
         try {
             const requestOptions = {
                 method: "PUT",
@@ -129,7 +164,6 @@ class SimpleModel extends React.Component {
         } catch {
             return false;
         }
-
     }
 
     runModelVerification() {
@@ -148,9 +182,16 @@ class SimpleModel extends React.Component {
         this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
     }
 
+    localModelSave() {
+
+    }
+
     render()
     {
         const {classes} = this.props;
+        let savedModelsMenuTemplate = this.state.savedModels.map(v => (
+            <MenuItem value={v.modelId}>{v.modelName}</MenuItem>
+        ));
         return (
             <div>
                 {this.state.showRunModelAlert ?
@@ -166,10 +207,19 @@ class SimpleModel extends React.Component {
                     variant="contained"
                     color="primary"
                     className={classes.button}
+                    startIcon={<CloudUploadIcon />}
+                    onClick={() => this.saveModel()}
+                >
+                    Persistent Save
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    className={classes.button}
                     startIcon={<SaveIcon />}
                     onClick={() => this.saveModel()}
                 >
-                    Save
+                    Session Save
                 </Button>
                 <ColorButton
                     variant="contained"
@@ -200,7 +250,7 @@ class SimpleModel extends React.Component {
                         <MenuItem value="">
                             <em>None</em>
                         </MenuItem>
-                        <MenuItem value="model1">Model 1</MenuItem>
+                        {savedModelsMenuTemplate}
                     </Select>
                     <FormHelperText>Optional</FormHelperText>
                 </FormControl>
