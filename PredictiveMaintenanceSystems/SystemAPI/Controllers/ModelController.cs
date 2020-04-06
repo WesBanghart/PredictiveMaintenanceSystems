@@ -55,7 +55,7 @@ namespace SystemAPI.Controllers
         // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
         // POST: api/Model
         [HttpPost]
-        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, Guid tenantId, string option = "save" , List<Guid> dataSourceIdList = null)
+        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, Guid tenantId, string option = "save", [FromQuery(Name = "dataSources")] List<Guid> dataSources = null)
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
@@ -72,20 +72,20 @@ namespace SystemAPI.Controllers
                 return NotFound();
             }
 
-            List<DataSourceTable> dataSources = new List<DataSourceTable>();
+            List<DataSourceTable> newDataSources = new List<DataSourceTable>();
 
             //Handle data sources
-            if (dataSourceIdList != null && dataSourceIdList.Count > 0)
+            if (dataSources != null && dataSources.Count > 0)
             {
-                foreach (var guid in dataSourceIdList)
+                foreach (var guid in dataSources)
                 {
                     var dataSource = await _context.DataSources.FindAsync(guid);
                     //collect data sources
                     if (dataSource == null)
                     {
-                        return NotFound();
+                        return NotFound($"Error: data source {guid} not found");
                     }
-                    dataSources.Append(dataSource);
+                    newDataSources.Append(dataSource);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace SystemAPI.Controllers
                 File = null,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now,
-                DataSources = dataSources
+                DataSources = newDataSources
             };
             _context.Models.Add(newModel);
             await _context.SaveChangesAsync();
@@ -133,14 +133,17 @@ namespace SystemAPI.Controllers
 
         // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
         // PUT: api/Model/5
-        [HttpPut]
-        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save")
+        //List<Guid> dataSourceIdList = null
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save", [FromQuery(Name = "dataSources")] List<Guid> dataSources = null)
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
             {
                 return BadRequest("Invalid option: valid values are: \"save\", \"saveandrun\", \"saveandtrain\"");
             }
+
+            
 
             //patch models
 
@@ -149,6 +152,34 @@ namespace SystemAPI.Controllers
             if (model == null)
             {
                 return NotFound();
+            }
+
+            //TODO: break this into another api call because this is costly if we are adding data sources.
+            if (dataSources != null && dataSources.Count > 0)
+            {
+                var modelDataSources = model.DataSources;
+                // Iterate through the data sources
+                foreach (var dataSourceId in dataSources)
+                {
+                    // Iterate through the models
+                    foreach (var modelDataSource in modelDataSources)
+                    {
+                        if (modelDataSource.DataSourceId != dataSourceId)
+                        {
+                            var dataSource = await _context.DataSources.FindAsync(dataSourceId);
+                            if (dataSource != null)
+                            {
+                                // Adding both the model and data source
+                                model.DataSources.Add(dataSource);
+                                modelDataSource.Models.Add(model);
+                            }
+                            else
+                            {
+                                return NotFound($"Error: Data Source: {dataSourceId} not found");
+                            }
+                        }
+                    }
+                }
             }
 
 
