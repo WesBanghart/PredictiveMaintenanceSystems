@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
+using System.Collections;
 
 namespace SystemAPI.Controllers
 {
@@ -39,6 +40,58 @@ namespace SystemAPI.Controllers
             }
 
             return tenantTable;
+        }
+
+        // GET: api/Tenant/Company/Hamilton
+        //[HttpGet("{companyName:string}")]
+        [HttpGet("Company/{companyName}")]
+        public async Task<ActionResult<TenantTable>> GetTenant(string companyName)
+        {
+            var tenantTable = await _context.Tenants.SingleAsync(x => x.Company == companyName);
+
+            if (tenantTable == null)
+            {
+                return NotFound();
+            }
+            return tenantTable;
+        }
+
+        // Get: api/Tenant/{id}/Models
+        [HttpGet("{id}/Models")]
+        public async Task<ActionResult<IEnumerable<ModelTable>>> GetTenantModels(Guid id)
+        {
+            var tenantTable = await _context.Tenants.FindAsync(id);
+
+            if (tenantTable == null)
+            {
+                return NotFound();
+            }
+
+            if (tenantTable.Models == null || tenantTable.Models.Count < 1)
+            {
+                return NotFound("No Models Found.");
+            }
+
+            return tenantTable.Models.ToList();
+        }
+
+        // Get: api/Tenant/{id}/Users
+        [HttpGet("{id}/Users")]
+        public async Task<ActionResult<IEnumerable<UserTable>>> GetTenantUsers(Guid id)
+        {
+            var tenantTable = await _context.Tenants.FindAsync(id);
+
+            if (tenantTable == null)
+            {
+                return NotFound();
+            }
+
+            if (tenantTable.Users == null || tenantTable.Users.Count < 1)
+            {
+                return NotFound("No Models Found.");
+            }
+
+            return tenantTable.Users.ToList();
         }
 
         // PUT: api/Tenant/5
