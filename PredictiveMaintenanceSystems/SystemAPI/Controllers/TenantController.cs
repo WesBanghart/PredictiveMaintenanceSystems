@@ -135,7 +135,10 @@ namespace SystemAPI.Controllers
                 Company = company,
                 ContactName = contactName,
                 ContactEmail = contactEmail,
-                ContactPhone = contactPhone
+                ContactPhone = contactPhone,
+                Models = new List<ModelTable>(),
+                Users = new List<UserTable>(),
+                Schedulers = new List<SchedulerTable>()
             };
             _context.Tenants.Add(newTable);
             await _context.SaveChangesAsync();
@@ -143,6 +146,7 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetTenant", new { id = newTable.TenantId }, newTable);
         }
 
+        //TODO: fix cascade deleting
         // DELETE: api/Tenant/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TenantTable>> DeleteTenant(Guid id)
@@ -152,6 +156,7 @@ namespace SystemAPI.Controllers
             {
                 return NotFound();
             }
+
 
             _context.Tenants.Remove(tenantTable);
             await _context.SaveChangesAsync();
