@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFDataModels.Migrations
 {
     [DbContext(typeof(EFSystemContext))]
-    [Migration("20200311222732_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200408180520_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -241,7 +241,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -254,13 +254,13 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.TenantTable", "Tenant")
                         .WithMany("Models")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -275,7 +275,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.TenantTable", "Tenant")
                         .WithMany("Schedulers")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")

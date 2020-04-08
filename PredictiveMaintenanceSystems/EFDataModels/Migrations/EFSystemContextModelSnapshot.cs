@@ -239,7 +239,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -252,13 +252,13 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.TenantTable", "Tenant")
                         .WithMany("Models")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -273,7 +273,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.TenantTable", "Tenant")
                         .WithMany("Schedulers")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")

@@ -2,11 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200408054615_EFSystemContextV3.cs" />
-    <Compile Remove="Migrations\20200408054615_EFSystemContextV3.Designer.cs" />
+    <Compile Remove="Migrations\20200408171924_Init.cs" />
+    <Compile Remove="Migrations\20200408171924_Init.Designer.cs" />
+    <Compile Remove="Migrations\20200408172625_Init.cs" />
+    <Compile Remove="Migrations\20200408172625_Init.Designer.cs" />
+    <Compile Remove="Migrations\20200408173529_Init.cs" />
+    <Compile Remove="Migrations\20200408173529_Init.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

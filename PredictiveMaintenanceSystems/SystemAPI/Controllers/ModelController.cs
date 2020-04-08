@@ -236,18 +236,6 @@ namespace SystemAPI.Controllers
                 return NotFound();
             }
 
-            //Iterate through datasources and remove models with the modelId
-            for (int i = 0; i < _context.DataSources.Count(); i++)
-            {
-                for (int j = 0; j < _context.DataSources.ElementAt(i).Models.Count; j++)
-                {
-                    if (_context.DataSources.ElementAt(i).Models.ElementAt(j).ModelId == id)
-                    {
-                        _context.DataSources.ElementAt(i).Models.Remove(_context.DataSources.ElementAt(i).Models.ElementAt(j));
-                    }
-                }
-            }
-
             _context.Models.Remove(modelTable);
             await _context.SaveChangesAsync();
 
