@@ -113,6 +113,7 @@ class SimpleModel extends React.Component {
             savedModels: passedThroughModels,
             createNewModelPrompt: false,
             newModelNameHolder: "",
+            newModelHasBeenCreated: false,
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
@@ -180,7 +181,7 @@ class SimpleModel extends React.Component {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(this.state),
             };
-            fetch("https://localhost:5001/api/", requestOptions).then(async response => {
+            fetch("https://localhost:5001/Model/", requestOptions).then(async response => {
                 const data = await response.json();
                 if(!response.ok) {
                     const error = (data && data.message) || response.status;
@@ -207,10 +208,18 @@ class SimpleModel extends React.Component {
     }
 
     saveModel() {
-        if (this.postData()) {
-            this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
+        if(this.state.newModelHasBeenCreated) {
+            if (this.postData()) {
+                this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
+            }
+            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
         }
-        this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+        else {
+            if (this.putData()) {
+                this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
+            }
+            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+        }
     }
 
     appendModelSave(event) {
@@ -233,7 +242,7 @@ class SimpleModel extends React.Component {
             "tenant": null
         }];
         let modelHolder = this.state.savedModels.concat(newModelData);
-        this.setState({createNewModelPrompt: false, savedModels: modelHolder});
+        this.setState({createNewModelPrompt: false, savedModels: modelHolder, newModelHasBeenCreated: true});
     }
 
     render() {
