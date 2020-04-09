@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EFDataModels.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,7 @@ namespace EFDataModels.Migrations
                         column: x => x.TenantId,
                         principalTable: "tenant_tbl",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,13 +71,13 @@ namespace EFDataModels.Migrations
                         column: x => x.TenantId,
                         principalTable: "tenant_tbl",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_models_tbl_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,19 +103,19 @@ namespace EFDataModels.Migrations
                         column: x => x.ModelTableModelId,
                         principalTable: "models_tbl",
                         principalColumn: "ModelId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DataSources_tenant_tbl_TenantId",
                         column: x => x.TenantId,
                         principalTable: "tenant_tbl",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_DataSources_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -141,19 +141,19 @@ namespace EFDataModels.Migrations
                         column: x => x.ModelId,
                         principalTable: "models_tbl",
                         principalColumn: "ModelId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_scheduler_tbl_tenant_tbl_TenantId",
                         column: x => x.TenantId,
                         principalTable: "tenant_tbl",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_scheduler_tbl_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -212,7 +212,7 @@ namespace EFDataModels.Migrations
                 column: "DataSourceTableDataSourceId",
                 principalTable: "DataSources",
                 principalColumn: "DataSourceId",
-                onDelete: ReferentialAction.NoAction);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

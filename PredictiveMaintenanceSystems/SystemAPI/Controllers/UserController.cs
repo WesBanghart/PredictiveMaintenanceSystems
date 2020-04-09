@@ -45,12 +45,14 @@ namespace SystemAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(Guid id, string userName, string email, string firstName, string lastName)
         {
-            if (UserTable(id))
-            {
-                return BadRequest($"User with {id} does not exist.");
-            }
 
             var userTable = await _context.Users.FindAsync(id);
+
+            if (userTable == null)
+            {
+                return BadRequest($"Error: User with {id} does not exist.");
+            }
+
 
             userTable.UserName = userName;
             userTable.Email = email;
@@ -100,6 +102,7 @@ namespace SystemAPI.Controllers
                 Created = DateTime.Now,
                 LastUpdate = DateTime.Now,
             };
+
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 

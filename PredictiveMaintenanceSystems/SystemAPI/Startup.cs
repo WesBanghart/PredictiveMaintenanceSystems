@@ -44,7 +44,12 @@ namespace SystemAPI
             services.AddScoped<IBackgroundWorker, ModelRunWorkItem.ModelRunWorker>();
             services.AddScoped<IBackgroundWorker, ModelUpdateWorkItem.ModelUpdateWorker>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
+
+            
 
         }
 
