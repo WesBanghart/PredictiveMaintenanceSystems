@@ -244,17 +244,5 @@ namespace SystemAPI.Controllers
             return _context.Models.Any(e => e.ModelId == id);
         }
 
-        private bool DataSourceInModel(ModelTable model, Guid dataSourceId)
-        {
-            foreach (var dataSource in model.DataSources)
-            {
-                if (dataSource.DataSourceId == dataSourceId)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

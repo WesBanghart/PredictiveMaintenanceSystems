@@ -4,14 +4,16 @@ using EFDataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFDataModels.Migrations
 {
     [DbContext(typeof(EFSystemContext))]
-    partial class EFSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20200410022430_EFContextChange")]
+    partial class EFContextChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,7 +201,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -208,7 +210,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -217,7 +219,7 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Schedulers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
