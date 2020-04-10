@@ -54,8 +54,8 @@ namespace SystemAPI.Controllers
 
         // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
         // POST: api/Model
-        [HttpPost]
-        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, string option = "save")
+        [HttpPost("{option}")]
+        public async Task<ActionResult<ModelTable>> PostModel([FromBody] ModelTable model, string option = "save")
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
@@ -63,7 +63,7 @@ namespace SystemAPI.Controllers
                 return BadRequest("Invalid option: valid values are: \"save\", \"saveandrun\", \"saveandtrain\"");
             }
             //Check if Tenant and User Id exists
-            if (await _context.Users.FindAsync(userId) == null)
+            if (await _context.Users.FindAsync(model.UserId) == null)
             {
                 return NotFound();
             }
@@ -71,13 +71,13 @@ namespace SystemAPI.Controllers
             //Create new Model object
             ModelTable newModel = new ModelTable
             {
-                ModelName = modelName,
-                Configuration = configuration,
+                ModelName = model.ModelName,
+                Configuration = model.Configuration,
                 ModelId = new Guid(),
                 File = null,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now,
-                UserId = userId
+                UserId = model.UserId
             };
 
            // List<DataSourceTable> newDataSources = new List<DataSourceTable>();
