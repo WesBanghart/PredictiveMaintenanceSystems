@@ -56,24 +56,6 @@ namespace SystemAPI.Controllers
             return tenantTable;
         }
 
-        // Get: api/Tenant/{id}/Models
-        //[HttpGet("{id}/Models")]
-        //public async Task<ActionResult<IEnumerable<ModelTable>>> GetTenantModels(Guid id)
-        //{
-        //    var tenantTable = await _context.Tenants.FindAsync(id);
-
-        //    if (tenantTable == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    if (tenantTable.Models == null || tenantTable.Models.Count < 1)
-        //    {
-        //        return NotFound("No Models Found.");
-        //    }
-
-        //    return tenantTable.Models.ToList();
-        //}
 
         // Get: api/Tenant/{id}/Users
         [HttpGet("{id}/Users")]

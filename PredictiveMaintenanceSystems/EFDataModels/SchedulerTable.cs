@@ -27,15 +27,8 @@ namespace EFDataModels
         [Timestamp]
         public byte[] Timestamp { get; set; }
 
-        //Represents the relationship to a single model entity
-        public Guid ModelId { get; set; }
-        public ModelTable Model { get; set; }
-
         //Represents the relationship to a single user entity
         public Guid UserId { get; set; }
         public UserTable User { get; set; }
-        //Represents the relationship to a single tenant entity
-        //public Guid TenantId { get; set; }
-        //public TenantTable Tenant { get; set; }
     }
 }
