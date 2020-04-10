@@ -55,7 +55,7 @@ class UserProfile extends React.Component {
                         <CardHeader
                             avatar={
                                 <Avatar aria-label="recipe" className={classes.avatar}>
-                                    J
+                                    E
                                 </Avatar>
                             }
                             title={

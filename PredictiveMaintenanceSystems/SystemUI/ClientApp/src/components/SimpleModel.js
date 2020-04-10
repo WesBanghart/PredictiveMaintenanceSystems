@@ -181,7 +181,7 @@ class SimpleModel extends React.Component {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(this.state),
             };
-            fetch("https://localhost:5001/Model/", requestOptions).then(async response => {
+            fetch("https://localhost:5001/api/Model/", requestOptions).then(async response => {
                 const data = await response.json();
                 if(!response.ok) {
                     const error = (data && data.message) || response.status;
