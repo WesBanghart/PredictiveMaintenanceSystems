@@ -43,9 +43,6 @@ namespace EFDataModels.Migrations
                     b.Property<Guid?>("ModelTableModelId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -57,8 +54,6 @@ namespace EFDataModels.Migrations
                     b.HasKey("DataSourceId");
 
                     b.HasIndex("ModelTableModelId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -89,9 +84,6 @@ namespace EFDataModels.Migrations
                     b.Property<string>("ModelName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -103,8 +95,6 @@ namespace EFDataModels.Migrations
                     b.HasKey("ModelId");
 
                     b.HasIndex("DataSourceTableDataSourceId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -135,9 +125,6 @@ namespace EFDataModels.Migrations
                     b.Property<string>("ScheduleConfiguration")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -149,8 +136,6 @@ namespace EFDataModels.Migrations
                     b.HasKey("ScheduleId");
 
                     b.HasIndex("ModelId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -230,12 +215,6 @@ namespace EFDataModels.Migrations
                         .WithMany("DataSources")
                         .HasForeignKey("ModelTableModelId");
 
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
@@ -248,12 +227,6 @@ namespace EFDataModels.Migrations
                     b.HasOne("EFDataModels.DataSourceTable", null)
                         .WithMany("Models")
                         .HasForeignKey("DataSourceTableDataSourceId");
-
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany("Models")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
@@ -268,12 +241,6 @@ namespace EFDataModels.Migrations
                         .WithMany()
                         .HasForeignKey("ModelId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany("Schedulers")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EFDataModels.UserTable", "User")

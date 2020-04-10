@@ -27,9 +27,9 @@ namespace EFDataModels
 
         //Represents a one-to-many tenant/users relationship
         public ICollection<UserTable> Users { get; set; }
-        //Represents a one-to-many tenant/models relationship
-        public ICollection<ModelTable> Models { get; set; }
-        //Represents a one-to-many tenant/schedulers relationship
-        public ICollection<SchedulerTable> Schedulers { get; set; }
+        ////Represents a one-to-many tenant/models relationship
+        //public ICollection<ModelTable> Models { get; set; }
+        ////Represents a one-to-many tenant/schedulers relationship
+        //public ICollection<SchedulerTable> Schedulers { get; set; }
     }
 }
