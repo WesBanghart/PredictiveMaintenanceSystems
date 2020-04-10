@@ -101,18 +101,11 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable(string dataSourceName, string configuration, string connectionString, Guid userId, Guid tenantId, [FromQuery(Name = "modelIds")] List<Guid> modelIds = null)
+        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable(string dataSourceName, string configuration, string connectionString, Guid userId, [FromQuery(Name = "modelIds")] List<Guid> modelIds = null)
         {
             // Check if User exists
             var userTable = await _context.Users.FindAsync(userId);
             if(userTable == null)
-            {
-                return NotFound();
-            }
-
-            //Check if Tenant exists
-            var tenantTable = await _context.Tenants.FindAsync(tenantId);
-            if(tenantTable == null)
             {
                 return NotFound();
             }
@@ -126,8 +119,6 @@ namespace SystemAPI.Controllers
                 ConnectionString = connectionString,
                 UserId = userId,
                 User = userTable,
-                TenantId = tenantId,
-                Tenant = tenantTable,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now                
             };

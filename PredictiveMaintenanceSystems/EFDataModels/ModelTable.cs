@@ -34,7 +34,7 @@ namespace EFDataModels
         public UserTable User { get; set; }
         //Represents the relationship to a single tenant entity
         
-        public Guid TenantId { get; set; }
-        public TenantTable Tenant { get; set; }
+        //public Guid TenantId { get; set; }
+        //public TenantTable Tenant { get; set; }
     }
 }

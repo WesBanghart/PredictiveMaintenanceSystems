@@ -52,17 +52,17 @@ namespace EFDataModels
                 .HasForeignKey(u => u.TenantId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<TenantTable>()
-                .HasMany(t => t.Models)
-                .WithOne(m => m.Tenant)
-                .HasForeignKey(m => m.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<TenantTable>()
+            //    .HasMany(t => t.Models)
+            //    .WithOne(m => m.Tenant)
+            //    .HasForeignKey(m => m.TenantId)
+            //    .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<TenantTable>()
-                .HasMany(t => t.Schedulers)
-                .WithOne(s => s.Tenant)
-                .HasForeignKey(s => s.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
+            //modelBuilder.Entity<TenantTable>()
+            //    .HasMany(t => t.Schedulers)
+            //    .WithOne(s => s.Tenant)
+            //    .HasForeignKey(s => s.TenantId)
+            //    .OnDelete(DeleteBehavior.Cascade);
             /////////////////////////////////////////////////////////////////////////////////
             // Model Table Relationships
             // Model - User Realtionship (many - one)
@@ -71,11 +71,12 @@ namespace EFDataModels
                 .WithMany(u => u.Models)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             // Model - Tenant Relationship (many - one)
-            modelBuilder.Entity<ModelTable>()
-                .HasOne(m => m.Tenant)
-                .WithMany(t => t.Models)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<ModelTable>()
+            //    .HasOne(m => m.Tenant)
+            //    .WithMany(t => t.Models)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             // Model - Datasource Relationship (many many)
             modelBuilder.Entity<DataSourceTable>().HasMany(m => m.Models);
@@ -83,10 +84,10 @@ namespace EFDataModels
             // Scheduler Table Relationships
 
             // Scheduler - Tenant Relationship (many - one) 
-            modelBuilder.Entity<SchedulerTable>()
-                .HasOne(s => s.Tenant)
-                .WithMany(t => t.Schedulers)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<SchedulerTable>()
+            //    .HasOne(s => s.Tenant)
+            //    .WithMany(t => t.Schedulers)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             /////////////////////////////////////////////////////////////////////////////////
             //Data Source Table Relationships

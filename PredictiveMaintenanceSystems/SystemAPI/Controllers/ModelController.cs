@@ -55,7 +55,7 @@ namespace SystemAPI.Controllers
         // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
         // POST: api/Model
         [HttpPost]
-        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, Guid tenantId, string option = "save", [FromQuery(Name = "dataSources")] List<Guid> dataSources = null)
+        public async Task<ActionResult<ModelTable>> PostModel(string modelName, string configuration, Guid userId, string option = "save")
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
@@ -64,10 +64,6 @@ namespace SystemAPI.Controllers
             }
             //Check if Tenant and User Id exists
             if (await _context.Users.FindAsync(userId) == null)
-            {
-                return NotFound();
-            }
-            if (await _context.Tenants.FindAsync(tenantId) == null)
             {
                 return NotFound();
             }
@@ -81,27 +77,28 @@ namespace SystemAPI.Controllers
                 File = null,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now,
+                UserId = userId
             };
 
-            List<DataSourceTable> newDataSources = new List<DataSourceTable>();
+           // List<DataSourceTable> newDataSources = new List<DataSourceTable>();
 
             //Handle data sources
-            if (dataSources != null && dataSources.Count > 0)
-            {
-                foreach (var guid in dataSources)
-                {
-                    var dataSource = await _context.DataSources.FindAsync(guid);
-                    //collect data sources
-                    if (dataSource == null)
-                    {
-                        return NotFound($"Error: data source {guid} not found");
-                    }
-                    newDataSources.Append(dataSource);
-                    dataSource.Models.Append(newModel);
-                }
-            }
+            //if (dataSources != null && dataSources.Count > 0)
+            //{
+            //    foreach (var guid in dataSources)
+            //    {
+            //        var dataSource = await _context.DataSources.FindAsync(guid);
+            //        //collect data sources
+            //        if (dataSource == null)
+            //        {
+            //            return NotFound($"Error: data source {guid} not found");
+            //        }
+            //        newDataSources.Append(dataSource);
+            //        dataSource.Models.Append(newModel);
+            //    }
+            //}
 
-            newModel.DataSources = newDataSources;
+            //newModel.DataSources = newDataSources;
            
             _context.Models.Add(newModel);
             await _context.SaveChangesAsync();
@@ -138,7 +135,7 @@ namespace SystemAPI.Controllers
         // PUT: api/Model/5
         //List<Guid> dataSourceIdList = null
         [HttpPut("{id}")]
-        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save", [FromQuery(Name = "dataSources")] List<Guid> dataSources = null)
+        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save")
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
@@ -158,19 +155,19 @@ namespace SystemAPI.Controllers
             }
 
             //TODO: break this into another api call because this is costly if we are adding data sources.
-            if (dataSources != null && dataSources.Count > 0)
-            {
-                foreach (var dataSource in dataSources)
-                {
-                    // Add the Data source to the model if it is not present
-                    if (!DataSourceInModel(model, dataSource))
-                    {
-                        var ds = await _context.DataSources.FindAsync(dataSource);
-                        model.DataSources.Add(ds);
-                        ds.Models.Add(model);
-                    }
-                }              
-            }
+            //if (dataSources != null && dataSources.Count > 0)
+            //{
+            //    foreach (var dataSource in dataSources)
+            //    {
+            //        // Add the Data source to the model if it is not present
+            //        if (!DataSourceInModel(model, dataSource))
+            //        {
+            //            var ds = await _context.DataSources.FindAsync(dataSource);
+            //            model.DataSources.Add(ds);
+            //            ds.Models.Add(model);
+            //        }
+            //    }              
+            //}
 
 
             model.Configuration = configuration;
