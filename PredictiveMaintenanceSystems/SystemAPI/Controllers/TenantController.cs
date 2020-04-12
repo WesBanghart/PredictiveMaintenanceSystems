@@ -42,20 +42,6 @@ namespace SystemAPI.Controllers
             return tenantTable;
         }
 
-        // GET: api/Tenant/Company/Hamilton
-        //[HttpGet("{companyName:string}")]
-        [HttpGet("Company/{companyName}")]
-        public async Task<ActionResult<TenantTable>> GetTenant(string companyName)
-        {
-            var tenantTable = await _context.Tenants.SingleAsync(x => x.Company == companyName);
-
-            if (tenantTable == null)
-            {
-                return NotFound();
-            }
-            return tenantTable;
-        }
-
 
         // Get: api/Tenant/{id}/Users
         [HttpGet("{id}/Users")]
@@ -78,14 +64,21 @@ namespace SystemAPI.Controllers
 
         // PUT: api/Tenant/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTenant(Guid id, TenantTable tenantTable)
+        public async Task<IActionResult> PutTenant(Guid id, [FromBody] TenantTable tenantTable)
         {
-            if (id != tenantTable.TenantId)
+            var tenant = await _context.Tenants.FindAsync(id);
+
+            if (tenant == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(tenantTable).State = EntityState.Modified;
+            tenant.Company = tenantTable.Company;
+            tenant.ContactEmail = tenantTable.ContactEmail;
+            tenant.ContactName = tenantTable.ContactName;
+            tenant.ContactPhone = tenant.ContactPhone;
+
+            _context.Entry(tenant).State = EntityState.Modified;
 
             try
             {
@@ -108,16 +101,17 @@ namespace SystemAPI.Controllers
 
         // POST: api/Tenant
         [HttpPost]
-        public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
+      //  public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
+        public async Task<ActionResult<TenantTable>> PostTenant([FromBody] TenantTable tenant)
         {
 
             TenantTable newTable = new TenantTable
             {
                 TenantId = new Guid(),
-                Company = company,
-                ContactName = contactName,
-                ContactEmail = contactEmail,
-                ContactPhone = contactPhone,
+                Company = tenant.Company,
+                ContactName = tenant.ContactName,
+                ContactEmail = tenant.ContactEmail,
+                ContactPhone = tenant.ContactPhone,
                 Users = new List<UserTable>(),
             };
             _context.Tenants.Add(newTable);

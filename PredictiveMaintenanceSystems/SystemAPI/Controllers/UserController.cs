@@ -43,24 +43,24 @@ namespace SystemAPI.Controllers
 
         // PUT: api/User/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(Guid id, string userName, string email, string firstName, string lastName)
+        public async Task<IActionResult> PutUser(Guid id, [FromBody] UserTable updatedUser)
         {
 
-            var userTable = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (userTable == null)
+            if (user == null)
             {
                 return BadRequest($"Error: User with {id} does not exist.");
             }
 
 
-            userTable.UserName = userName;
-            userTable.Email = email;
-            userTable.FirstName = firstName;
-            userTable.LastName = lastName;
-            userTable.LastUpdate = DateTime.Now;
+            user.UserName = updatedUser.UserName;
+            user.Email = updatedUser.Email;
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.LastUpdate = DateTime.Now;
 
-            _context.Entry(userTable).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -83,27 +83,27 @@ namespace SystemAPI.Controllers
 
         // POST: api/User
         [HttpPost]
-        public async Task<ActionResult<UserTable>> PostUser(string userName, string email, string firstName, string lastName, Guid tenantID)
+        public async Task<ActionResult<UserTable>> PostUser([FromBody] UserTable newUser)
         {
-            var tenant = await _context.Tenants.FindAsync(tenantID);
+            var tenant = await _context.Tenants.FindAsync(newUser.TenantId);
             if (tenant == null)
             {
-                return NotFound($"Tenant with ID: {tenantID} not found.");
+                return NotFound($"Tenant with ID: {newUser.TenantId} not found.");
             }
-            UserTable newUser = new UserTable
+            UserTable user = new UserTable
             {
                 UserId = new Guid(),
-                TenantId = tenantID,
-                Tenant = tenant,
-                UserName = userName,
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
+                TenantId = newUser.TenantId,
+                Tenant = newUser.Tenant,
+                UserName = newUser.UserName,
+                Email = newUser.Email,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
                 Created = DateTime.Now,
                 LastUpdate = DateTime.Now,
             };
 
-            _context.Users.Add(newUser);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
@@ -122,7 +122,7 @@ namespace SystemAPI.Controllers
             var tenantTable = await _context.Tenants.FindAsync(userTable.TenantId);
             if(tenantTable == null)
             {
-                return NotFound("Error: Assosiated Tentant Table not found.");
+                return NotFound("Error: Associated Tenant Table not found.");
             }
 
             tenantTable.Users.Remove(userTable);

@@ -52,7 +52,6 @@ namespace SystemAPI.Controllers
             return modelTable;
         }
 
-        // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
         // POST: api/Model
         [HttpPost("{option}")]
         public async Task<ActionResult<ModelTable>> PostModel([FromBody] ModelTable model, string option = "save")
@@ -80,26 +79,6 @@ namespace SystemAPI.Controllers
                 UserId = model.UserId
             };
 
-           // List<DataSourceTable> newDataSources = new List<DataSourceTable>();
-
-            //Handle data sources
-            //if (dataSources != null && dataSources.Count > 0)
-            //{
-            //    foreach (var guid in dataSources)
-            //    {
-            //        var dataSource = await _context.DataSources.FindAsync(guid);
-            //        //collect data sources
-            //        if (dataSource == null)
-            //        {
-            //            return NotFound($"Error: data source {guid} not found");
-            //        }
-            //        newDataSources.Append(dataSource);
-            //        dataSource.Models.Append(newModel);
-            //    }
-            //}
-
-            //newModel.DataSources = newDataSources;
-           
             _context.Models.Add(newModel);
             await _context.SaveChangesAsync();
 
@@ -131,11 +110,10 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetModel", new { id = newModel.ModelId }, newModel);
         }
 
-        // Note: valid option values should be "save", "saveandrun", "saveandtrain" - default is "save"
-        // PUT: api/Model/5
+        // PUT: api/Model/save
         //List<Guid> dataSourceIdList = null
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ModelTable>> PutModel(Guid id, string configuration, string option = "save")
+        [HttpPut("{option}")]
+        public async Task<ActionResult<ModelTable>> PutModel([FromBody] ModelTable updatedModel, string option = "save")
         {
             option = option.Replace("\"", "");
             if (!_modelOptions.Contains(option))
@@ -143,34 +121,16 @@ namespace SystemAPI.Controllers
                 return BadRequest("Invalid option: valid values are: \"save\", \"saveandrun\", \"saveandtrain\"");
             }
 
-            
-
             //patch models
-
-            var model = await _context.Models.FindAsync(id);
+            var model = await _context.Models.FindAsync(updatedModel.ModelId);
 
             if (model == null)
             {
                 return NotFound();
             }
 
-            //TODO: break this into another api call because this is costly if we are adding data sources.
-            //if (dataSources != null && dataSources.Count > 0)
-            //{
-            //    foreach (var dataSource in dataSources)
-            //    {
-            //        // Add the Data source to the model if it is not present
-            //        if (!DataSourceInModel(model, dataSource))
-            //        {
-            //            var ds = await _context.DataSources.FindAsync(dataSource);
-            //            model.DataSources.Add(ds);
-            //            ds.Models.Add(model);
-            //        }
-            //    }              
-            //}
-
-
-            model.Configuration = configuration;
+            model.Configuration = updatedModel.Configuration;
+            model.ModelName = updatedModel.ModelName;
             model.LastUpdated = DateTime.Now;
 
             _context.Entry(model).State = EntityState.Modified;
@@ -181,7 +141,7 @@ namespace SystemAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ModelExists(id))
+                if (!ModelExists(model.ModelId))
                 {
                     return NotFound();
                 }
@@ -225,8 +185,6 @@ namespace SystemAPI.Controllers
         public async Task<ActionResult<ModelTable>> DeleteModelTable(Guid id)
         {
             var modelTable = await _context.Models.FindAsync(id);
-
-            //Need to remove references to this model in other tables
 
             if (modelTable == null)
             {
