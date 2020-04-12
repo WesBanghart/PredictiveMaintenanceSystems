@@ -45,14 +45,21 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSchedulerTable(Guid id, SchedulerTable schedulerTable)
+        public async Task<IActionResult> PutSchedulerTable(Guid id, [FromBody] SchedulerTable schedulerTable)
         {
-            if (id != schedulerTable.ScheduleId)
+            var schedule = await _context.Schedulers.FindAsync(id);
+            if (schedule == null)
             {
-                return BadRequest();
+                return BadRequest($"Schedule with ID:{id} does not exit.");
             }
 
-            _context.Entry(schedulerTable).State = EntityState.Modified;
+            schedule.ScheduleConfiguration = schedulerTable.ScheduleConfiguration;
+            schedule.IsScheduled = schedulerTable.IsScheduled;
+            schedule.LastRan = schedulerTable.LastRan;
+            schedule.LastUpdated = DateTime.Now;
+            
+
+            _context.Entry(schedule).State = EntityState.Modified;
 
             try
             {
@@ -75,12 +82,31 @@ namespace SystemAPI.Controllers
 
         // POST: api/Scheduler
         [HttpPost]
-        public async Task<ActionResult<SchedulerTable>> PostSchedulerTable(SchedulerTable schedulerTable)
+        public async Task<ActionResult<SchedulerTable>> PostSchedulerTable([FromBody] SchedulerTable schedulerTable)
         {
-            _context.Schedulers.Add(schedulerTable);
+            var user = await _context.Users.FindAsync(schedulerTable.UserId);
+            if (user == null)
+            {
+                return BadRequest($"User with ID:{schedulerTable.UserId} does not exist.");
+            }
+
+            SchedulerTable newSchedulerTable = new SchedulerTable
+            {
+                ScheduleId = new Guid(),
+                ScheduleConfiguration = schedulerTable.ScheduleConfiguration,
+                IsScheduled = schedulerTable.IsScheduled,
+                LastRan = null,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now,
+                UserId = schedulerTable.UserId,
+                User = schedulerTable.User
+            };
+
+
+            _context.Schedulers.Add(newSchedulerTable);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSchedulerTable", new { id = schedulerTable.ScheduleId }, schedulerTable);
+            return CreatedAtAction("GetSchedulerTable", new { id = newSchedulerTable.ScheduleId }, newSchedulerTable);
         }
 
         // DELETE: api/Scheduler/5

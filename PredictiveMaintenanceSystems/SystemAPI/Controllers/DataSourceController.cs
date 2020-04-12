@@ -45,14 +45,21 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDataSourceTable(Guid id, DataSourceTable dataSourceTable)
+        public async Task<IActionResult> PutDataSourceTable(Guid id, [FromBody] DataSourceTable dataSourceTable)
         {
-            if (id != dataSourceTable.DataSourceId)
+            var dataSource = await _context.DataSources.FindAsync(id);
+
+            if (dataSource == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(dataSourceTable).State = EntityState.Modified;
+            dataSource.DataSourceName = dataSourceTable.DataSourceName;
+            dataSource.Configuration = dataSourceTable.Configuration;
+            dataSource.ConnectionString = dataSourceTable.ConnectionString;
+            dataSource.LastUpdated = DateTime.Now;
+
+            _context.Entry(dataSource).State = EntityState.Modified;
 
             try
             {
@@ -77,12 +84,33 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable(DataSourceTable dataSourceTable)
+        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable([FromBody] DataSourceTable dataSourceTable)
         {
-            _context.DataSources.Add(dataSourceTable);
+            // Check if User exists
+            var userTable = await _context.Users.FindAsync(dataSourceTable.UserId);
+            if(userTable == null)
+            {
+                return NotFound();
+            }
+
+            //Create new Datasource table
+            DataSourceTable newDataSource = new DataSourceTable
+            {
+                DataSourceId = new Guid(),
+                DataSourceName = dataSourceTable.DataSourceName,
+                Configuration = dataSourceTable.Configuration,
+                ConnectionString = dataSourceTable.ConnectionString,
+                UserId = dataSourceTable.UserId,
+                User = userTable,
+                Created = DateTime.Now,
+                LastUpdated = DateTime.Now                
+            };
+
+            //Add and save changes
+            _context.DataSources.Add(newDataSource);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDataSourceTable", new { id = dataSourceTable.DataSourceId }, dataSourceTable);
+            return CreatedAtAction("GetDataSourceTable", new { id = newDataSource.DataSourceId }, newDataSource);
         }
 
         // DELETE: api/DataSource/5
@@ -105,5 +133,6 @@ namespace SystemAPI.Controllers
         {
             return _context.DataSources.Any(e => e.DataSourceId == id);
         }
+
     }
 }

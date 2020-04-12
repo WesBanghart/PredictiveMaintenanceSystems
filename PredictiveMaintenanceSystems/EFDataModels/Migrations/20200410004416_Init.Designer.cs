@@ -4,14 +4,16 @@ using EFDataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFDataModels.Migrations
 {
     [DbContext(typeof(EFSystemContext))]
-    partial class EFSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20200410004416_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +42,9 @@ namespace EFDataModels.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("ModelTableModelId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -49,6 +54,8 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("DataSourceId");
+
+                    b.HasIndex("ModelTableModelId");
 
                     b.HasIndex("UserId");
 
@@ -66,6 +73,9 @@ namespace EFDataModels.Migrations
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DataSourceTableDataSourceId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("File")
                         .HasColumnType("varbinary(max)");
@@ -85,6 +95,8 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ModelId");
+
+                    b.HasIndex("DataSourceTableDataSourceId");
 
                     b.HasIndex("UserId");
 
@@ -109,6 +121,9 @@ namespace EFDataModels.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("ModelId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ScheduleConfiguration")
                         .HasColumnType("nvarchar(max)");
 
@@ -121,6 +136,8 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ScheduleId");
+
+                    b.HasIndex("ModelId");
 
                     b.HasIndex("UserId");
 
@@ -196,24 +213,38 @@ namespace EFDataModels.Migrations
 
             modelBuilder.Entity("EFDataModels.DataSourceTable", b =>
                 {
+                    b.HasOne("EFDataModels.ModelTable", null)
+                        .WithMany("DataSources")
+                        .HasForeignKey("ModelTableModelId");
+
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("EFDataModels.ModelTable", b =>
                 {
+                    b.HasOne("EFDataModels.DataSourceTable", null)
+                        .WithMany("Models")
+                        .HasForeignKey("DataSourceTableDataSourceId");
+
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("EFDataModels.SchedulerTable", b =>
                 {
+                    b.HasOne("EFDataModels.ModelTable", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Schedulers")
                         .HasForeignKey("UserId")

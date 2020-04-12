@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFDataModels.Migrations
 {
     [DbContext(typeof(EFSystemContext))]
-    [Migration("20200311222732_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200410023232_EFContextChangeOnDeleteRev1")]
+    partial class EFContextChangeOnDeleteRev1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,12 +42,6 @@ namespace EFDataModels.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("ModelTableModelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -57,10 +51,6 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("DataSourceId");
-
-                    b.HasIndex("ModelTableModelId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -79,9 +69,6 @@ namespace EFDataModels.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DataSourceTableDataSourceId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("File")
                         .HasColumnType("varbinary(max)");
 
@@ -90,9 +77,6 @@ namespace EFDataModels.Migrations
 
                     b.Property<string>("ModelName")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -103,10 +87,6 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ModelId");
-
-                    b.HasIndex("DataSourceTableDataSourceId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -131,14 +111,8 @@ namespace EFDataModels.Migrations
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ModelId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ScheduleConfiguration")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("TenantId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -149,10 +123,6 @@ namespace EFDataModels.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ScheduleId");
-
-                    b.HasIndex("ModelId");
-
-                    b.HasIndex("TenantId");
 
                     b.HasIndex("UserId");
 
@@ -228,16 +198,6 @@ namespace EFDataModels.Migrations
 
             modelBuilder.Entity("EFDataModels.DataSourceTable", b =>
                 {
-                    b.HasOne("EFDataModels.ModelTable", null)
-                        .WithMany("DataSources")
-                        .HasForeignKey("ModelTableModelId");
-
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("DataSources")
                         .HasForeignKey("UserId")
@@ -247,16 +207,6 @@ namespace EFDataModels.Migrations
 
             modelBuilder.Entity("EFDataModels.ModelTable", b =>
                 {
-                    b.HasOne("EFDataModels.DataSourceTable", null)
-                        .WithMany("Models")
-                        .HasForeignKey("DataSourceTableDataSourceId");
-
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany("Models")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Models")
                         .HasForeignKey("UserId")
@@ -266,18 +216,6 @@ namespace EFDataModels.Migrations
 
             modelBuilder.Entity("EFDataModels.SchedulerTable", b =>
                 {
-                    b.HasOne("EFDataModels.ModelTable", "Model")
-                        .WithMany()
-                        .HasForeignKey("ModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFDataModels.TenantTable", "Tenant")
-                        .WithMany("Schedulers")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EFDataModels.UserTable", "User")
                         .WithMany("Schedulers")
                         .HasForeignKey("UserId")

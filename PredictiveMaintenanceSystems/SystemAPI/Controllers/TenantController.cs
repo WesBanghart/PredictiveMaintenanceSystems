@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
+using System.Collections;
 
 namespace SystemAPI.Controllers
 {
@@ -41,16 +42,43 @@ namespace SystemAPI.Controllers
             return tenantTable;
         }
 
-        // PUT: api/Tenant/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTenant(Guid id, TenantTable tenantTable)
+
+        // Get: api/Tenant/{id}/Users
+        [HttpGet("{id}/Users")]
+        public async Task<ActionResult<IEnumerable<UserTable>>> GetTenantUsers(Guid id)
         {
-            if (id != tenantTable.TenantId)
+            var tenantTable = await _context.Tenants.FindAsync(id);
+
+            if (tenantTable == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(tenantTable).State = EntityState.Modified;
+            if (tenantTable.Users == null || tenantTable.Users.Count < 1)
+            {
+                return NotFound("No Models Found.");
+            }
+
+            return tenantTable.Users.ToList();
+        }
+
+        // PUT: api/Tenant/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTenant(Guid id, [FromBody] TenantTable tenantTable)
+        {
+            var tenant = await _context.Tenants.FindAsync(id);
+
+            if (tenant == null)
+            {
+                return NotFound();
+            }
+
+            tenant.Company = tenantTable.Company;
+            tenant.ContactEmail = tenantTable.ContactEmail;
+            tenant.ContactName = tenantTable.ContactName;
+            tenant.ContactPhone = tenant.ContactPhone;
+
+            _context.Entry(tenant).State = EntityState.Modified;
 
             try
             {
@@ -73,16 +101,18 @@ namespace SystemAPI.Controllers
 
         // POST: api/Tenant
         [HttpPost]
-        public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
+      //  public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
+        public async Task<ActionResult<TenantTable>> PostTenant([FromBody] TenantTable tenant)
         {
 
             TenantTable newTable = new TenantTable
             {
                 TenantId = new Guid(),
-                Company = company,
-                ContactName = contactName,
-                ContactEmail = contactEmail,
-                ContactPhone = contactPhone
+                Company = tenant.Company,
+                ContactName = tenant.ContactName,
+                ContactEmail = tenant.ContactEmail,
+                ContactPhone = tenant.ContactPhone,
+                Users = new List<UserTable>(),
             };
             _context.Tenants.Add(newTable);
             await _context.SaveChangesAsync();
@@ -90,6 +120,7 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetTenant", new { id = newTable.TenantId }, newTable);
         }
 
+        //TODO: fix cascade deleting
         // DELETE: api/Tenant/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TenantTable>> DeleteTenant(Guid id)
@@ -99,6 +130,7 @@ namespace SystemAPI.Controllers
             {
                 return NotFound();
             }
+
 
             _context.Tenants.Remove(tenantTable);
             await _context.SaveChangesAsync();

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EFDataModels.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,7 +45,7 @@ namespace EFDataModels.Migrations
                         column: x => x.TenantId,
                         principalTable: "tenant_tbl",
                         principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,24 +60,17 @@ namespace EFDataModels.Migrations
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
                     UserId = table.Column<Guid>(nullable: false),
-                    TenantId = table.Column<Guid>(nullable: false),
                     DataSourceTableDataSourceId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_models_tbl", x => x.ModelId);
                     table.ForeignKey(
-                        name: "FK_models_tbl_tenant_tbl_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "tenant_tbl",
-                        principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
                         name: "FK_models_tbl_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +85,6 @@ namespace EFDataModels.Migrations
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
                     UserId = table.Column<Guid>(nullable: false),
-                    TenantId = table.Column<Guid>(nullable: false),
                     ModelTableModelId = table.Column<Guid>(nullable: true)
                 },
                 constraints: table =>
@@ -103,19 +95,13 @@ namespace EFDataModels.Migrations
                         column: x => x.ModelTableModelId,
                         principalTable: "models_tbl",
                         principalColumn: "ModelId",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_DataSources_tenant_tbl_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "tenant_tbl",
-                        principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DataSources_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -130,8 +116,7 @@ namespace EFDataModels.Migrations
                     LastUpdated = table.Column<DateTime>(nullable: true),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
                     ModelId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<Guid>(nullable: false),
-                    TenantId = table.Column<Guid>(nullable: false)
+                    UserId = table.Column<Guid>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,30 +126,19 @@ namespace EFDataModels.Migrations
                         column: x => x.ModelId,
                         principalTable: "models_tbl",
                         principalColumn: "ModelId",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
-                        name: "FK_scheduler_tbl_tenant_tbl_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "tenant_tbl",
-                        principalColumn: "TenantId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_scheduler_tbl_user_tbl_UserId",
                         column: x => x.UserId,
                         principalTable: "user_tbl",
                         principalColumn: "UserId",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DataSources_ModelTableModelId",
                 table: "DataSources",
                 column: "ModelTableModelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DataSources_TenantId",
-                table: "DataSources",
-                column: "TenantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DataSources_UserId",
@@ -177,11 +151,6 @@ namespace EFDataModels.Migrations
                 column: "DataSourceTableDataSourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_models_tbl_TenantId",
-                table: "models_tbl",
-                column: "TenantId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_models_tbl_UserId",
                 table: "models_tbl",
                 column: "UserId");
@@ -190,11 +159,6 @@ namespace EFDataModels.Migrations
                 name: "IX_scheduler_tbl_ModelId",
                 table: "scheduler_tbl",
                 column: "ModelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_scheduler_tbl_TenantId",
-                table: "scheduler_tbl",
-                column: "TenantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_scheduler_tbl_UserId",
@@ -212,7 +176,7 @@ namespace EFDataModels.Migrations
                 column: "DataSourceTableDataSourceId",
                 principalTable: "DataSources",
                 principalColumn: "DataSourceId",
-                onDelete: ReferentialAction.NoAction);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

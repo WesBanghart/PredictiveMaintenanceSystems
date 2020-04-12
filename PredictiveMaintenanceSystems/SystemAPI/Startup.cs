@@ -18,6 +18,7 @@ using ServicesLibrary.Interfaces;
 using ServicesLibrary.Model.Run;
 using ServicesLibrary.Model.Update;
 using ServicesLibrary.Model;
+using Newtonsoft.Json;
 
 namespace SystemAPI
 {
@@ -36,12 +37,20 @@ namespace SystemAPI
             services.AddDbContext<EFSystemContext>(opt => 
                 opt.UseSqlServer(Configuration.GetConnectionString("Development")));
 
+            //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+           // services.AddSingleton(typeof(IBackgroundTaskQueue), typeof(BackgroundTaskQueue));
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<ModelQueueWorker>();
             services.AddScoped<IBackgroundWorker, ModelRunWorkItem.ModelRunWorker>();
             services.AddScoped<IBackgroundWorker, ModelUpdateWorkItem.ModelUpdateWorker>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
+
+            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

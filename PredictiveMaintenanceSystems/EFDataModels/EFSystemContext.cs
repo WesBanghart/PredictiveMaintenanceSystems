@@ -20,35 +20,38 @@ namespace EFDataModels
 
         public EFSystemContext() { }
 
-        public EFSystemContext(DbContextOptions<EFSystemContext> options) : base(options) { }
+        public EFSystemContext(DbContextOptions<EFSystemContext> options) : base(options) 
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //User Table Relationsips
-            //User => Models
-            modelBuilder.Entity<ModelTable>().HasOne(m => m.User).WithMany(u => u.Models).HasForeignKey(m => m.UserId);
-            //User => DataSources
-            modelBuilder.Entity<DataSourceTable>().HasOne(ds => ds.User).WithMany(u => u.DataSources).HasForeignKey(ds => ds.UserId);
-            //User => Scedulers
-            modelBuilder.Entity<SchedulerTable>().HasOne(s => s.User).WithMany(u => u.Schedulers).HasForeignKey(s => s.UserId);
-           
             //Tenant Table Relationships
-            //Tenant => Users
-            modelBuilder.Entity<UserTable>().HasOne(u => u.Tenant).WithMany(t => t.Users).HasForeignKey(u => u.TenantId);
-            //Tenant => Models
-            modelBuilder.Entity<ModelTable>().HasOne(m => m.Tenant).WithMany(t => t.Models).HasForeignKey(m => m.TenantId);
-            //Tenant => Schedulers
-            modelBuilder.Entity<SchedulerTable>().HasOne(s => s.Tenant).WithMany(t => t.Schedulers).HasForeignKey(s => s.TenantId);
+            modelBuilder.Entity<TenantTable>()
+                .HasMany<UserTable>(t => t.Users)
+                .WithOne(u => u.Tenant)
+                .HasForeignKey(u => u.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            //Model Table Relationships - Many to Many
-            //Model => Datasources
+            // User Table Relationships
+            modelBuilder.Entity<UserTable>()
+                .HasMany<ModelTable>(u => u.Models)
+                .WithOne(m => m.User)
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<DataSourceTable>().HasMany(m => m.Models);
+            modelBuilder.Entity<UserTable>()
+                .HasMany<SchedulerTable>(u => u.Schedulers)
+                .WithOne(s => s.User)
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            //Data Source Table Relationships - Many to Many
-            //DataSources => Models
+            modelBuilder.Entity<UserTable>()
+                .HasMany<DataSourceTable>(u => u.DataSources)
+                .WithOne(ds => ds.User)
+                .HasForeignKey(ds => ds.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<ModelTable>().HasMany(ds => ds.DataSources);
         }
     }
 }
