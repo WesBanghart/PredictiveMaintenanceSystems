@@ -19,6 +19,7 @@ using ServicesLibrary.Model.Run;
 using ServicesLibrary.Model.Update;
 using ServicesLibrary.Model;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace SystemAPI
 {
@@ -49,7 +50,15 @@ namespace SystemAPI
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
-            
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin(); // For anyone access.
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
+            });
 
         }
 
@@ -64,6 +73,8 @@ namespace SystemAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("SiteCoresPolicy");
 
             app.UseAuthorization();
 

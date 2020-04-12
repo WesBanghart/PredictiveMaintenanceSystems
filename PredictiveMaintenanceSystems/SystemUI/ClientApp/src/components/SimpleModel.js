@@ -153,21 +153,29 @@ class SimpleModel extends React.Component {
     postData() {
         try {
             const requestOptions = {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(this.state),
+                method: 'POST',
+                //mode: "no-cors",
+                headers: { 'Content-Type': 'application/json; charset=utf-8' },
+                body: JSON.stringify({
+                    "modelName":"model_2",
+                    "configuration":"{json}",
+                    "userId":"ee5b366f-800f-4e05-6dae-08d7dce89124"
+                })
             };
-            fetch("https://localhost:5001/api/Model", requestOptions).then(async response => {
-                const data = await response.json();
-                if (!response.ok) {
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
-                }
-                this.setState({postId: data.id});
-            }).catch(error => {
-                this.setState({errorMessage: error});
-                console.log("There was an error!", error)
-            });
+            fetch('https://localhost:5001/api/Model/save', requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+
+                    this.setState({ postId: data.Id })
+                })
+                .catch(error => {
+                    this.setState({ errorMessage: error });
+                    console.error('There was an error!', error);
+                });
             return true;
         } catch {
             return false;
@@ -215,7 +223,7 @@ class SimpleModel extends React.Component {
             this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
         }
         else {
-            if (this.putData()) {
+            if (this.postData()) {
                 this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
             }
             this.setState({showSaveModelAlert: true, saveModelStatus: "error"});

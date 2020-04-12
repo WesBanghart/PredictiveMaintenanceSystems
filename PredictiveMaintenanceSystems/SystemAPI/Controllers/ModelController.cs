@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using ServicesLibrary;
@@ -16,6 +17,7 @@ using ServicesLibrary.Model.Update;
 
 namespace SystemAPI.Controllers
 {
+    [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class ModelController : ControllerBase

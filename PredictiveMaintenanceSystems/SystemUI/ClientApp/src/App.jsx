@@ -33,10 +33,12 @@ export default class App extends Component {
 
     componentDidMount()
     {
-        fetch("https://localhost:5001/api/User").then(function(response) {
+        fetch("https://localhost:5001/api/User"
+            ).then(function(response) {
             return response.json();
         }).then(jsonData => this.setState({user: jsonData[0]}))
     };
+
 
     render() {
         if (!this.dashboardLogin) {
