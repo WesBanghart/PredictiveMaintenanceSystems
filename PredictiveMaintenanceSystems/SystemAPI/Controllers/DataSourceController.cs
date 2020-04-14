@@ -45,7 +45,7 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDataSourceTable(Guid id, string dataSourceName, string configuration, string connectionString)
+        public async Task<IActionResult> PutDataSourceTable(Guid id, [FromBody] DataSourceTable dataSourceTable)
         {
             var dataSource = await _context.DataSources.FindAsync(id);
 
@@ -54,27 +54,10 @@ namespace SystemAPI.Controllers
                 return NotFound();
             }
 
-            if (dataSource.DataSourceId == id)
-            {
-                return BadRequest();
-            }
-
-            //dataSource.DataSourceName = dataSourceName;
-            //dataSource.Configuration = configuration;
-            //dataSource.ConnectionString = connectionString;
-
-            //if (modelIds != null && modelIds.Count > 0)
-            //{
-            //    foreach (var modelId in modelIds)
-            //    {
-            //        if(!ModelInDataSource(dataSource, modelId))
-            //        {
-            //            var mdl = await _context.Models.FindAsync(modelId);
-            //            dataSource.Models.Add(mdl);
-            //            mdl.DataSources.Add(dataSource);
-            //        }
-            //    }
-            //}
+            dataSource.DataSourceName = dataSourceTable.DataSourceName;
+            dataSource.Configuration = dataSourceTable.Configuration;
+            dataSource.ConnectionString = dataSourceTable.ConnectionString;
+            dataSource.LastUpdated = DateTime.Now;
 
             _context.Entry(dataSource).State = EntityState.Modified;
 
@@ -101,10 +84,10 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable(string dataSourceName, string configuration, string connectionString, Guid userId)
+        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable([FromBody] DataSourceTable dataSourceTable)
         {
             // Check if User exists
-            var userTable = await _context.Users.FindAsync(userId);
+            var userTable = await _context.Users.FindAsync(dataSourceTable.UserId);
             if(userTable == null)
             {
                 return NotFound();
@@ -114,33 +97,14 @@ namespace SystemAPI.Controllers
             DataSourceTable newDataSource = new DataSourceTable
             {
                 DataSourceId = new Guid(),
-                DataSourceName = dataSourceName,
-                Configuration = configuration,
-                ConnectionString = connectionString,
-                UserId = userId,
+                DataSourceName = dataSourceTable.DataSourceName,
+                Configuration = dataSourceTable.Configuration,
+                ConnectionString = dataSourceTable.ConnectionString,
+                UserId = dataSourceTable.UserId,
                 User = userTable,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now                
             };
-
-            List<ModelTable> modelTables = new List<ModelTable>();
-
-            //Handle models
-            //if(modelIds != null && modelIds.Count > 0)
-            //{
-            //    foreach (var guid in modelIds)
-            //    {
-            //        var model = await _context.Models.FindAsync(guid);
-            //        if (model == null)
-            //        {
-            //            return NotFound($"Error: model with ID:{guid} not found.");
-            //        }
-            //        modelTables.Append(model);
-            //        model.DataSources.Append(newDataSource);
-            //    }
-            //}
-
-           // newDataSource.Models = modelTables;
 
             //Add and save changes
             _context.DataSources.Add(newDataSource);
@@ -169,18 +133,6 @@ namespace SystemAPI.Controllers
         {
             return _context.DataSources.Any(e => e.DataSourceId == id);
         }
-
-        //private bool ModelInDataSource(DataSourceTable dataSource, Guid modelId)
-        //{
-        //    foreach (var model in dataSource.Models)
-        //    {
-        //        if (model.ModelId == modelId)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
 
     }
 }
