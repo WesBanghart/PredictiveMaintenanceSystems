@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EFDataModels;
 using System.Collections;
+using Microsoft.AspNetCore.Cors;
 
 namespace SystemAPI.Controllers
 {
+    [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class TenantController : ControllerBase
