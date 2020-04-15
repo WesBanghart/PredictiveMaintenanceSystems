@@ -157,9 +157,9 @@ class SimpleModel extends React.Component {
                 //mode: "no-cors",
                 headers: { 'Content-Type': 'application/json; charset=utf-8' },
                 body: JSON.stringify({
-                    "modelName":"model_2",
+                    "modelName":"model_1",
                     "configuration":"{json}",
-                    "userId":"ee5b366f-800f-4e05-6dae-08d7dce89124"
+                    "userId":"3b7304a2-e7ad-46d6-1f2e-08d7de67eb5d"
                 })
             };
             fetch('https://localhost:5001/api/Model/save', requestOptions)
@@ -169,8 +169,7 @@ class SimpleModel extends React.Component {
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
                     }
-
-                    this.setState({ postId: data.Id })
+                    this.setState({ postId: data.modelId })
                 })
                 .catch(error => {
                     this.setState({ errorMessage: error });
@@ -220,13 +219,17 @@ class SimpleModel extends React.Component {
             if (this.postData()) {
                 this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
             }
-            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+            else{
+                this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+            }
         }
         else {
             if (this.postData()) {
                 this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
             }
-            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+            else {
+                this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+            }
         }
     }
 
