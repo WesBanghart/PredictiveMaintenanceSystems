@@ -67,35 +67,6 @@ const tempDataSources = [
     "Source 3",
 ];
 
-let passedThroughModels = [
-    {
-        "modelId": "90f4df6d-a844-44fd-ccd7-08d7c6aabda2",
-        "modelName": "\"My_Model_1\"",
-        "configuration": "\"{}\"",
-        "file": null,
-        "created": "2020-03-12T10:28:12.401512",
-        "lastUpdated": "2020-04-05T16:36:03.0274553",
-        "timestamp": "AAAAAAAAE44=",
-        "dataSources": null,
-        "userId": "8c166ec3-482d-41ca-75aa-08d7c61e9044",
-        "user": null,
-        "tenantId": "9eae9863-ae02-479e-9d72-08d7c61e4856",
-        "tenant": null
-    },
-    {"modelId":"df218369-2571-400b-ccd8-08d7c6aabda2",
-        "modelName":"\"My_Model_2\"",
-        "configuration":"\"{JSON STRING}\"",
-        "file":null,
-        "created":"2020-03-12T10:28:40.463769",
-        "lastUpdated":"2020-03-12T10:28:40.463733",
-        "timestamp":"AAAAAAAAD6w=",
-        "dataSources":null,
-        "userId":"8c166ec3-482d-41ca-75aa-08d7c61e9044",
-        "user":null,
-        "tenantId":"9eae9863-ae02-479e-9d72-08d7c61e4856",
-        "tenant":null
-    }];
-
 class SimpleModel extends React.Component {
     constructor(props) {
         super(props);
@@ -110,7 +81,7 @@ class SimpleModel extends React.Component {
             showSaveModelAlert: false,
             saveModelStatus: "",
             selectedModel: "",
-            savedModels: passedThroughModels,
+            savedModels: this.props.userData["models"],
             createNewModelPrompt: false,
             newModelNameHolder: "",
             newModelHasBeenCreated: false,
@@ -154,7 +125,6 @@ class SimpleModel extends React.Component {
         try {
             const requestOptions = {
                 method: 'POST',
-                //mode: "no-cors",
                 headers: { 'Content-Type': 'application/json; charset=utf-8' },
                 body: JSON.stringify({
                     "modelName":"model_1",
@@ -184,21 +154,27 @@ class SimpleModel extends React.Component {
     putData() {
         try {
             const requestOptions = {
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(this.state),
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json; charset=utf-8' },
+                body: JSON.stringify({
+                    "modelName":"model_1",
+                    "configuration":"{json}",
+                    "modelId":"9e22d099-6c94-4a8e-8dc3-08d7de68d061"
+                })
             };
-            fetch("https://localhost:5001/api/Model/", requestOptions).then(async response => {
-                const data = await response.json();
-                if(!response.ok) {
-                    const error = (data && data.message) || response.status;
-                    return Promise.reject(error);
-                }
-                this.setState({postId: data.id});
-            }).catch(error => {
-                this.setState({errorMessage: error});
-                console.log("There was an error!", error)
-            });
+            fetch('https://localhost:5001/api/Model/save', requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+                    this.setState({ postId: data.modelId })
+                })
+                .catch(error => {
+                    this.setState({ errorMessage: error });
+                    console.error('There was an error!', error);
+                });
             return true;
         } catch {
             return false;
@@ -239,28 +215,30 @@ class SimpleModel extends React.Component {
 
     createNewModelName() {
         let newModelData = [{
-            "modelId": "",
-            "modelName": "\"" + this.state.newModelNameHolder + "\"",
-            "configuration": "\"{}\"",
-            "file": null,
-            "created": "2020-03-12T10:28:12.401512",
-            "lastUpdated": "2020-04-05T16:36:03.0274553",
-            "timestamp": "AAAAAAAAE44=",
-            "dataSources": null,
+            "modelName": this.state.newModelNameHolder,
+            "configuration": "{json}",
             "userId": this.state.userData["userId"],
-            "user": null,
-            "tenantId": "9eae9863-ae02-479e-9d72-08d7c61e4856",
-            "tenant": null
         }];
-        let modelHolder = this.state.savedModels.concat(newModelData);
-        this.setState({createNewModelPrompt: false, savedModels: modelHolder, newModelHasBeenCreated: true});
+        if(this.state.savedModels === null) {
+            this.setState({createNewModelPrompt: false, savedModels: newModelData, newModelHasBeenCreated: true});
+        }
+        else {
+            let modelHolder = this.state.savedModels.concat(newModelData);
+            this.setState({createNewModelPrompt: false, savedModels: modelHolder, newModelHasBeenCreated: true});
+
+        }
     }
 
     render() {
         const {classes} = this.props;
-        let savedModelsMenuTemplate = this.state.savedModels.map(v => (
-            <MenuItem value={v.modelId}>{v.modelName}</MenuItem>
-        ));
+        let savedModelsMenuTemplate;
+        if(this.props.userData["models"] == null) {
+        }
+        else {
+            savedModelsMenuTemplate = this.state.savedModels.map(v => (
+                <MenuItem value={v.userId}>{v.modelName}</MenuItem>
+            ));
+        }
         return (
             <div>
                 {this.state.showRunModelAlert ?
