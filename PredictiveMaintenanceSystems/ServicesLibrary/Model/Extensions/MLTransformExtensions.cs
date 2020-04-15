@@ -80,7 +80,10 @@ namespace ServicesLibrary.Model.Extensions
         //=============== CLUSTERING FUNCTIONS ================================================
         public static IEstimator<ITransformer> _KMeansTrainer(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string weightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            int numClusters = componentObject.Value<int>("NumberOfClusters");
+            return MLContext.Clustering.Trainers.KMeans(featureColumn, weightColumn, numClusters);
         }
 
 

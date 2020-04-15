@@ -12,16 +12,24 @@ namespace ServicesLibrary.Model.Extensions
         public static IDataView _LoadFromDatabase(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Data.CreateDatabaseLoader();
         }
 
         public static IDataView _LoadFromSingleFile(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Data.LoadFromTextFile();
         }
 
         public static IDataView _LoadFromMultipleFiles(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+        }
+
+        public static IDataView _LoadFromBinary(this MLContext MLContext, JToken componentObject)
+        {
+            throw new NotImplementedException();
+            //return MLContext.Data.LoadFromBinary();
         }
     }
 }

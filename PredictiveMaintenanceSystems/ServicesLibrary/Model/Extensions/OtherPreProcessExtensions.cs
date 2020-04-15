@@ -11,12 +11,16 @@ namespace ServicesLibrary.Model.Extensions
         //--------------- MISSING VALUES ------------------------------------------------------
         public static IEstimator<ITransformer> _IndicateMissingValues(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.IndicateMissingValues(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _ReplaceMissingValues(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.ReplaceMissingValues(outputColumn, inputColumn);
         }
 
 
