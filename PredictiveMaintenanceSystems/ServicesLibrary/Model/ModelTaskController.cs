@@ -25,6 +25,7 @@ namespace ServicesLibrary.Model
         public IDataView TrainDataView { get; set; }
         public IDataView TestDataView { get; set; }
         public ITransformer Transformer { get; set; }
+        public IDataView Results { get; set; }
 
         public ModelTaskController(EFSystemContext context)
         {
@@ -35,14 +36,38 @@ namespace ServicesLibrary.Model
         //------------- PUBLIC OPERATIONS ----------------------------------------------------
         public async Task<bool> RunModel(Guid ModelId, CancellationToken cancellationToken)
         {
-            if (await UpdateModel(ModelId, cancellationToken))
+            try
             {
-                var results = Transformer.Transform(TestDataView);
-                //TODO: save results
-                return true;
-            }
+                if (_RetrieveModel(ModelId))
+                {
+                    if (_ParseModelJson())
+                    {
+                        byte[] modelZip = _SaveModel(ModelId);
+                        var modelEntry = await _context.FindAsync<EFDataModels.ModelTable>(ModelId, cancellationToken);
+                        modelEntry.File = modelZip;
+                        modelEntry.LastUpdated = DateTime.Now;
+                        _context.Entry(modelEntry).State = EntityState.Modified;
 
-            return false;
+                        try
+                        {
+                            await _context.SaveChangesAsync(cancellationToken);
+                            return true;
+                        }
+                        catch (Exception)
+                        {
+                            //TODO: log exception
+                            return false;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                //TODO: log exception
+                return false;
+            }
         }
 
         public async Task<bool> UpdateModel(Guid ModelId, CancellationToken cancellationToken)
@@ -53,6 +78,7 @@ namespace ServicesLibrary.Model
                 {
                     if (_ParseModelJson())
                     {
+                        Results = Transformer.Transform(TestDataView);
                         byte[] modelZip = _SaveModel(ModelId);
                         var modelEntry = await _context.FindAsync<EFDataModels.ModelTable>(ModelId, cancellationToken);
                         modelEntry.File = modelZip;
@@ -108,6 +134,14 @@ namespace ServicesLibrary.Model
 
             Directory.CreateDirectory(tempDir);
             ZipFile.ExtractToDirectory(tempZip, tempDir);
+
+            if (Results != null)
+            {
+                using (FileStream fileStream = new FileStream($"{tempDir}results.tsv", FileMode.Create))
+                {
+                    MLContext.Data.SaveAsText(Results, fileStream);
+                }
+            }
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
