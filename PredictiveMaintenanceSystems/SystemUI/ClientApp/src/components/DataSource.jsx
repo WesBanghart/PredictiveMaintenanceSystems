@@ -51,23 +51,23 @@ interface TableState {
 export default function Devices() {
     const [state, setState] = React.useState({
         columns: [
-            {title: 'Device', field: 'device'},
-            {title: 'Location', field: 'location'},
-            {title: 'IP Address', field: 'ip'},
+            {title: 'Data Source', field: 'device'},
+            {title: 'Data Source ID', field: 'datasourceid'},
+            {title: 'Last Updated', field: 'lastupdated'},
 
         ],
         data: [
-            {device: 'Device1', location: 'Nevada', ip: '192.168.20.5'},
-            {device: 'Device2', location: 'California', ip: '192.168.20.6'},
+            {device: 'Data Source One', datasourceid: 'cb2e305e-60f8-4a30-23be-08d7de6d9d4c', lastupdated: '2020-04-11T16:15:02.1362427'},
+            {device: 'Data Source Two', datasourceid: '34e15dbe-2930-4203-f282-08d7de6e336c', lastupdated: '2020-04-11T16:15:18.6680769'},
         ],
     });
 
     return (
         <div>
-            <Typography color="textPrimary" variant="h4" component="h2">Devices</Typography>
+            <Typography color="textPrimary" variant="h4" component="h2">Data Sources</Typography>
             <br/>
             <MaterialTable
-                title="Device List"
+                title="Data Source List"
                 columns={state.columns}
                 data={state.data}
                 icons={tableIcons}

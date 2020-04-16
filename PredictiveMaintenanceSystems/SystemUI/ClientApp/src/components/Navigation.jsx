@@ -15,8 +15,8 @@ const navigationMenuItems = [
         Icon: IconDashboard,
     },
     {
-        name: 'Devices',
-        link: '/devices',
+        name: 'Data Sources',
+        link: '/data_sources',
         Icon: DeviceHubIcon,
     },
     {

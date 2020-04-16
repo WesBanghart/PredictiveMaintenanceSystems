@@ -19,6 +19,7 @@ class RunModelAlert extends React.Component {
         super(props);
         this.state = {
           open: true,
+            status: this.props.status,
         };
         this.setOpen=this.setOpen.bind(this);
     }
@@ -29,29 +30,55 @@ class RunModelAlert extends React.Component {
 
     render() {
         const {classes} = this.props;
-        return (
-            <div className={classes.root}>
-                <Collapse in={this.state.open}>
-                    <Alert severity="error"
-                        action={
-                            <IconButton
-                                aria-label="close"
-                                color="inherit"
-                                size="medium"
-                                onClick={() => {
-                                    this.setOpen(false);
-                                }}
-                            >
-                                <CloseIcon fontSize="inherit" />
-                            </IconButton>
-                        }
-                    ><AlertTitle>Error</AlertTitle>
-                        Please fill out all the required fields.
-                    </Alert>
-                </Collapse>
-            </div>
-        );
-    }
+        if(this.state.status === "success") {
+            return (
+                <div className={classes.root}>
+                    <Collapse in={this.state.open}>
+                        <Alert severity="success"
+                               action={
+                                   <IconButton
+                                       aria-label="close"
+                                       color="inherit"
+                                       size="medium"
+                                       onClick={() => {
+                                           this.setOpen(false);
+                                       }}
+                                   >
+                                       <CloseIcon fontSize="inherit" />
+                                   </IconButton>
+                               }
+                        ><AlertTitle>Success!</AlertTitle>
+                            Model saved and run is queued.
+                        </Alert>
+                    </Collapse>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div className={classes.root}>
+                    <Collapse in={this.state.open}>
+                        <Alert severity="error"
+                               action={
+                                   <IconButton
+                                       aria-label="close"
+                                       color="inherit"
+                                       size="medium"
+                                       onClick={() => {
+                                           this.setOpen(false);
+                                       }}
+                                   >
+                                       <CloseIcon fontSize="inherit" />
+                                   </IconButton>
+                               }
+                        ><AlertTitle>Error</AlertTitle>
+                            Please fill out all the required fields.
+                        </Alert>
+                    </Collapse>
+                </div>
+            );
+        }
+        }
 }
 
 export default withStyles(useStyles)(RunModelAlert);
