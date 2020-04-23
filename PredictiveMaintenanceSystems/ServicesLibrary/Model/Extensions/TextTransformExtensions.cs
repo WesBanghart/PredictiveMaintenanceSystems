@@ -11,27 +11,39 @@ namespace ServicesLibrary.Model.Extensions
         //--------------- TEXT TRANSFORMATIONS ------------------------------------------------
         public static IEstimator<ITransformer> _FeaturizeText(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Text.FeaturizeText(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _TokenizeIntoWords(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            string separators = componentObject.Value<string>("Separators");
+            return MLContext.Transforms.Text.TokenizeIntoWords(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _TokenizeIntoCharactersAsKeys(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Text.TokenizeIntoCharactersAsKeys(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _NormalizeText(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Text.NormalizeText(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _ProduceNgrams(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            int ngramLength = componentObject.Value<int>("NgramLength");
+            return MLContext.Transforms.Text.ProduceNgrams(outputColumn, inputColumn, ngramLength);
         }
 
         public static IEstimator<ITransformer> _ProduceWordBags(this MLContext MLContext, JToken componentObject)
@@ -51,12 +63,17 @@ namespace ServicesLibrary.Model.Extensions
 
         public static IEstimator<ITransformer> _RemoveDefaultStopWords(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Text.RemoveDefaultStopWords(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _RemoveStopWords(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            string[] stopWords = componentObject.Value<string>("StopWords").Split(", ");
+            return MLContext.Transforms.Text.RemoveStopWords(outputColumn, inputColumn, stopWords);
         }
 
         public static IEstimator<ITransformer> _LatentDirichletAllocation(this MLContext MLContext, JToken componentObject)

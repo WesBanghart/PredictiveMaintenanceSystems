@@ -89,10 +89,10 @@ namespace SystemAPI.Controllers
             {
                 try
                 {
-                    Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew((() =>
                     {
-                        backgroundTaskQueue.QueueModelRunWorkItem(newModel.ModelId);
-                    });
+                        backgroundTaskQueue.QueueModelRunWorkItem(model.ModelId);
+                    }));
                 }
                 catch (Exception e)
                 {
@@ -106,9 +106,8 @@ namespace SystemAPI.Controllers
                 {
                     Task.Factory.StartNew((() =>
                     {
-                        backgroundTaskQueue.QueueModelUpdateWorkItem(newModel.ModelId);
+                        backgroundTaskQueue.QueueModelUpdateWorkItem(model.ModelId);
                     }));
-
                 }
                 catch (Exception e)
                 {
@@ -166,10 +165,10 @@ namespace SystemAPI.Controllers
             {
                 try
                 {
-                    Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew((() =>
                     {
                         backgroundTaskQueue.QueueModelRunWorkItem(model.ModelId);
-                    });
+                    }));
                 }
                 catch (Exception e)
                 {
@@ -185,7 +184,6 @@ namespace SystemAPI.Controllers
                     {
                         backgroundTaskQueue.QueueModelUpdateWorkItem(model.ModelId);
                     }));
-
                 }
                 catch (Exception e)
                 {
