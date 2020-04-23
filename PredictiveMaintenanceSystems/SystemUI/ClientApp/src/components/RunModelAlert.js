@@ -18,7 +18,7 @@ class RunModelAlert extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          open: true,
+            open: true,
             status: this.props.status,
         };
         this.setOpen=this.setOpen.bind(this);
@@ -54,7 +54,7 @@ class RunModelAlert extends React.Component {
                 </div>
             );
         }
-        else {
+        else if (this.state.status === "error") {
             return (
                 <div className={classes.root}>
                     <Collapse in={this.state.open}>

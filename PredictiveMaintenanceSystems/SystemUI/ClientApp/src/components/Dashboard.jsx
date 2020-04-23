@@ -76,7 +76,7 @@ class Dashboard extends React.Component {
                                 <Route path="/data_sources" component={Devices}/>
                                 <Route path="/simple_model" render={(props) => <SimpleModel {...props} userData={this.props.userData}/>} />
                                 <Route path="/workflow" component={Workflow}/>
-                                <Route path="/settings" component={Settings}/>
+                                <Route path="/settings" render={(props) => <Settings {...props} userData={this.props.userData}/>}/>
                             </Switch>
 
                         </Container>

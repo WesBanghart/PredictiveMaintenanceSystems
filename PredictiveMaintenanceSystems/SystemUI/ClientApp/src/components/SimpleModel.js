@@ -190,16 +190,16 @@ class SimpleModel extends React.Component {
             this.runModelStatus();
         }
         else {
-            this.setState({showRunModelAlert: true});
+            this.setState({showRunModelAlert: true, runModelStatus: "error"});
         }
     }
 
     runModelStatus() {
         if (this.postData("https://localhost:5001/api/Model/saveandrun")) {
-            this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
+            this.setState({showRunModelAlert: true, runModelStatus: "success"});
         }
-        else{
-            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
+        else {
+            this.setState({showRunModelAlert: true, runModelStatus: "error"});
         }
     }
 
