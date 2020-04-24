@@ -36,7 +36,7 @@ namespace SystemAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<EFSystemContext>(opt => 
-                opt.UseSqlServer(Configuration.GetConnectionString("Development")));
+                opt.UseSqlServer(Configuration.GetConnectionString("Production")));
 
             //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
            // services.AddSingleton(typeof(IBackgroundTaskQueue), typeof(BackgroundTaskQueue));
