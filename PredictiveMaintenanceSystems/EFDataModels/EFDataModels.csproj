@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,6 +10,8 @@
     <Compile Remove="Migrations\20200410020952_EFContextChange.Designer.cs" />
     <Compile Remove="Migrations\20200410022206_EFContextChange.cs" />
     <Compile Remove="Migrations\20200410022206_EFContextChange.Designer.cs" />
+    <Compile Remove="Migrations\20200424215521_ResourceTransferInit.cs" />
+    <Compile Remove="Migrations\20200424215521_ResourceTransferInit.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
