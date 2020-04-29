@@ -323,30 +323,6 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ F ---------------------------------------------------------------------------------
-                case "FastForestBinary":
-                    pipeline.Append(MLContext._FastForestBinaryTrainer(componentObject));
-                    return true;
-
-                case "FastForestRegression":
-                    pipeline.Append(MLContext._FastForestRegressionTrainer(componentObject));
-                    return true;
-
-                case "FastTreeBinary":
-                    pipeline.Append(MLContext._FastTreeBinaryTrainer(componentObject));
-                    return true;
-
-                case "FastTreeRanking":
-                    pipeline.Append(MLContext._FastTreeRankingTrainer(componentObject));
-                    return true;
-                
-                case "FastTreeRegression":
-                    pipeline.Append(MLContext._FastTreeRegressionTrainer(componentObject));
-                    return true;
-                
-                case "FastTreeTweedie":
-                    pipeline.Append(MLContext._FastTreeTweedieTrainer(componentObject));
-                    return true;
-
                 case "FeaturizeText":
                     pipeline.Append(MLContext._FeaturizeText(componentObject));
                     return true;
@@ -369,14 +345,7 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ G ---------------------------------------------------------------------------------
-                case "GamBinary":
-                    pipeline.Append(MLContext._GamBinaryTrainer(componentObject));
-                    return true;
-
-                case "GamRegression":
-                    pipeline.Append(MLContext._GamRegressionTrainer(componentObject));
-                    return true;
-
+                
 
                 //------------------------ H ---------------------------------------------------------------------------------
                 case "Hash":
@@ -385,10 +354,6 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ I ---------------------------------------------------------------------------------
-                case "ImageClassification":
-                    pipeline.Append(MLContext._ImageClassificationTrainer(componentObject));
-                    return true;
-
                 case "IndicateMissingValues":
                     pipeline.Append(MLContext._IndicateMissingValues(componentObject));
                     return true;
@@ -419,22 +384,6 @@ namespace ServicesLibrary.Model
 
                 case "LbfgsPoissonRegression":
                     pipeline.Append(MLContext._LbfgsPoissonRegressionTrainer(componentObject));
-                    return true;
-
-                case "LightGbmBinary":
-                    pipeline.Append(MLContext._LightGbmBinaryTrainer(componentObject));
-                    return true;
-                
-                case "LightGbmMulticlass":
-                    pipeline.Append(MLContext._LightGbmMulticlassTrainer(componentObject));
-                    return true;
-
-                case "LightGbmRanking":
-                    pipeline.Append(MLContext._LightGbmRankingTrainer(componentObject));
-                    return true;
-
-                case "LightGbmRegression":
-                    pipeline.Append(MLContext._LightGbmRegressionTrainer(componentObject));
                     return true;
 
                 case "LinearSvm":
@@ -527,24 +476,12 @@ namespace ServicesLibrary.Model
                     pipeline.Append(MLContext._OneHotHashEncoding(componentObject));
                     return true;
 
-                case "OneVersusAll":
-                    pipeline.Append(MLContext._OneVersusAllTrainer(componentObject));
-                    return true;
-
                 case "OnlineGradientDescent":
                     pipeline.Append(MLContext._OnlineGradientDescentTrainer(componentObject));
                     return true;
 
-                case "OlsTrainer":
-                    pipeline.Append(MLContext._OlsTrainer(componentObject));
-                    return true;
-
 
                 //------------------------ P ---------------------------------------------------------------------------------
-                case "PairwiseCoupling":
-                    pipeline.Append(MLContext._PairwiseCouplingTrainer(componentObject));
-                    return true;
-
                 case "Prior":
                     pipeline.Append(MLContext._PriorTrainer(componentObject));
                     return true;
@@ -625,8 +562,12 @@ namespace ServicesLibrary.Model
                     pipeline.Append(MLContext._SelectFeaturesBasedOnMutualInformation(componentObject));
                     return true;
 
-                case "SymbolicSgdLogisticRegressionBinary":
-                    pipeline.Append(MLContext._SymbolicSgdLogisticRegressionBinaryTrainer(componentObject));
+                case "SgdCalibratedBinary":
+                    pipeline.Append(MLContext._SgdCalibratedBinaryTrainer(componentObject));
+                    return true;
+
+                case "SgdNonCalibratedBinary":
+                    pipeline.Append(MLContext._SgdNonCalibratedTrainer(componentObject));
                     return true;
 
 

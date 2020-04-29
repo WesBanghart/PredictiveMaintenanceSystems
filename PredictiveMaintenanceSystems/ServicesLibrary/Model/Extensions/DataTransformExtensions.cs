@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML;
+using Microsoft.ML.Data;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,10 @@ namespace ServicesLibrary.Model.Extensions
         //--------------- CONVERT DATA TYPE ---------------------------------------------------
         public static IEstimator<ITransformer> _ConvertType(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            DataKind dataKind = Enum.Parse<DataKind>(componentObject.Value<string>("Datatype"));
+            return MLContext.Transforms.Conversion.ConvertType(outputColumn, inputColumn, dataKind);
         }
 
         public static IEstimator<ITransformer> _MapValue(this MLContext MLContext, JToken componentObject)
@@ -21,12 +25,16 @@ namespace ServicesLibrary.Model.Extensions
 
         public static IEstimator<ITransformer> _MapValueToKey(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Conversion.MapValueToKey(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _MapKeyToValue(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
+            string outputColumn = componentObject.Value<string>("OutputColumnName");
+            string inputColumn = componentObject.Value<string>("InputColumnName");
+            return MLContext.Transforms.Conversion.MapKeyToValue(outputColumn, inputColumn);
         }
 
         public static IEstimator<ITransformer> _MapKeyToVector(this MLContext MLContext, JToken componentObject)
