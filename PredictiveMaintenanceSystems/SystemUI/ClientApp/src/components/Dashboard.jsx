@@ -58,13 +58,6 @@ class Dashboard extends React.Component {
                 console.log(error);
             }
         }
-        if(this.props.modelData && !this.state.loadedModelData) {
-            try {
-                this.setState({data: this.props.modelData});
-            } catch(error) {
-                console.log(error);
-            }
-        }
         return (
             <BrowserRouter>
                 <div className={clsx('App', classes.root)}>
@@ -82,7 +75,7 @@ class Dashboard extends React.Component {
                         <Container maxWidth="lg" className={classes.container}>
                             <Switch>
                                 <Route path="/" exact component={Desktop}/>
-                                <Route path="/data_sources" component={Devices}/>
+                                <Route path="/data_sources" render={(props) => <Devices {...props} dataSourceData={this.props.dataSourceData} />} />
                                 <Route path="/simple_model" render={(props) => <SimpleModel {...props} userData={this.props.userData} modelData={this.props.modelData}/>} />
                                 <Route path="/workflow" component={Workflow}/>
                                 <Route path="/settings" render={(props) => <Settings {...props} userData={this.props.userData}/>}/>

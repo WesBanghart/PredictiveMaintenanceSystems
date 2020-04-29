@@ -48,67 +48,83 @@ interface TableState {
     data: Row[];
 }
 
-export default function Devices() {
-    const [state, setState] = React.useState({
-        columns: [
-            {title: 'Data Source', field: 'device'},
-            {title: 'Connection', field: 'connectionstring'},
-            {title: 'Last Updated', field: 'lastupdated'},
+export default class Devices extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            columns: [
+                {title: 'Data Source', field: 'device'},
+                {title: 'ID', field: 'id'},
+                {title: 'Connection', field: 'connectionstring'},
+                {title: 'Last Updated', field: 'lastupdated'},
 
-        ],
-        data: [
-            {device: 'Data Source One', connectionstring: '134.197.50.1', lastupdated: '2020-04-11T16:15:02.1362427'},
-            {device: 'Data Source Two', connectionstring: '134.197.50.2', lastupdated: '2020-04-11T16:15:18.6680769'},
-        ],
-    });
+            ],
+            data: [],
+        }
+    }
 
-    return (
-        <div>
-            <Typography color="textPrimary" variant="h4" component="h2">Data Sources</Typography>
-            <br/>
-            <MaterialTable
-                title="Data Source List"
-                columns={state.columns}
-                data={state.data}
-                icons={tableIcons}
-                editable={{
-                    onRowAdd: newData =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve();
-                                setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data.push(newData);
-                                    return {...prevState, data};
-                                });
-                            }, 600);
-                        }),
-                    onRowUpdate: (newData, oldData) =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve();
-                                if (oldData) {
-                                    setState(prevState => {
+    componentDidMount() {
+        let tmpData = [];
+        for(let i = 0; i < this.props.dataSourceData.length; ++i) {
+            tmpData[i] = {
+                device: this.props.dataSourceData[i]["dataSourceName"],
+                id: this.props.dataSourceData[i]["dataSourceId"],
+                connectionstring: this.props.dataSourceData[i]["connectionString"],
+                lastupdated: this.props.dataSourceData[i]["lastUpdated"]
+            };
+        }
+        this.setState({data: tmpData});
+    }
+
+    render() {
+        return (
+            <div>
+                <Typography color="textPrimary" variant="h4" component="h2">Data Sources</Typography>
+                <br/>
+                <MaterialTable
+                    title="Data Source List"
+                    columns={this.state.columns}
+                    data={this.state.data}
+                    icons={tableIcons}
+                    editable={{
+                        onRowAdd: newData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    resolve();
+                                    this.setState(prevState => {
                                         const data = [...prevState.data];
-                                        data[data.indexOf(oldData)] = newData;
+                                        data.push(newData);
                                         return {...prevState, data};
                                     });
-                                }
-                            }, 600);
-                        }),
-                    onRowDelete: oldData =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve();
-                                setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data.splice(data.indexOf(oldData), 1);
-                                    return {...prevState, data};
-                                });
-                            }, 600);
-                        }),
-                }}
-            />
-        </div>
-    );
+                                }, 600);
+                            }),
+                        onRowUpdate: (newData, oldData) =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    resolve();
+                                    if (oldData) {
+                                        this.setState(prevState => {
+                                            const data = [...prevState.data];
+                                            data[data.indexOf(oldData)] = newData;
+                                            return {...prevState, data};
+                                        });
+                                    }
+                                }, 600);
+                            }),
+                        onRowDelete: oldData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                    resolve();
+                                    this.setState(prevState => {
+                                        const data = [...prevState.data];
+                                        data.splice(data.indexOf(oldData), 1);
+                                        return {...prevState, data};
+                                    });
+                                }, 600);
+                            }),
+                    }}
+                />
+            </div>
+        );
+    }
 }
