@@ -24,8 +24,10 @@ export default class App extends Component {
         this.state = 
         {
             isLoaded:false,
-            user: []
+            user: [],
+            models :[],
         }
+        this.getModels = this.getModels.bind(this);
     }
     static displayName = App.name;
 
@@ -37,14 +39,21 @@ export default class App extends Component {
             ).then(function(response) {
             return response.json();
         }).then(jsonData => this.setState({user: jsonData[0]}))
+        //this.getModels();
     };
 
+    getModels() {
+        fetch("https://localhost:5001/api/Model"
+        ).then(function(response) {
+            return response.json();
+        }).then(jsonData => this.setState({models: jsonData}))
+    }
 
     render() {
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
         } else {
-            return (<Dashboard userData = {this.state.user}/>);
+            return (<Dashboard userData = {this.state.user} modelData = {this.state.models} />);
         }
     }
 }

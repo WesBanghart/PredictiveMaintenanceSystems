@@ -23,6 +23,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import Input from '@material-ui/core/Input';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 
 const ColorButton = withStyles((theme) => ({
@@ -81,7 +82,7 @@ class SimpleModel extends React.Component {
             showSaveModelAlert: false,
             saveModelStatus: "",
             selectedModel: "",
-            savedModels: this.props.userData["models"],
+            savedModels: this.props.modelData,
             createNewModelPrompt: false,
             newModelNameHolder: "",
             newModelHasBeenCreated: false,
@@ -99,8 +100,9 @@ class SimpleModel extends React.Component {
         this.appendModelSave = this.appendModelSave.bind(this);
         this.putData = this.putData.bind(this);
         this.createNewModelName = this.createNewModelName.bind(this);
-        //this.getDataSourcesAPI = this.getDataSourcesAPI.bind(this);
+        this.getDataSourcesAPI = this.getDataSourcesAPI.bind(this);
         this.runModelStatus = this.runModelStatus.bind(this);
+        this.getModelResults = this.getModelResults.bind(this);
     }
 
     setDataSource(event) {
@@ -242,14 +244,18 @@ class SimpleModel extends React.Component {
         }
     }
 
-    /**
+
     getDataSourcesAPI() {
         fetch("https://localhost:5001/api/DataSource"
         ).then(function(response) {
             return response.json();
         }).then(jsonData => this.setState({dataSources: [jsonData[0]["dataSourceName"]]}))
     }
-     */
+
+
+    getModelResults() {
+
+    }
 
     componentDidMount() {
 
@@ -258,11 +264,11 @@ class SimpleModel extends React.Component {
     render() {
         const {classes} = this.props;
         let savedModelsMenuTemplate;
-        if(this.props.userData["models"] == null) {
-            savedModelsMenuTemplate = <MenuItem value={"model_1"}>Model 1</MenuItem>
+        if(this.props.modelData == null) {
+            savedModelsMenuTemplate = <MenuItem value={"model_1"}>Model Placeholder</MenuItem>
         }
         else {
-            savedModelsMenuTemplate = this.state.savedModels.map(v => (
+            savedModelsMenuTemplate = this.props.modelData.map(v => (
                 <MenuItem value={v.userId}>{v.modelName}</MenuItem>
             ));
         }
@@ -417,6 +423,15 @@ class SimpleModel extends React.Component {
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
             </div>
+                    <ColorButton
+                        variant="contained"
+                        color="secondary"
+                        className={classes.button}
+                        startIcon={<CloudDownloadIcon/>}
+                        onClick={() => this.getModelResults()}
+                    >
+                        Get Model Results
+                    </ColorButton>
             </div>
             </div>
         );
