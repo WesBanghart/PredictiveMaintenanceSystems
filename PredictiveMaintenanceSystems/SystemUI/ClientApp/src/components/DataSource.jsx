@@ -57,10 +57,78 @@ export default class Devices extends React.Component {
                 {title: 'ID', field: 'id'},
                 {title: 'Connection', field: 'connectionstring'},
                 {title: 'Last Updated', field: 'lastupdated'},
-
             ],
             data: [],
         }
+        this.createNewDataSource = this.createNewDataSource.bind(this);
+        this.deleteDataSource = this.deleteDataSource.bind(this);
+        this.putDataSource = this.putDataSource.bind(this);
+    }
+
+    createNewDataSource(data) {
+        let dataSourceBody = {
+            "dataSourceName": data["device"],
+            "configuration": "string",
+            "userId": this.props.userData["userId"]
+        };
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            body: JSON.stringify(dataSourceBody)
+        };
+        fetch("https://localhost:5001/api/DataSource", requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                this.setState({ postId: data.modelId })
+            })
+            .catch(error => {
+                this.setState({ errorMessage: error });
+                console.error('There was an error!', error);
+            });
+    }
+
+    deleteDataSource(data) {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        };
+        fetch("https://localhost:5001/api/DataSource/"+data["id"], requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                this.setState({ postId: data.modelId })
+            })
+            .catch(error => {
+                this.setState({ errorMessage: error });
+                console.error('There was an error!', error);
+            });
+    }
+
+    putDataSource(data) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        };
+        fetch("https://localhost:5001/api/DataSource/"+data["id"], requestOptions)
+            .then(async response => {
+                const data = await response.json();
+                if (!response.ok) {
+                    const error = (data && data.message) || response.status;
+                    return Promise.reject(error);
+                }
+                this.setState({ postId: data.modelId })
+            })
+            .catch(error => {
+                this.setState({ errorMessage: error });
+                console.error('There was an error!', error);
+            });
     }
 
     componentDidMount() {
@@ -97,7 +165,7 @@ export default class Devices extends React.Component {
                                         return {...prevState, data};
                                     });
                                 }, 600);
-                            }),
+                            }).then(this.createNewDataSource(newData)),
                         onRowUpdate: (newData, oldData) =>
                             new Promise(resolve => {
                                 setTimeout(() => {
@@ -110,7 +178,7 @@ export default class Devices extends React.Component {
                                         });
                                     }
                                 }, 600);
-                            }),
+                            }).then(this.putDataSource(newData)),
                         onRowDelete: oldData =>
                             new Promise(resolve => {
                                 setTimeout(() => {
@@ -121,7 +189,7 @@ export default class Devices extends React.Component {
                                         return {...prevState, data};
                                     });
                                 }, 600);
-                            }),
+                            }).then(this.deleteDataSource(oldData)),
                     }}
                 />
             </div>
