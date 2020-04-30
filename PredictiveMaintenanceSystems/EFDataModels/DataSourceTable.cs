@@ -16,6 +16,13 @@ namespace EFDataModels
         public string Configuration { get; set; }
         //The connection string of the data source
         public string ConnectionString { get; set; }
+
+        //A static data file from a DataSource
+        public byte[] File { get; set; }
+
+        //Boolean determining if the DataSource is streaming or not.
+        public bool IsStreaming { get; set; }
+
         //The datetime when the datasource entry was created
         public DateTime Created { get; set; }
         //The datetime when the datasource entry was last updated
