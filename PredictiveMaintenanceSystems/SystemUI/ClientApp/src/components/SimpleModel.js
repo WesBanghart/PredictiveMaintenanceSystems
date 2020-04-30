@@ -64,12 +64,14 @@ const MenuProps = {
     },
 };
 
+//Placeholder if the data sources are not pulled yet
 const tempDataSources = [
     "Source 1",
     "Source 2",
     "Source 3",
 ];
 
+//Creates the simple model page
 class SimpleModel extends React.Component {
     constructor(props) {
         super(props);
@@ -133,6 +135,8 @@ class SimpleModel extends React.Component {
         this.setState({selectedModel: event.target.value, modelIndex: indexTmp});
     }
 
+    //Post the request to the API
+    //Takes in a URL to API and the body
     postData(url, bodyData) {
         try {
             const requestOptions = {
@@ -159,6 +163,8 @@ class SimpleModel extends React.Component {
         }
     }
 
+    //PUT request to the API
+    //Takes in a URL and body
     putData(url, body) {
         try {
             const requestOptions = {
@@ -185,6 +191,7 @@ class SimpleModel extends React.Component {
         }
     }
 
+    //Handles when to show the run model alert
     runModelStatus() {
         let runData = {
             "modelName": this.props.modelData[this.state.modelIndex]["modelId"],
@@ -199,6 +206,7 @@ class SimpleModel extends React.Component {
         }
     }
 
+    //Handles the configuration for saving the model and when to show the alert
     saveModel() {
         let saveData = {
             "modelName": this.props.modelData[this.state.modelIndex]["modelId"],
@@ -217,6 +225,7 @@ class SimpleModel extends React.Component {
         //For when other options are changeable
     }
 
+    //Handles creating a new model with the new name
     createNewModelName() {
         let newModelData = {
             "modelName": this.state.newModelNameHolder,
@@ -236,6 +245,7 @@ class SimpleModel extends React.Component {
 
     }
 
+    //Handles deleting the model using the ID
     deleteModelStatus() {
         if(this.state.selectedModel !== "") {
             if(this.deleteModel("https://localhost:5001/api/Model/" + this.props.modelData[this.state.modelIndex]["modelId"])) {
@@ -248,6 +258,7 @@ class SimpleModel extends React.Component {
         }
     }
 
+    //Sends a DELETE request to the API
     deleteModel(url) {
         try {
             const requestOptions = {
@@ -278,6 +289,7 @@ class SimpleModel extends React.Component {
     }
 
     render() {
+        //Create templates for the menu portions of the page
         const {classes} = this.props;
         let savedModelsMenuTemplate, dataSourceTemplate;
         let dataSourcesTmp = [];
@@ -308,6 +320,7 @@ class SimpleModel extends React.Component {
                 </MenuItem>
             ));
         }
+        //HTML and Javascript functions to render the page
         return (
             <div>
                 {this.state.showRunModelAlert ?
