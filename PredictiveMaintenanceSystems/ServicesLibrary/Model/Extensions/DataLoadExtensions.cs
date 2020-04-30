@@ -59,5 +59,19 @@ namespace ServicesLibrary.Model.Extensions
             throw new NotImplementedException();
             //return MLContext.Data.LoadFromBinary();
         }
+
+        public static IDataView _FilterRowsByColumn(this MLContext MLContext, ref IDataView dataView, JToken componentObject)
+        {
+            string columnName = componentObject.Value<string>("ColumnName");
+            float lowerBound = componentObject.Value<float>("LowerBound");
+            float upperBound = componentObject.Value<float>("UpperBound");
+            return MLContext.Data.FilterRowsByColumn(dataView, columnName, lowerBound, upperBound);
+        }
+
+        public static IDataView _FilterRowsByMissingValues(this MLContext MLContext, ref IDataView dataView, JToken componentObject)
+        {
+            string[] columns = componentObject.Value<string>("ColumnNames").Split(", ");
+            return MLContext.Data.FilterRowsByMissingValues(dataView, columns);
+        }
     }
 }
