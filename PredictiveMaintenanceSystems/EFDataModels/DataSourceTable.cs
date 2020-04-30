@@ -18,7 +18,9 @@ namespace EFDataModels
         public string ConnectionString { get; set; }
 
         //A static data file from a DataSource
-        public byte[] File { get; set; }
+        //public byte[] File { get; set; }
+
+        public string LocalFilePath { get; set; }
 
         //Boolean determining if the DataSource is streaming or not.
         public bool IsStreaming { get; set; }

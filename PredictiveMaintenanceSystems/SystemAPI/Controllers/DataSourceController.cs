@@ -59,7 +59,7 @@ namespace SystemAPI.Controllers
 
             dataSource.DataSourceName = dataSourceTable.DataSourceName;
             dataSource.Configuration = dataSourceTable.Configuration;
-            dataSource.File = dataSourceTable.File;
+            dataSource.LocalFilePath = dataSourceTable.LocalFilePath;
             dataSource.IsStreaming = dataSourceTable.IsStreaming;
             dataSource.ConnectionString = dataSourceTable.ConnectionString;
             dataSource.LastUpdated = DateTime.Now;
@@ -107,7 +107,7 @@ namespace SystemAPI.Controllers
                 ConnectionString = dataSourceTable.ConnectionString,
                 UserId = dataSourceTable.UserId,
                 IsStreaming = dataSourceTable.IsStreaming,
-                File = dataSourceTable.File,
+                LocalFilePath = dataSourceTable.LocalFilePath,
                 User = userTable,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now                
@@ -120,39 +120,40 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetDataSourceTable", new { id = newDataSource.DataSourceId }, newDataSource);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> UploadDataSourceFile(Guid id, [FromBody] FileFeature file)
-        {
-            var dataSourceTable = await _context.DataSources.FindAsync(id);
-            if (dataSourceTable == null)
-            {
-                return NotFound($"Could Not Find datasource with ID: {id}");
-            }
+        //[HttpPatch("{id}")]
+        //public async Task<IActionResult> UploadDataSourceFile(Guid id, [FromBody] FileFeature file)
+        //{
+        //    var dataSourceTable = await _context.DataSources.FindAsync(id);
+        //    if (dataSourceTable == null)
+        //    {
+        //        return NotFound($"Could Not Find datasource with ID: {id}");
+        //    }
 
-            try
-            {
-                byte[] data = System.IO.File.ReadAllBytes(file.Path);
-                dataSourceTable.File = data;
-                dataSourceTable.LastUpdated = DateTime.Now;
+        //    try
+        //    {
+        //        byte[] data = System.IO.File.ReadAllBytes(file.Path);
+        //        dataSourceTable.File = data;
+        //        dataSourceTable.LastUpdated = DateTime.Now;
 
-                _context.Entry(dataSourceTable).State = EntityState.Modified;
+        //        _context.Entry(dataSourceTable).State = EntityState.Modified;
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception e)
-            {
-                return BadRequest($"Error reading file: {e}");
-            }
+        //        try
+        //        {
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            return BadRequest();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return BadRequest($"Error reading file: {e}");
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
+
         // DELETE: api/DataSource/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<DataSourceTable>> DeleteDataSourceTable(Guid id)
