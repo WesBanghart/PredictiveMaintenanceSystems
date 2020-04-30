@@ -23,7 +23,10 @@ import CreateIcon from '@material-ui/icons/Create';
 import Input from '@material-ui/core/Input';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
-
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import Paper from "@material-ui/core/Paper";
+import DeleteModelAlert from "./DeleteModelAlert";
+import { post, patch } from 'axios';
 
 const ColorButton = withStyles((theme) => ({
     root: {
@@ -81,26 +84,35 @@ class SimpleModel extends React.Component {
             showSaveModelAlert: false,
             saveModelStatus: "",
             selectedModel: "",
-            savedModels: this.props.userData["models"],
+            savedModels: this.props.modelData,
             createNewModelPrompt: false,
             newModelNameHolder: "",
             newModelHasBeenCreated: false,
             checkBoxDataSources: [],
             runModelStatus: "",
+            modelIndex: 0,
+            allDataSources: [],
+            dataSourcesDidLoad: false,
+            showDeleteModelAlert: false,
+            deleteModelStatus: "",
+            file: null,
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
         this.setAlgorithm = this.setAlgorithm.bind(this);
-        this.verifyMenuSelections = this.verifyMenuSelections.bind(this);
         this.postData = this.postData.bind(this);
-        this.runModelVerification = this.runModelVerification.bind(this);
         this.saveModel = this.saveModel.bind(this);
         this.setModel = this.setModel.bind(this);
         this.appendModelSave = this.appendModelSave.bind(this);
         this.putData = this.putData.bind(this);
         this.createNewModelName = this.createNewModelName.bind(this);
-        //this.getDataSourcesAPI = this.getDataSourcesAPI.bind(this);
         this.runModelStatus = this.runModelStatus.bind(this);
+        this.getModelResults = this.getModelResults.bind(this);
+        this.deleteModel = this.deleteModel.bind(this);
+        this.deleteModelStatus = this.deleteModelStatus.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this)
+        this.onChange = this.onChange.bind(this)
+        this.fileUpload = this.fileUpload.bind(this)
     }
 
     setDataSource(event) {
@@ -116,25 +128,21 @@ class SimpleModel extends React.Component {
     }
 
     setModel(event) {
-        this.setState({selectedModel: event.target.value});
+        let indexTmp = 0;
+        for(let i = 0; i < this.props.modelData.length; ++i) {
+            if(this.props.modelData[i]["modelId"] === event.target.value) {
+                indexTmp = i;
+            }
+        }
+        this.setState({selectedModel: event.target.value, modelIndex: indexTmp});
     }
 
-    verifyMenuSelections() {
-        if (!this.state.transformation || this.state.transformation.length === 0) {
-            return false;
-        } else return !(!this.state.algorithm || this.state.algorithm.length === 0);
-    }
-
-    postData(url) {
+    postData(url, bodyData) {
         try {
             const requestOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json; charset=utf-8' },
-                body: JSON.stringify({
-                    "modelName":"model_1",
-                    "configuration":"{json}",
-                    "userId":"3b7304a2-e7ad-46d6-1f2e-08d7de67eb5d"
-                })
+                body: JSON.stringify(bodyData)
             };
             fetch(url, requestOptions)
                 .then(async response => {
@@ -155,16 +163,12 @@ class SimpleModel extends React.Component {
         }
     }
 
-    putData(url) {
+    putData(url, body) {
         try {
             const requestOptions = {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json; charset=utf-8' },
-                body: JSON.stringify({
-                    "modelName":"model_1",
-                    "configuration":"{json}",
-                    "modelId":"9e22d099-6c94-4a8e-8dc3-08d7de68d061"
-                })
+                body: JSON.stringify(body)
             };
             fetch(url, requestOptions)
                 .then(async response => {
@@ -185,17 +189,13 @@ class SimpleModel extends React.Component {
         }
     }
 
-    runModelVerification() {
-        if(this.verifyMenuSelections()) {
-            this.runModelStatus();
-        }
-        else {
-            this.setState({showRunModelAlert: true, runModelStatus: "error"});
-        }
-    }
-
     runModelStatus() {
-        if (this.postData("https://localhost:5001/api/Model/saveandrun")) {
+        let runData = {
+            "modelName": this.props.modelData[this.state.modelIndex]["modelId"],
+            "configuration": "{json}",
+            "userId": this.state.userData["userId"]
+        };
+        if(this.postData("https://localhost:5001/api/Model/saveandrun", runData)) {
             this.setState({showRunModelAlert: true, runModelStatus: "success"});
         }
         else {
@@ -204,21 +204,16 @@ class SimpleModel extends React.Component {
     }
 
     saveModel() {
-        if(this.state.newModelHasBeenCreated) {
-            if (this.postData("https://localhost:5001/api/Model/save")) {
-                this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
-            }
-            else{
-                this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
-            }
+        let saveData = {
+            "modelName": this.props.modelData[this.state.modelIndex]["modelId"],
+            "configuration": "{json}",
+            "userId": this.state.userData["userId"]
+        };
+        if (this.postData("https://localhost:5001/api/Model/save", saveData)) {
+            this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
         }
-        else {
-            if (this.postData("https://localhost:5001/api/Model/save")) {
-                this.setState({showSaveModelAlert: true, saveModelStatus: "success"});
-            }
-            else {
-                this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
-            }
+        else{
+            this.setState({showSaveModelAlert: true, saveModelStatus: "error"});
         }
     }
 
@@ -227,29 +222,87 @@ class SimpleModel extends React.Component {
     }
 
     createNewModelName() {
-        let newModelData = [{
+        let newModelData = {
             "modelName": this.state.newModelNameHolder,
             "configuration": "{json}",
             "userId": this.state.userData["userId"],
-        }];
-        if(this.state.savedModels === null) {
-            this.setState({createNewModelPrompt: false, savedModels: newModelData, newModelHasBeenCreated: true});
-        }
-        else {
-            let modelHolder = this.state.savedModels.concat(newModelData);
-            this.setState({createNewModelPrompt: false, savedModels: modelHolder, newModelHasBeenCreated: true});
-
+        };
+        if(this.postData("https://localhost:5001/api/Model/save", newModelData)) {
+            this.setState({createNewModelPrompt: false});
+        } else {
+            this.setState({createNewModelPrompt: false});
         }
     }
 
-    /**
-    getDataSourcesAPI() {
-        fetch("https://localhost:5001/api/DataSource"
-        ).then(function(response) {
-            return response.json();
-        }).then(jsonData => this.setState({dataSources: [jsonData[0]["dataSourceName"]]}))
+
+    getModelResults() {
+
     }
-     */
+
+    deleteModelStatus() {
+        if(this.state.selectedModel !== "") {
+            if(this.deleteModel("https://localhost:5001/api/Model/" + this.props.modelData[this.state.modelIndex]["modelId"])) {
+                this.setState({showDeleteModelAlert: true, deleteModelStatus: "success"});
+            } else {
+                this.setState({showDeleteModelAlert: true, deleteModelStatus: "error"});
+            }
+        } else {
+            this.setState({showDeleteModelAlert: true, deleteModelStatus: "noModelSelected"});
+        }
+    }
+
+    deleteModel(url) {
+        try {
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json; charset=utf-8' },
+            };
+            fetch(url, requestOptions)
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok) {
+                        const error = (data && data.message) || response.status;
+                        return Promise.reject(error);
+                    }
+                    this.setState({ postId: data.modelId })
+                })
+                .catch(error => {
+                    this.setState({ errorMessage: error });
+                    console.error('There was an error!', error);
+                });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    onFormSubmit(e) {
+        e.preventDefault()
+        this.fileUpload(this.state.file);
+    }
+
+    onChange(e) {
+        this.setState({file:e.target.files[0]})
+    }
+
+    fileUpload(file) {
+        console.log(this.state.dataSources);
+        for(let i = 0; i < this.props.dataSourceData.length; ++i) {
+            if(this.state.dataSources[i] === this.props.dataSourceData[i]["dataSourceName"]) {
+                const url = 'http://localhost:5001/api/DataSource/' + this.props.dataSourceData[i]["dataSourceId"];
+                const formData = new FormData();
+                formData.append('file', file)
+                const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+                let response = patch(url, formData, config)
+                console.log(response);
+            }
+        }
+    }
+
 
     componentDidMount() {
 
@@ -257,13 +310,33 @@ class SimpleModel extends React.Component {
 
     render() {
         const {classes} = this.props;
-        let savedModelsMenuTemplate;
-        if(this.props.userData["models"] == null) {
-            savedModelsMenuTemplate = <MenuItem value={"model_1"}>Model 1</MenuItem>
+        let savedModelsMenuTemplate, dataSourceTemplate;
+        let dataSourcesTmp = [];
+        if(this.props.modelData == null) {
+            savedModelsMenuTemplate = <MenuItem value={"model_1"}>Model Placeholder</MenuItem>
         }
         else {
-            savedModelsMenuTemplate = this.state.savedModels.map(v => (
-                <MenuItem value={v.userId}>{v.modelName}</MenuItem>
+            savedModelsMenuTemplate = this.props.modelData.map(v => (
+                <MenuItem value={v.modelId}>{v.modelName}</MenuItem>
+            ));
+        }
+        if(this.props.dataSourceData == null) {
+            dataSourceTemplate = tempDataSources.map((source) => (
+                <MenuItem key={source} value={source}>
+                    <Checkbox checked={this.state.dataSources.indexOf(source) > -1}/>
+                    <ListItemText primary={source}/>
+                </MenuItem>
+            ));
+        }
+        else {
+            for(let i = 0; i < this.props.dataSourceData.length; ++i) {
+                dataSourcesTmp[i] = this.props.dataSourceData[i]["dataSourceName"];
+            }
+            dataSourceTemplate = dataSourcesTmp.map((source) => (
+                <MenuItem key={source} value={source}>
+                    <Checkbox checked={this.state.dataSources.indexOf(source) > -1}/>
+                    <ListItemText primary={source}/>
+                </MenuItem>
             ));
         }
         return (
@@ -274,6 +347,10 @@ class SimpleModel extends React.Component {
                 }
                 {this.state.showSaveModelAlert ?
                     <SaveModelAlert status={this.state.saveModelStatus}/> :
+                    null
+                }
+                {this.state.showDeleteModelAlert ?
+                    <DeleteModelAlert status={this.state.deleteModelStatus} /> :
                     null
                 }
                 <div>
@@ -331,7 +408,7 @@ class SimpleModel extends React.Component {
                         color="primary"
                         className={classes.button}
                         startIcon={<DirectionsRunIcon/>}
-                        onClick={() => this.runModelVerification()}
+                        onClick={() => this.runModelStatus()}
                     >
                         Save & Run
                     </ColorButton>
@@ -340,9 +417,19 @@ class SimpleModel extends React.Component {
                         color="secondary"
                         className={classes.button}
                         startIcon={<DeleteIcon/>}
+                        onClick={() => this.deleteModelStatus()}
                     >
                         Delete
                     </Button>
+                    <ColorButton
+                        variant="contained"
+                        color="secondary"
+                        className={classes.button}
+                        startIcon={<CloudDownloadIcon/>}
+                        onClick={this.getModelResults}
+                    >
+                        Get Model Results
+                    </ColorButton>
                     <div>
                         <FormControl className={classes.formControl}>
                             <InputLabel id="model-selection">Model</InputLabel>
@@ -371,12 +458,7 @@ class SimpleModel extends React.Component {
                                 renderValue={(selected) => selected.join(', ')}
                                 MenuProps={MenuProps}
                             >
-                                {tempDataSources.map((source) => (
-                                    <MenuItem key={source} value={source}>
-                                        <Checkbox checked={this.state.dataSources.indexOf(source) > -1}/>
-                                        <ListItemText primary={source}/>
-                                    </MenuItem>
-                                ))}
+                                {dataSourceTemplate}
                             </Select>
                             <FormHelperText>Optional</FormHelperText>
                         </FormControl>
@@ -417,6 +499,36 @@ class SimpleModel extends React.Component {
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
             </div>
+                    <FormControl required className={classes.formControl}>
+                        <Input id="algorithm-selection" type="file" onChange={this.onChange}>File Upload</Input>
+                        <ColorButton
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<CloudUploadIcon/>}
+                            onClick={this.onFormSubmit}
+                        >
+                            File Upload
+                        </ColorButton>
+                    </FormControl>
+
+                    {this.state.selectedModel !== "" ?
+                        <Paper className={classes.root}>
+                            <h3 style={{margin: 10 + 'px'}}>Model Name: {this.props.modelData[this.state.modelIndex]["modelName"]}</h3>
+                            <body>
+                            <div style={{fontSize: 18 + 'px', margin: 20 + 'px'}}>
+                                <p>
+                                    Model ID: {this.props.modelData[this.state.modelIndex]["modelId"]}
+                                    <br/>Model Configuration: {this.props.modelData[this.state.modelIndex]["configuration"]}
+                                    <br/>File: {this.props.modelData[this.state.modelIndex]["file"]}
+                                    <br/>Last Updated: {this.props.modelData[this.state.modelIndex]["lastUpdated"]}
+                                    <br/>User ID: {this.props.modelData[this.state.modelIndex]["userId"]}
+                                </p>
+                            </div>
+                            </body>
+                        </Paper>:
+                        null
+                    }
             </div>
             </div>
         );

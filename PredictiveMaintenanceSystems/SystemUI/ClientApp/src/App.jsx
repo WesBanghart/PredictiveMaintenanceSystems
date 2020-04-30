@@ -24,8 +24,12 @@ export default class App extends Component {
         this.state = 
         {
             isLoaded:false,
-            user: []
+            user: [],
+            models: [],
+            dataSources: [],
         }
+        this.getModels = this.getModels.bind(this);
+        this.getDataSources = this.getDataSources.bind(this);
     }
     static displayName = App.name;
 
@@ -37,14 +41,29 @@ export default class App extends Component {
             ).then(function(response) {
             return response.json();
         }).then(jsonData => this.setState({user: jsonData[0]}))
+        this.getModels();
+        this.getDataSources();
     };
 
+    getModels() {
+        fetch("https://localhost:5001/api/Model"
+        ).then(function(response) {
+            return response.json();
+        }).then(jsonData => this.setState({models: jsonData}))
+    }
+
+    getDataSources() {
+        fetch("https://localhost:5001/api/DataSource"
+        ).then(function(response) {
+            return response.json();
+        }).then(jsonData => this.setState({dataSources: jsonData}))
+    }
 
     render() {
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
         } else {
-            return (<Dashboard userData = {this.state.user}/>);
+            return (<Dashboard userData={this.state.user} modelData={this.state.models} dataSourceData={this.state.dataSources}/>);
         }
     }
 }

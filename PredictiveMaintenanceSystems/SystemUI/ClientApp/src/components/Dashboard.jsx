@@ -42,14 +42,16 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loadedData: false,
+            loadedUserData: false,
+            loadedModelData: false,
             data: [],
+            models: [],
         };
     }
 
     render() {
         const {classes} = this.props;
-        if(this.props.userData && !this.state.loadedData) {
+        if(this.props.userData && !this.state.loadedUserData) {
             try {
                 this.setState({data: this.props.userData});
             } catch(error) {
@@ -73,8 +75,8 @@ class Dashboard extends React.Component {
                         <Container maxWidth="lg" className={classes.container}>
                             <Switch>
                                 <Route path="/" exact component={Desktop}/>
-                                <Route path="/data_sources" component={Devices}/>
-                                <Route path="/simple_model" render={(props) => <SimpleModel {...props} userData={this.props.userData}/>} />
+                                <Route path="/data_sources" render={(props) => <Devices {...props} dataSourceData={this.props.dataSourceData} userData={this.props.userData}/>} />
+                                <Route path="/simple_model" render={(props) => <SimpleModel {...props} userData={this.props.userData} dataSourceData={this.props.dataSourceData} modelData={this.props.modelData}/>} />
                                 <Route path="/workflow" component={Workflow}/>
                                 <Route path="/settings" render={(props) => <Settings {...props} userData={this.props.userData}/>}/>
                             </Switch>
