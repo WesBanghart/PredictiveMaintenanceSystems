@@ -168,7 +168,7 @@ namespace ServicesLibrary.Model
             if (trainSourceEntry == null) return false;
             string trainSourceConfig = trainSourceEntry.Configuration;
             JToken trainSourceJson = JToken.Parse(trainSourceConfig);
-            if (!_ParseDataSourceJson(trainSourceJson, false)) return false;
+            if (!_ParseDataSourceJson(ref trainSourceEntry, trainSourceJson, false)) return false;
             
             //parse testing data source id
             if (modelObject.TryGetValue("TestSetSource", out JToken token))
@@ -178,7 +178,7 @@ namespace ServicesLibrary.Model
                 if (testSourceEntry == null) return false;
                 string testSourceConfig = testSourceEntry.Configuration;
                 JToken testSourceJson = JToken.Parse(testSourceConfig);
-                _ParseDataSourceJson(testSourceJson, true);
+                _ParseDataSourceJson(ref testSourceEntry, testSourceJson, true);
             }
             else
             {
@@ -208,7 +208,7 @@ namespace ServicesLibrary.Model
             return true;
         }
 
-        private bool _ParseDataSourceJson(JToken dataSourceJson, bool isTestData)
+        private bool _ParseDataSourceJson(ref DataSourceTable dataSource, JToken dataSourceJson, bool isTestData)
         {
             string sourceType = dataSourceJson.Value<string>("Type");
 
@@ -225,6 +225,15 @@ namespace ServicesLibrary.Model
                     return true;
                 
                 case "File":
+                    string fileName = dataSource.FileName;
+                    byte[] fileBytes = dataSource.File;
+                    FileInfo tempFile = new FileInfo($"temp/{dataSource.DataSourceId}/{fileName}");
+                    if (tempFile.Exists) tempFile.Delete();
+                    using(FileStream fileStream = new FileStream(tempFile.FullName, FileMode.Create, FileAccess.ReadWrite))
+                    {
+                        fileStream.Write(fileBytes, 0, fileBytes.Length);
+                    }
+                    dataSourceJson["LocalPath"] = tempFile.FullName;
                     if (isTestData) TestDataView = MLContext._LoadFromFile(dataSourceJson);
                     else TrainDataView = MLContext._LoadFromFile(dataSourceJson);
                     return true;
@@ -313,10 +322,6 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ E ---------------------------------------------------------------------------------
-                case "EstimatedPlatt":
-                    pipeline.Append(MLContext._EstimatedPlatt(componentObject));
-                    return true;
-
                 case "ExtractPixels":
                     pipeline.Append(MLContext._ExtractPixels(componentObject));
                     return true;
@@ -355,14 +360,6 @@ namespace ServicesLibrary.Model
                     pipeline.Append(MLContext._FieldAwareFactorizationMachineTrainer(componentObject));
                     return true;
 
-                case "FilterRowsByColumn":
-                    pipeline.Append(MLContext._FilterRowsByColumn(componentObject));
-                    return true;
-
-                case "FixedPlatt":
-                    pipeline.Append(MLContext._FixedPlatt(componentObject));
-                    return true;
-
                 case "ForecastBySsa":
                     pipeline.Append(MLContext._ForecastBySsa(componentObject));
                     return true;
@@ -385,16 +382,8 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ I ---------------------------------------------------------------------------------
-                case "ImageClassification":
-                    pipeline.Append(MLContext._ImageClassificationTrainer(componentObject));
-                    return true;
-
                 case "IndicateMissingValues":
                     pipeline.Append(MLContext._IndicateMissingValues(componentObject));
-                    return true;
-
-                case "IsotonicDistribution":
-                    pipeline.Append(MLContext._IsotonicDistribution(componentObject));
                     return true;
 
 
@@ -481,10 +470,6 @@ namespace ServicesLibrary.Model
                     pipeline.Append(MLContext._NaiveBayesMulticlassTrainer(componentObject));
                     return true;
 
-                case "NaiveDistribution":
-                    pipeline.Append(MLContext._NaiveDistribution(componentObject));
-                    return true;
-
                 case "NormalizeBinning":
                     pipeline.Append(MLContext._NormalizeBinning(componentObject));
                     return true;
@@ -527,10 +512,6 @@ namespace ServicesLibrary.Model
                     pipeline.Append(MLContext._OneHotHashEncoding(componentObject));
                     return true;
 
-                case "OneVersusAll":
-                    pipeline.Append(MLContext._OneVersusAllTrainer(componentObject));
-                    return true;
-
                 case "OnlineGradientDescent":
                     pipeline.Append(MLContext._OnlineGradientDescentTrainer(componentObject));
                     return true;
@@ -541,10 +522,6 @@ namespace ServicesLibrary.Model
 
 
                 //------------------------ P ---------------------------------------------------------------------------------
-                case "PairwiseCoupling":
-                    pipeline.Append(MLContext._PairwiseCouplingTrainer(componentObject));
-                    return true;
-
                 case "Prior":
                     pipeline.Append(MLContext._PriorTrainer(componentObject));
                     return true;

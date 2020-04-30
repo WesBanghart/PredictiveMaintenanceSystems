@@ -19,7 +19,7 @@ namespace ServicesLibrary.Model.Extensions
             foreach(JToken columnObject in componentObject["Columns"].Children())
             {
                 string name = columnObject.Value<string>("Name");
-                int colIndex = columnObject.Value<int>("ColIndex");
+                int colIndex = columnObject.Value<int>("ColumnIndex");
                 DbType dbType = Enum.Parse<DbType>(columnObject.Value<string>("DataType"));
                 columns.Add(new DatabaseLoader.Column(name, dbType, colIndex));
             }
@@ -32,19 +32,19 @@ namespace ServicesLibrary.Model.Extensions
             return loader.Load(databaseSource);
         }
 
-        public static IDataView _LoadFromFile(this MLContext MLContext, JToken componentObject)
+        public static IDataView _LoadFromFile(this MLContext MLContext, JToken componentObject) //TODO: edit to support db changes to file load location
         {
             List<TextLoader.Column> columns = new List<TextLoader.Column>();
 
             foreach (JToken columnObject in componentObject["Columns"].Children())
             {
                 string name = columnObject.Value<string>("Name");
-                int colIndex = columnObject.Value<int>("ColIndex");
+                int colIndex = columnObject.Value<int>("ColumnIndex");
                 DataKind dataKind = Enum.Parse<DataKind>(columnObject.Value<string>("DataType"));
                 columns.Add(new TextLoader.Column(name, dataKind, colIndex));
             }
 
-            string path = componentObject.Value<string>("Path");
+            string path = componentObject.Value<string>("LocalPath");
             char separatorChar = componentObject.Value<char>("SeparatorChar");
             bool hasHeader = componentObject.Value<bool>("HasHeader");
             bool allowQuoting = componentObject.Value<bool>("AllowQuoting");
