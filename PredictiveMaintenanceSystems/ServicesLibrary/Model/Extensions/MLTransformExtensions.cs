@@ -27,7 +27,7 @@ namespace ServicesLibrary.Model.Extensions
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
-            //loss function
+            //TODO: loss function
             float learningRate = componentObject.Value<float>("LearningRate");
             bool decreaseLearningRate = componentObject.Value<bool>("DecreaseLearningRate");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
@@ -55,7 +55,7 @@ namespace ServicesLibrary.Model.Extensions
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
-            //sdca loss function
+            //TODO: sdca loss function
             float l1Regularization = componentObject.Value<float>("L1Regularization");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
             int numIterations = componentObject.Value<int>("NumberOfIterations");
@@ -90,7 +90,7 @@ namespace ServicesLibrary.Model.Extensions
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
-            //loss function
+            //TODO: loss function
             int numIterations = componentObject.Value<int>("NumberOfIterations");
             double learningRate = componentObject.Value<double>("LearningRate");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
@@ -236,7 +236,7 @@ namespace ServicesLibrary.Model.Extensions
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
-            //loss function
+            //TODO: loss function
             float l1Regularization = componentObject.Value<float>("L1Regularization");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
             int numIterations = componentObject.Value<int>("NumberOfIterations");
@@ -290,12 +290,14 @@ namespace ServicesLibrary.Model.Extensions
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string groupIdColumn = componentObject.Value<string>("RowGroupColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
             int numLeaves = componentObject.Value<int>("NumberOfLeaves");
             int numTrees = componentObject.Value<int>("NumberOfTrees");
             int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
             double learningRate = componentObject.Value<double>("LearningRate");
-            return MLContext.Ranking.Trainers.FastTree(labelColumn, featureColumn, exampleWeightColumn, );
+            return MLContext.Ranking.Trainers.FastTree(labelColumn, featureColumn, groupIdColumn, exampleWeightColumn,
+                                                       numLeaves, numTrees, minExamplesPerLeaf, learningRate);
         }
 
 
@@ -334,7 +336,7 @@ namespace ServicesLibrary.Model.Extensions
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
-            //loss function
+            //TODO: loss function
             float l1Regularization = componentObject.Value<float>("L1Regularization");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
             int numIterations = componentObject.Value<int>("NumberOfIterations");
@@ -354,7 +356,7 @@ namespace ServicesLibrary.Model.Extensions
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
-            //loss function
+            //TODO: loss function
             float learningRate = componentObject.Value<float>("LearningRate");
             bool decreaseLearningRate = componentObject.Value<bool>("DecreaseLearningRate");
             float l2Regularization = componentObject.Value<float>("L2Regularization");

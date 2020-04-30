@@ -34,7 +34,6 @@ namespace ServicesLibrary.Model.Extensions
 
         public static IEstimator<ITransformer> _OneHotHashEncoding(this MLContext MLContext, JToken componentObject)
         {
-            throw new NotImplementedException();
             string outputColumn = componentObject.Value<string>("OutputColumnName");
             string inputColumn = componentObject.Value<string>("InputColumnName");
             OneHotEncodingEstimator.OutputKind outputKind = Enum.Parse<OneHotEncodingEstimator.OutputKind>(componentObject.Value<string>("OutputKind"));
