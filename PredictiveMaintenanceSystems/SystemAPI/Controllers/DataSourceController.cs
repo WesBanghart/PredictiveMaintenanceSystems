@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,7 +60,6 @@ namespace SystemAPI.Controllers
 
             dataSource.DataSourceName = dataSourceTable.DataSourceName;
             dataSource.Configuration = dataSourceTable.Configuration;
-            dataSource.LocalFilePath = dataSourceTable.LocalFilePath;
             dataSource.IsStreaming = dataSourceTable.IsStreaming;
             dataSource.ConnectionString = dataSourceTable.ConnectionString;
             dataSource.LastUpdated = DateTime.Now;
@@ -89,13 +89,20 @@ namespace SystemAPI.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable([FromBody] DataSourceTable dataSourceTable)
+        public async Task<ActionResult<DataSourceTable>> PostDataSourceTable([FromBody] DataSourceTable dataSourceTable, [FromForm]IFormFile body)
         {
             // Check if User exists
             var userTable = await _context.Users.FindAsync(dataSourceTable.UserId);
             if(userTable == null)
             {
                 return NotFound();
+            }
+
+            byte[] fileBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                await body.CopyToAsync(memoryStream);
+                fileBytes = memoryStream.ToArray();
             }
 
             //Create new Datasource table
@@ -107,8 +114,12 @@ namespace SystemAPI.Controllers
                 ConnectionString = dataSourceTable.ConnectionString,
                 UserId = dataSourceTable.UserId,
                 IsStreaming = dataSourceTable.IsStreaming,
-                LocalFilePath = dataSourceTable.LocalFilePath,
                 User = userTable,
+                File = fileBytes,
+                FileName = body.FileName,
+                FileContentDisposition = body.ContentDisposition,
+                FileContentType = body.ContentType,
+                FileLength = body.Length,
                 Created = DateTime.Now,
                 LastUpdated = DateTime.Now                
             };
@@ -120,39 +131,49 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetDataSourceTable", new { id = newDataSource.DataSourceId }, newDataSource);
         }
 
-        //[HttpPatch("{id}")]
-        //public async Task<IActionResult> UploadDataSourceFile(Guid id, [FromBody] FileFeature file)
-        //{
-        //    var dataSourceTable = await _context.DataSources.FindAsync(id);
-        //    if (dataSourceTable == null)
-        //    {
-        //        return NotFound($"Could Not Find datasource with ID: {id}");
-        //    }
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UploadDataSourceFile(Guid id, [FromForm] IFormFile body)
+        {
+            var dataSourceTable = await _context.DataSources.FindAsync(id);
+            if (dataSourceTable == null)
+            {
+                return NotFound($"Could Not Find datasource with ID: {id}");
+            }
 
-        //    try
-        //    {
-        //        byte[] data = System.IO.File.ReadAllBytes(file.Path);
-        //        dataSourceTable.File = data;
-        //        dataSourceTable.LastUpdated = DateTime.Now;
+            try
+            {
+                byte[] fileBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await body.CopyToAsync(memoryStream);
+                    fileBytes = memoryStream.ToArray();
+                }
 
-        //        _context.Entry(dataSourceTable).State = EntityState.Modified;
+                dataSourceTable.File = fileBytes;
+                dataSourceTable.FileContentDisposition = body.ContentDisposition;
+                dataSourceTable.FileContentType = body.ContentType;
+                dataSourceTable.FileLength = body.Length;
+                dataSourceTable.FileName = body.FileName;
+                dataSourceTable.LastUpdated = DateTime.Now;
 
-        //        try
-        //        {
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            return BadRequest();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return BadRequest($"Error reading file: {e}");
-        //    }
+                _context.Entry(dataSourceTable).State = EntityState.Modified;
 
-        //    return NoContent();
-        //}
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"Error reading file: {e}");
+            }
+
+            return Ok();
+        }
 
         // DELETE: api/DataSource/5
         [HttpDelete("{id}")]

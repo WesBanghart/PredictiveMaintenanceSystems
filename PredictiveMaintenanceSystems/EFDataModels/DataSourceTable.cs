@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace EFDataModels
 {
@@ -18,9 +19,13 @@ namespace EFDataModels
         public string ConnectionString { get; set; }
 
         //A static data file from a DataSource
-        //public byte[] File { get; set; }
+        public byte[] File { get; set; }
 
-        public string LocalFilePath { get; set; }
+        public string FileContentType { get; set; }
+        public string FileName { get; set; }
+        public long FileLength { get; set; }
+        public string FileContentDisposition { get; set; }
+
 
         //Boolean determining if the DataSource is streaming or not.
         public bool IsStreaming { get; set; }
