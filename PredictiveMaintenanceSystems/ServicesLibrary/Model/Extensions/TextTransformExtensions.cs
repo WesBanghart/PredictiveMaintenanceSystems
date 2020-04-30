@@ -49,16 +49,19 @@ namespace ServicesLibrary.Model.Extensions
         public static IEstimator<ITransformer> _ProduceWordBags(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Transforms.Text.ProduceWordBags();
         }
 
         public static IEstimator<ITransformer> _ProduceHashedNgrams(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Transforms.Text.ProduceHashedNgrams();
         }
 
         public static IEstimator<ITransformer> _ProduceHashedWordBags(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Transforms.Text.ProduceHashedWordBags();
         }
 
         public static IEstimator<ITransformer> _RemoveDefaultStopWords(this MLContext MLContext, JToken componentObject)
@@ -79,11 +82,13 @@ namespace ServicesLibrary.Model.Extensions
         public static IEstimator<ITransformer> _LatentDirichletAllocation(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Transforms.Text.LatentDirichletAllocation();
         }
 
         public static IEstimator<ITransformer> _ApplyWordEmbedding(this MLContext MLContext, JToken componentObject)
         {
             throw new NotImplementedException();
+            //return MLContext.Transforms.Text.ApplyWordEmbedding();
         }
     }
 }
