@@ -16,7 +16,9 @@ namespace ServicesLibrary.Model.Extensions
             int rank = componentObject.Value<int>("Rank");
             int oversampling = componentObject.Value<int>("Oversampling");
             bool ensureZeroMean = componentObject.Value<bool>("EnsureZeroMean");
-            return MLContext.AnomalyDetection.Trainers.RandomizedPca(featureColumn, exampleWeightColumn, rank, oversampling, ensureZeroMean);
+            int seed = componentObject.Value<int>("Seed");
+            return MLContext.AnomalyDetection.Trainers.RandomizedPca(featureColumn, exampleWeightColumn, rank,
+                                                                     oversampling, ensureZeroMean, seed);
         }
 
 
@@ -62,13 +64,22 @@ namespace ServicesLibrary.Model.Extensions
                                                                              l1Regularization, numIterations);
         }
 
+        public static IEstimator<ITransformer> _SymbolicSgdLogisticRegressionBinaryTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            return MLContext.BinaryClassification.Trainers.SymbolicSgdLogisticRegression(labelColumn, featureColumn, numIterations);
+        }
+
+
         public static IEstimator<ITransformer> _SgdCalibratedBinaryTrainer(this MLContext MLContext, JToken componentObject)
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
             string featureColumn = componentObject.Value<string>("FeatureColumnName");
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
             int numIterations = componentObject.Value<int>("NumberOfIterations");
-            float learningRate = componentObject.Value<float>("LearningRate");
+            double learningRate = componentObject.Value<double>("LearningRate");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
             return MLContext.BinaryClassification.Trainers.SgdCalibrated(labelColumn, featureColumn, exampleWeightColumn,
                                                                          numIterations, learningRate, l2Regularization);
@@ -81,7 +92,7 @@ namespace ServicesLibrary.Model.Extensions
             string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
             //loss function
             int numIterations = componentObject.Value<int>("NumberOfIterations");
-            float learningRate = componentObject.Value<float>("LearningRate");
+            double learningRate = componentObject.Value<double>("LearningRate");
             float l2Regularization = componentObject.Value<float>("L2Regularization");
             return MLContext.BinaryClassification.Trainers.SgdNonCalibrated(labelColumn, featureColumn,
                                                                             exampleWeightColumn, null, numIterations,
@@ -103,6 +114,58 @@ namespace ServicesLibrary.Model.Extensions
                                                                                    l2Regularization,
                                                                                    optimizationTolerance, historySize,
                                                                                    enforceNonNegativity);
+        }
+
+        public static IEstimator<ITransformer> _LightGbmBinaryTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            return MLContext.BinaryClassification.Trainers.LightGbm(labelColumn, featureColumn, exampleWeightColumn,
+                                                                    numLeaves, minExamplesPerLeaf, learningRate,
+                                                                    numIterations);
+        }
+
+        public static IEstimator<ITransformer> _FastTreeBinaryTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.BinaryClassification.Trainers.FastTree(labelColumn, featureColumn, exampleWeightColumn,
+                                                                    numLeaves, numTrees, minExamplesPerLeaf,
+                                                                    learningRate);
+        }
+
+        public static IEstimator<ITransformer> _FastForestBinaryTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            return MLContext.BinaryClassification.Trainers.FastForest(labelColumn, featureColumn, exampleWeightColumn,
+                                                                      numLeaves, numTrees, minExamplesPerLeaf);
+        }
+
+        public static IEstimator<ITransformer> _GamBinaryTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            int maxBinCount = componentObject.Value<int>("MaximumBinCountPerFeature");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.BinaryClassification.Trainers.Gam(labelColumn, featureColumn, exampleWeightColumn,
+                                                               numIterations, maxBinCount, learningRate);
         }
 
         public static IEstimator<ITransformer> _FieldAwareFactorizationMachineTrainer(this MLContext MLContext, JToken componentObject)
@@ -141,6 +204,20 @@ namespace ServicesLibrary.Model.Extensions
 
 
         //=============== MULTICLASS CLASSIFICATION FUNCTIONS =================================
+        public static IEstimator<ITransformer> _LightGbmMulticlassTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            return MLContext.MulticlassClassification.Trainers.LightGbm(labelColumn, featureColumn, exampleWeightColumn,
+                                                                        numLeaves, minExamplesPerLeaf, learningRate,
+                                                                        numIterations);
+        }
+
         public static IEstimator<ITransformer> _SdcaMaximumEntropyMulticlassTrainer(this MLContext MLContext, JToken componentObject)
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
@@ -194,6 +271,34 @@ namespace ServicesLibrary.Model.Extensions
         }
 
 
+        //=============== RANKING FUNCTIONS ===================================================
+        public static IEstimator<ITransformer> _LightGbmRankingTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string groupIdColumn = componentObject.Value<string>("RowGroupColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            return MLContext.Ranking.Trainers.LightGbm(labelColumn, featureColumn, groupIdColumn, exampleWeightColumn,
+                                                       numLeaves, minExamplesPerLeaf, learningRate, numIterations);
+        }
+
+        public static IEstimator<ITransformer> _FastTreeRankingTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.Ranking.Trainers.FastTree(labelColumn, featureColumn, exampleWeightColumn, );
+        }
+
+
         //=============== REGRESSION FUNCTIONS ================================================
         public static IEstimator<ITransformer> _LbfgsPoissonRegressionTrainer(this MLContext MLContext, JToken componentObject)
         {
@@ -211,6 +316,19 @@ namespace ServicesLibrary.Model.Extensions
                                                                         enforceNonNegativity);
         }
 
+        public static IEstimator<ITransformer> _LightGbmRegressionTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            return MLContext.Regression.Trainers.LightGbm(labelColumn, featureColumn, exampleWeightColumn, numLeaves,
+                                                          minExamplesPerLeaf, learningRate, numIterations);
+        }
+
         public static IEstimator<ITransformer> _SdcaRegressionTrainer(this MLContext MLContext, JToken componentObject)
         {
             string labelColumn = componentObject.Value<string>("LabelColumnName");
@@ -222,6 +340,14 @@ namespace ServicesLibrary.Model.Extensions
             int numIterations = componentObject.Value<int>("NumberOfIterations");
             return MLContext.Regression.Trainers.Sdca(labelColumn, featureColumn, exampleWeightColumn, null,
                                                       l2Regularization, l1Regularization, numIterations);
+        }
+
+        public static IEstimator<ITransformer> _OlsTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            return MLContext.Regression.Trainers.Ols(labelColumn, featureColumn, exampleWeightColumn);
         }
 
         public static IEstimator<ITransformer> _OnlineGradientDescentTrainer(this MLContext MLContext, JToken componentObject)
@@ -236,6 +362,56 @@ namespace ServicesLibrary.Model.Extensions
             return MLContext.Regression.Trainers.OnlineGradientDescent(labelColumn, featureColumn, null, learningRate,
                                                                        decreaseLearningRate, l2Regularization,
                                                                        numIterations);
+        }
+
+        public static IEstimator<ITransformer> _FastTreeRegressionTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.Regression.Trainers.FastTree(labelColumn, featureColumn, exampleWeightColumn, numLeaves,
+                                                          numTrees, minExamplesPerLeaf, learningRate);
+        }
+
+        public static IEstimator<ITransformer> _FastTreeTweedieTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.Regression.Trainers.FastTreeTweedie(labelColumn, featureColumn, exampleWeightColumn,
+                                                                 numLeaves, numTrees, minExamplesPerLeaf, learningRate);
+        }
+
+        public static IEstimator<ITransformer> _FastForestRegressionTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numLeaves = componentObject.Value<int>("NumberOfLeaves");
+            int numTrees = componentObject.Value<int>("NumberOfTrees");
+            int minExamplesPerLeaf = componentObject.Value<int>("MinimumExampleCountPerLeaf");
+            return MLContext.Regression.Trainers.FastForest(labelColumn, featureColumn, exampleWeightColumn, numLeaves,
+                                                            numTrees, minExamplesPerLeaf);
+        }
+
+        public static IEstimator<ITransformer> _GamRegressionTrainer(this MLContext MLContext, JToken componentObject)
+        {
+            string labelColumn = componentObject.Value<string>("LabelColumnName");
+            string featureColumn = componentObject.Value<string>("FeatureColumnName");
+            string exampleWeightColumn = componentObject.Value<string>("ExampleWeightColumnName");
+            int numIterations = componentObject.Value<int>("NumberOfIterations");
+            int maxBinCount = componentObject.Value<int>("MaximumBinCountPerFeature");
+            double learningRate = componentObject.Value<double>("LearningRate");
+            return MLContext.Regression.Trainers.Gam(labelColumn, featureColumn, exampleWeightColumn, numIterations,
+                                                     maxBinCount, learningRate);
         }
     }
 }

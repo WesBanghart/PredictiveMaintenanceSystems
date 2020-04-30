@@ -12,7 +12,7 @@ namespace ServicesLibrary.Model.Extensions
         public static IEstimator<ITransformer> _Concatenate(this MLContext MLContext, JToken componentObject)
         {
             string outputColumn = componentObject.Value<string>("OutputColumnName");
-            string[] inputColumns = componentObject.Value<string>("InputColumnNames").Split(",");
+            string[] inputColumns = componentObject.Value<string>("InputColumnNames").Split(", ");
             return MLContext.Transforms.Concatenate(outputColumn, inputColumns);
         }
 
@@ -25,19 +25,14 @@ namespace ServicesLibrary.Model.Extensions
 
         public static IEstimator<ITransformer> _DropColumns(this MLContext MLContext, JToken componentObject)
         {
-            string[] dropColumns = componentObject.Value<string>("ColumnNames").Split(",");
+            string[] dropColumns = componentObject.Value<string>("ColumnNames").Split(", ");
             return MLContext.Transforms.DropColumns(dropColumns);
         }
 
         public static IEstimator<ITransformer> _SelectColumns(this MLContext MLContext, JToken componentObject)
         {
-            string[] selectColumns = componentObject.Value<string>("ColumnNames").Split(",");
+            string[] selectColumns = componentObject.Value<string>("ColumnNames").Split(", ");
             return MLContext.Transforms.SelectColumns(selectColumns);
-        }
-
-        public static IEstimator<ITransformer> _FilterRowsByColumn(this MLContext MLContext, JToken componentObject)
-        {
-            throw new NotImplementedException();
         }
     }
 }

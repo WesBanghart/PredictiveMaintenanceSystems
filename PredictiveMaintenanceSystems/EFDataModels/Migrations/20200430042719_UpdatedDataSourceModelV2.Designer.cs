@@ -4,14 +4,16 @@ using EFDataModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EFDataModels.Migrations
 {
     [DbContext(typeof(EFSystemContext))]
-    partial class EFSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20200430042719_UpdatedDataSourceModelV2")]
+    partial class UpdatedDataSourceModelV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,26 +39,14 @@ namespace EFDataModels.Migrations
                     b.Property<string>("DataSourceName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("File")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("FileContentDisposition")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileContentType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("FileLength")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("FileName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsStreaming")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastUpdated")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("LocalFilePath")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()

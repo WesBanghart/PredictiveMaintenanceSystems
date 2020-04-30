@@ -26,7 +26,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Paper from "@material-ui/core/Paper";
 import DeleteModelAlert from "./DeleteModelAlert";
-
+import { post, patch } from 'axios';
 
 const ColorButton = withStyles((theme) => ({
     root: {
@@ -97,6 +97,7 @@ class SimpleModel extends React.Component {
             dataSourcesDidLoad: false,
             showDeleteModelAlert: false,
             deleteModelStatus: "",
+            file: null,
         };
         this.setDataSource = this.setDataSource.bind(this);
         this.setTransformation = this.setTransformation.bind(this);
@@ -111,6 +112,9 @@ class SimpleModel extends React.Component {
         this.getModelResults = this.getModelResults.bind(this);
         this.deleteModel = this.deleteModel.bind(this);
         this.deleteModelStatus = this.deleteModelStatus.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this)
+        this.onChange = this.onChange.bind(this)
+        this.fileUpload = this.fileUpload.bind(this)
     }
 
     setDataSource(event) {
@@ -236,7 +240,6 @@ class SimpleModel extends React.Component {
             this.setState({createNewModelPrompt: false});
         } else {
             this.setState({createNewModelPrompt: false});
-
         }
     }
 
@@ -283,6 +286,34 @@ class SimpleModel extends React.Component {
             return false;
         }
     }
+
+    onFormSubmit(e) {
+        e.preventDefault()
+        this.fileUpload(this.state.file);
+    }
+
+    onChange(e) {
+        this.setState({file:e.target.files[0]})
+    }
+
+    fileUpload(file) {
+        console.log(this.state.dataSources);
+        for(let i = 0; i < this.props.dataSourceData.length; ++i) {
+            if(this.state.dataSources[i] === this.props.dataSourceData[i]["dataSourceName"]) {
+                const url = 'http://localhost:5001/api/DataSource/' + this.props.dataSourceData[i]["dataSourceId"];
+                const formData = new FormData();
+                formData.append('file', file)
+                const config = {
+                    headers: {
+                        'content-type': 'multipart/form-data'
+                    }
+                }
+                let response = patch(url, formData, config)
+                console.log(response);
+            }
+        }
+    }
+
 
     componentDidMount() {
 
@@ -408,7 +439,7 @@ class SimpleModel extends React.Component {
                         color="secondary"
                         className={classes.button}
                         startIcon={<CloudDownloadIcon/>}
-                        onClick={() => this.getModelResults()}
+                        onClick={this.getModelResults}
                     >
                         Get Model Results
                     </ColorButton>
@@ -481,6 +512,19 @@ class SimpleModel extends React.Component {
                     <FormHelperText>Required</FormHelperText>
                 </FormControl>
             </div>
+                    <FormControl required className={classes.formControl}>
+                        <Input id="algorithm-selection" type="file" onChange={this.onChange}>File Upload</Input>
+                        <ColorButton
+                            variant="contained"
+                            color="secondary"
+                            className={classes.button}
+                            startIcon={<CloudUploadIcon/>}
+                            onClick={this.onFormSubmit}
+                        >
+                            File Upload
+                        </ColorButton>
+                    </FormControl>
+
                     {this.state.selectedModel !== "" ?
                         <Paper className={classes.root}>
                             <h3 style={{margin: 10 + 'px'}}>Model Name: {this.props.modelData[this.state.modelIndex]["modelName"]}</h3>
