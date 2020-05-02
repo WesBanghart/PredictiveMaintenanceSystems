@@ -288,7 +288,7 @@ class SimpleModel extends React.Component {
     }
 
     onFormSubmit(e) {
-        e.preventDefault()
+        e.preventDefault();
         this.fileUpload(this.state.file);
     }
 
@@ -302,13 +302,13 @@ class SimpleModel extends React.Component {
             if(this.state.dataSources[i] === this.props.dataSourceData[i]["dataSourceName"]) {
                 const url = 'http://localhost:5001/api/DataSource/' + this.props.dataSourceData[i]["dataSourceId"];
                 const formData = new FormData();
-                formData.append('file', file)
+                formData.append('file', file);
                 const config = {
                     headers: {
                         'content-type': 'multipart/form-data'
                     }
-                }
-                let response = patch(url, formData, config)
+                };
+                let response = patch(url, formData, config);
                 console.log(response);
             }
         }
