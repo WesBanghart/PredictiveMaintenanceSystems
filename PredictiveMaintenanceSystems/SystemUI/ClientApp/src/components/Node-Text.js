@@ -6,11 +6,12 @@ import {type INode} from './Node';
 
 type INodeTextProps = {
     data: INode,
-    nodeTypes: any, // TODO: create a nodeTypes interface
+    nodeTypes: any,
     isSelected: boolean,
     maxTitleChars: number,
 };
 
+//Allows the nodes to have text
 class NodeText extends React.Component<INodeTextProps> {
     getTypeText(data: INode, nodeTypes: any) {
         if (data.type && nodeTypes[data.type]) {
@@ -22,6 +23,7 @@ class NodeText extends React.Component<INodeTextProps> {
         }
     }
 
+    //Render the node with relevant text
     render() {
         const {data, nodeTypes, isSelected, maxTitleChars} = this.props;
         const lineOffset = 18;

@@ -25,6 +25,7 @@ const styles = {
     },
 };
 
+//Defines the user profile in the top left
 class UserProfile extends React.Component {
     constructor(props) {
         super(props);
@@ -35,6 +36,7 @@ class UserProfile extends React.Component {
         };
     }
 
+    //Render the information based on the API
     render() {
         const {classes} = this.props;
         if(this.props.userData && !this.state.loadedData) {

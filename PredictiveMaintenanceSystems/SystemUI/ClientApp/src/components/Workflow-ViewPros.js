@@ -11,6 +11,7 @@ export type IBBox = {
     height: number,
 };
 
+//Handle the workflow view properties
 export type IGraphViewProps = {
     backgroundFillId?: string,
     edges: any[],

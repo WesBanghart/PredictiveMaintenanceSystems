@@ -14,6 +14,7 @@ import Workflow from './Workflow';
 import PropTypes from 'prop-types';
 import SimpleModel from "./SimpleModel";
 
+//Define the styles for the dashboard for looks
 const styles = theme => ({
     root: {
         display: 'flex'
@@ -38,7 +39,9 @@ const styles = theme => ({
     }
 });
 
+//Main dashboard for the application
 class Dashboard extends React.Component {
+    //Create properties to hold new information from the API
     constructor(props) {
         super(props);
         this.state = {
@@ -49,6 +52,7 @@ class Dashboard extends React.Component {
         };
     }
 
+    //Check if the user data is loaded
     render() {
         const {classes} = this.props;
         if(this.props.userData && !this.state.loadedUserData) {
@@ -58,6 +62,7 @@ class Dashboard extends React.Component {
                 console.log(error);
             }
         }
+        //Pass all the information from the API to the various components
         return (
             <BrowserRouter>
                 <div className={clsx('App', classes.root)}>

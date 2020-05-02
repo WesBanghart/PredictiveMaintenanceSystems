@@ -21,6 +21,7 @@ type IGraph = {
     edges: IEdge[],
 };
 
+//Temporary test nodes for when the graph renders
 const sample: IGraph = {
     edges: [
         {
@@ -146,6 +147,7 @@ const sample: IGraph = {
     ],
 };
 
+//Create the nodes on the graph for rendering
 function generateSample(totalNodes) {
     const generatedSample: IGraph = {
         edges: [],
@@ -194,9 +196,10 @@ type IGraphState = {
     layoutEngineType?: LayoutEngineType,
 };
 
+//Construct the workflow into view
 class Workflow extends React.Component<IGraphProps, IGraphState> {
     GraphView;
-
+    //Create the state
     constructor(props: IGraphProps) {
         super(props);
 
@@ -211,12 +214,14 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.GraphView = React.createRef();
     }
 
+    //Finds the index of the current node
     getNodeIndex(searchNode: INode | any) {
         return this.state.graph.nodes.findIndex(node => {
             return node[NODE_KEY] === searchNode[NODE_KEY];
         });
     }
 
+    //Finds the index of the edge
     getEdgeIndex(searchEdge: IEdge) {
         return this.state.graph.edges.findIndex(edge => {
             return (
@@ -225,6 +230,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         });
     }
 
+    //Finds the look of the node
     getViewNode(nodeKey: string) {
         const searchNode = {};
 
@@ -234,6 +240,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         return this.state.graph.nodes[i];
     }
 
+    //Changing the size of the node and edges
     makeItLarge = () => {
         const graph = this.state.graph;
         const generatedSample = generateSample(this.state.totalNodes);
@@ -243,6 +250,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.setState(this.state);
     };
 
+    //Create a new root node
     addStartNode = () => {
         const graph = this.state.graph;
 
@@ -260,6 +268,8 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
             graph,
         });
     };
+
+    //Deleting a node
     deleteStartNode = () => {
         const graph = this.state.graph;
 
@@ -270,6 +280,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         });
     };
 
+    //Handle changing a node
     handleChange = (event: any) => {
         this.setState(
             {
@@ -279,6 +290,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         );
     };
 
+    //Handles updating a node
     onUpdateNode = (viewNode: INode) => {
         const graph = this.state.graph;
         const i = this.getNodeIndex(viewNode);
@@ -287,14 +299,17 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.setState({graph});
     };
 
+    //Handes selecting a node
     onSelectNode = (viewNode: INode | null) => {
         this.setState({selected: viewNode});
     };
 
+    //Handles selecting an edge
     onSelectEdge = (viewEdge: IEdge) => {
         this.setState({selected: viewEdge});
     };
 
+    //Handles creating a new node
     onCreateNode = (x: number, y: number) => {
         const graph = this.state.graph;
         const type = Math.random() < 0.25 ? SPECIAL_TYPE : EMPTY_TYPE;
@@ -310,6 +325,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.setState({graph});
     };
 
+    ///Handles deleting a node
     onDeleteNode = (viewNode: INode, nodeId: string, nodeArr: INode[]) => {
         const graph = this.state.graph;
         const newEdges = graph.edges.filter((edge, i) => {
@@ -324,6 +340,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.setState({graph, selected: null});
     };
 
+    //Handles creating an edge
     onCreateEdge = (sourceViewNode: INode, targetViewNode: INode) => {
         const graph = this.state.graph;
         const type =
@@ -346,6 +363,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         }
     };
 
+    //Swapping the orientation of the edge
     onSwapEdge = (
         sourceViewNode: INode,
         targetViewNode: INode,
@@ -366,6 +384,7 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         });
     };
 
+    //Handle deleting the edge
     onDeleteEdge = (viewEdge: IEdge, edges: IEdge[]) => {
         const graph = this.state.graph;
 
@@ -376,14 +395,13 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         });
     };
 
+    //Handles undo of a node
     onUndo = () => {
-        console.warn('Undo not implemented yet.')
     };
 
+    //Copy a node
     onCopySelected = () => {
         if (this.state.selected.source) {
-            console.warn('Cannot copy selected edges, try selecting a node instead.');
-
             return;
         }
 
@@ -395,11 +413,9 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         });
     };
 
+    //Paste a node
     onPasteSelected = () => {
         if (!this.state.copiedNode) {
-            console.warn(
-                'No node is currently in the copy queue. Try selecting a node and copying it with Ctrl/Command-C'
-            );
         }
 
         const graph = this.state.graph;
@@ -409,18 +425,21 @@ class Workflow extends React.Component<IGraphProps, IGraphState> {
         this.forceUpdate();
     };
 
+    //Handle the layout type
     handleChangeLayoutEngineType = (event: any) => {
         this.setState({
             layoutEngineType: (event.target.value: LayoutEngineType | 'None'),
         });
     };
 
+    //Change the pan view
     onSelectPanNode = (event: any) => {
         if (this.GraphView) {
             this.GraphView.panToNode(event.target.value, true);
         }
     };
 
+    //Render the workflow
     render() {
         const {nodes, edges} = this.state.graph;
         const selected = this.state.selected;

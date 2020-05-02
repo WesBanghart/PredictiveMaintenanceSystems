@@ -9,6 +9,7 @@ export type IPosition = {
     [key: string]: any,
 };
 
+//Converts the nodes into a tree view
 export default class LayoutEngine {
     graphViewProps: IGraphViewProps;
 

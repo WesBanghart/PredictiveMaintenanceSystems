@@ -28,6 +28,7 @@ const rows = [
     createData('Device 3', '14', 'Disconnected', 'October 2020'),
 ];
 
+//Creates a simple table for displaying model information based the devices
 export default function SimpleTable() {
     const classes = useStyles();
 

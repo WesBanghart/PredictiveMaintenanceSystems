@@ -4,7 +4,9 @@ import * as dagre from 'dagre';
 import {type INode} from '../../components/Node';
 import SnapToGrid from './SnapToGrid';
 
+//Vertical tree (this will snap to the grid
 class VerticalTree extends SnapToGrid {
+    //Adjust the ndoe location
     adjustNodes(nodes: INode[], nodesMap?: any): INode[] {
         const {
             nodeKey,
@@ -30,7 +32,7 @@ class VerticalTree extends SnapToGrid {
         if (nodeWidth) {
             width = nodeWidth * spacing;
         }
-
+        //Change all the nodes that exist
         nodes.forEach(node => {
             if (!nodesMap) {
                 return;

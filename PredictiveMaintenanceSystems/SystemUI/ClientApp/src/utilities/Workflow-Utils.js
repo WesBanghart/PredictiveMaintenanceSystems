@@ -13,6 +13,7 @@ export type INodeMapNode = {
     children: INode[],
 };
 
+//Assit with getting workflow information
 class GraphUtils {
     static getNodesMap(nodes: any, key: string) {
         const map = {};
@@ -34,6 +35,7 @@ class GraphUtils {
         return map;
     }
 
+    //Gets the edges on the graph
     static getEdgesMap(arr: IEdge[]) {
         const map = {};
         let item = null;
@@ -54,6 +56,7 @@ class GraphUtils {
         return map;
     }
 
+    //Find what is connected between the nodes and edges
     static linkNodesAndEdges(nodesMap: any, edges: IEdge[]) {
         let nodeMapSourceNode = null;
         let nodeMapTargetNode = null;
@@ -78,6 +81,7 @@ class GraphUtils {
         }
     }
 
+    //Remove the SVG DOM
     static removeElementFromDom(id: string) {
         const container = document.getElementById(id);
 
@@ -90,6 +94,7 @@ class GraphUtils {
         return false;
     }
 
+    //Find the parent node
     static findParent(element: any, selector: string) {
         if (element && element.matches && element.matches(selector)) {
             return element;

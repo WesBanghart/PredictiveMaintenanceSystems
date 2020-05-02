@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+//Create the shadow for the workflow graph
+//Visual effects only
 class DropshadowFilter extends React.Component<any> {
     render() {
         return (

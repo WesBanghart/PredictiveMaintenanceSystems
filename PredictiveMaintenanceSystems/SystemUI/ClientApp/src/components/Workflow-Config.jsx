@@ -15,6 +15,8 @@ export const COMPLEX_CIRCLE_TYPE = 'complexCircle';
 export const nodeTypes = [EMPTY_TYPE, POLY_TYPE, SPECIAL_TYPE, SKINNY_TYPE];
 export const edgeTypes = [EMPTY_EDGE_TYPE, SPECIAL_EDGE_TYPE];
 
+//Holds constants for how to draw the various components of the workflow portion
+
 const EmptyNodeShape = (
     <symbol viewBox="0 0 154 154" width="154" height="154" id="emptyNode">
         <circle cx="77" cy="77" r="76"/>

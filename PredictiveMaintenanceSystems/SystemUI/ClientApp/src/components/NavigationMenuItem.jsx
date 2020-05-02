@@ -13,12 +13,14 @@ export type AppMenuItemProps = AppMenuItemPropsWithoutItems & {
     items?: AppMenuItemProps[]
 }
 
+//Checks what is open on the navigation bar
 const NavigationMenuItem: React.FC<AppMenuItemProps> = props => {
     const {name, link, Icon, items = []} = props;
     const classes = useStyles();
     const isExpandable = items && items.length > 0;
     const [open, setOpen] = React.useState(false);
 
+    //The user clicks on a navigation bar item
     function handleClick() {
         setOpen(!open)
     }
@@ -57,6 +59,7 @@ const NavigationMenuItem: React.FC<AppMenuItemProps> = props => {
     )
 };
 
+//The style for the navigation bar selection
 const useStyles = makeStyles(theme =>
     createStyles({
         menuItem: {

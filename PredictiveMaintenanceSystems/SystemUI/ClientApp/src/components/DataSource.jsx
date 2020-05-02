@@ -17,6 +17,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import Typography from "@material-ui/core/Typography";
 
+//Static icons for the data sources
 const tableIcons: Icons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref}/>),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref}/>),
@@ -48,6 +49,7 @@ interface TableState {
     data: Row[];
 }
 
+//This will hold the controller for the data sources UI
 export default class Devices extends React.Component {
     constructor(props) {
         super(props);
@@ -65,12 +67,15 @@ export default class Devices extends React.Component {
         this.putDataSource = this.putDataSource.bind(this);
     }
 
+    //Creating a new data source
     createNewDataSource(data) {
+        //Define what the API needs in the request
         let dataSourceBody = {
             "dataSourceName": data["device"],
             "configuration": "string",
             "userId": this.props.userData["userId"]
         };
+        //Define the location of the request
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -91,7 +96,9 @@ export default class Devices extends React.Component {
             });
     }
 
+    //Deleting a data source
     deleteDataSource(data) {
+        //Define the options to request to the API
         const requestOptions = {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -111,7 +118,9 @@ export default class Devices extends React.Component {
             });
     }
 
+    //Edits the existing data source
     putDataSource(data) {
+        //Define options for the API
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json; charset=utf-8' },
@@ -131,6 +140,7 @@ export default class Devices extends React.Component {
             });
     }
 
+    //Loads the information to view when the component is going to mount
     componentDidMount() {
         let tmpData = [];
         for(let i = 0; i < this.props.dataSourceData.length; ++i) {
@@ -144,6 +154,7 @@ export default class Devices extends React.Component {
         this.setState({data: tmpData});
     }
 
+    //Render the component with the information defined above
     render() {
         return (
             <div>

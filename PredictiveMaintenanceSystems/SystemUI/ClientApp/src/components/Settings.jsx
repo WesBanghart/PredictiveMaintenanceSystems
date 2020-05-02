@@ -15,7 +15,9 @@ const useStyles = {
     },
 };
 
+//Renders the settings page for account information for the user
 class Settings extends React.Component{
+    //Set information from the API
     constructor(props) {
         super(props);
         this.state = {
@@ -23,6 +25,7 @@ class Settings extends React.Component{
         };
     }
 
+    //Render the information for the current user logged in from the API
     render() {
         const {classes} = this.props;
         return (

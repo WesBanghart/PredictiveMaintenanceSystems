@@ -1,7 +1,9 @@
 import React from "react";
 import * as d3 from 'd3';
 
+//Testing charts for D3 to visualize data
 export default class RowChart extends React.Component {
+    //Create the graph with temporary data
     constructor(props) {
         super(props);
         this.state = {
@@ -21,10 +23,12 @@ export default class RowChart extends React.Component {
         this.drawChart = this.drawChart.bind(this);
     }
 
+    //If the component is mounting, then render it
     componentDidMount() {
         this.drawChart();
     }
 
+    //Draw the graph
     drawChart() {
         let margin = {top: 20, right: 30, bottom: 40, left: 90},
             width = this.state.width - margin.left - margin.right,

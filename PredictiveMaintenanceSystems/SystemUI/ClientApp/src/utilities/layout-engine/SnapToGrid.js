@@ -2,6 +2,7 @@
 
 import LayoutEngine, {type IPosition} from './Layout-Engine';
 
+//Makes all the nodes and edges align with the grid
 class SnapToGrid extends LayoutEngine {
     calculatePosition(node: IPosition) {
         const {x, y} = node;

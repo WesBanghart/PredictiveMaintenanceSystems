@@ -57,6 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+//OLD temporary user login holder before switching to Azure
 const UserLogin: React.FC = () => {
     const classes = useStyles();
     return (

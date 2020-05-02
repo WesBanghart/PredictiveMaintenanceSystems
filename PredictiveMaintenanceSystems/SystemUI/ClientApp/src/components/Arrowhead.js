@@ -5,7 +5,7 @@ import * as React from 'react';
 type IArrowheadMarkerProps = {
     edgeArrowSize?: number,
 };
-
+//Handles rendering the arrow head component for the graph
 class Arrowhead extends React.Component<IArrowheadMarkerProps> {
     static defaultProps = {
         edgeArrowSize: 8,
@@ -13,11 +13,12 @@ class Arrowhead extends React.Component<IArrowheadMarkerProps> {
 
     render() {
         const {edgeArrowSize} = this.props;
-
+        //Checks the side of the arrow
         if (!edgeArrowSize && edgeArrowSize !== 0) {
             return null;
         }
 
+        //Render the arrow with the direction and size
         return (
             <marker
                 id="end-arrow"

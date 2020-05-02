@@ -8,10 +8,12 @@ type IBackgroundPatternProps = {
     gridDotSize?: number,
 };
 
+//Creates the pattern design
 class BackgroundPattern extends React.Component<IBackgroundPatternProps> {
     render() {
         const {gridSpacing, gridDotSize} = this.props;
-
+        //Use the spacing defined from the props
+        //Creates the dots
         return (
             <pattern
                 id="grid"

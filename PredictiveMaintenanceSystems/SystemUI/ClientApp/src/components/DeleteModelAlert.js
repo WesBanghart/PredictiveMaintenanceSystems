@@ -14,6 +14,7 @@ const useStyles = (theme) => ({
     },
 });
 
+//Show a confirmation message when deleting a model
 class DeleteModelAlert extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +29,7 @@ class DeleteModelAlert extends React.Component {
         this.setState({open: value});
     }
 
+    //Renders the alert based on the code passed to it
     render() {
         const {classes} = this.props;
         if(this.state.status === "success") {

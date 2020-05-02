@@ -26,7 +26,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Paper from "@material-ui/core/Paper";
 import DeleteModelAlert from "./DeleteModelAlert";
-import { post, patch } from 'axios';
+import { post } from 'axios';
 
 const ColorButton = withStyles((theme) => ({
     root: {
@@ -308,7 +308,7 @@ class SimpleModel extends React.Component {
                         'content-type': 'multipart/form-data'
                     }
                 };
-                let response = patch(url, formData, config);
+                let response = post(url, formData, config);
                 console.log(response);
             }
         }

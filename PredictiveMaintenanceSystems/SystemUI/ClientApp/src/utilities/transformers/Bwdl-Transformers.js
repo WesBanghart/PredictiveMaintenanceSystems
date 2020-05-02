@@ -4,7 +4,9 @@ import { type IEdge } from '../../components/Edge';
 import { type INode } from '../../components/Node';
 import Transformer, { type IGraphInput } from './Transformers';
 
+//Change for the nodes are shown
 export default class BwdlTransformer extends Transformer {
+    //Transform to new state
     static transform(input: any) {
         if (!input.States) {
             return {
@@ -49,8 +51,6 @@ export default class BwdlTransformer extends Transformer {
                         });
                     }
                 });
-
-                // Choice nodes carry both a Choices list and an optional Default value which is not part of the list.
                 if (currentNode.Default) {
                     edges.push({
                         source: name,

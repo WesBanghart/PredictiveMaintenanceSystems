@@ -20,11 +20,12 @@ export type INode = {
     [key: string]: any,
 };
 
+//Properties that the node can have
 type INodeProps = {
     data: INode,
     id: string,
-    nodeTypes: any, // TODO: make a nodeTypes interface
-    nodeSubtypes: any, // TODO: make a nodeSubtypes interface
+    nodeTypes: any,
+    nodeSubtypes: any,
     opacity?: number,
     nodeKey: string,
     nodeSize?: number,
@@ -53,6 +54,7 @@ type INodeProps = {
     maxTitleChars: number,
 };
 
+//Maintains the state of the node
 type INodeState = {
     hovered: boolean,
     x: number,
@@ -63,6 +65,7 @@ type INodeState = {
     pointerOffset: ?{ x: number, y: number },
 };
 
+//Creates a node
 class Node extends React.Component<INodeProps, INodeState> {
     static defaultProps = {
         isSelected: false,
@@ -88,6 +91,7 @@ class Node extends React.Component<INodeProps, INodeState> {
     nodeRef: any;
     oldSibling: any;
 
+    //Construct the node based on the props
     constructor(props: INodeProps) {
         super(props);
 
@@ -104,6 +108,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         this.nodeRef = React.createRef();
     }
 
+    //Get the state of the node
     static getDerivedStateFromProps(
         nextProps: INodeProps,
         prevState: INodeState
@@ -115,6 +120,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         };
     }
 
+    //Loads the data for the node
     static getNodeTypeXlinkHref(data: INode, nodeTypes: any) {
         if (data.type && nodeTypes[data.type]) {
             return nodeTypes[data.type].shapeId;
@@ -125,6 +131,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         return null;
     }
 
+    //Load the type of node
     static getNodeSubtypeXlinkHref(data: INode, nodeSubtypes?: any) {
         if (data.subtype && nodeSubtypes && nodeSubtypes[data.subtype]) {
             return nodeSubtypes[data.subtype].shapeId;
@@ -135,6 +142,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         return null;
     }
 
+    //Check if the node is rendering
     componentDidMount() {
         const dragFunction = d3
             .drag()
@@ -151,6 +159,7 @@ class Node extends React.Component<INodeProps, INodeState> {
             .call(dragFunction);
     }
 
+    //The user is moving a node on the graph
     handleMouseMove = (event: any) => {
         const mouseButtonDown = event.sourceEvent.buttons === 1;
         const shiftKey = event.sourceEvent.shiftKey;
@@ -203,6 +212,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         this.props.onNodeMove(newState, this.props.data[nodeKey], shiftKey);
     };
 
+    //The user is starting the drag a node on the graph
     handleDragStart = () => {
         if (!this.nodeRef.current) {
             return;
@@ -217,6 +227,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         );
     };
 
+    //The user is no longer dragging a node
     handleDragEnd = (event: any) => {
         if (!this.nodeRef.current) {
             return;
@@ -246,6 +257,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         onNodeSelected(data, data[nodeKey], shiftKey || drawingEdge, sourceEvent);
     };
 
+    //The user is hovering over a node
     handleMouseOver = (event: any) => {
         let hovered = false;
 
@@ -257,12 +269,14 @@ class Node extends React.Component<INodeProps, INodeState> {
         this.props.onNodeMouseEnter(event, this.props.data, hovered);
     };
 
+    //No longer hovering
     handleMouseOut = (event: any) => {
 
         this.setState({hovered: false});
         this.props.onNodeMouseLeave(event, this.props.data);
     };
 
+    //Return the shape of the node
     renderShape() {
         const {renderNode, data, nodeTypes, nodeSubtypes, nodeKey} = this.props;
         const {hovered, selected} = this.state;
@@ -320,6 +334,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         }
     }
 
+    //The text within the node on the graph
     renderText() {
         const {
             data,
@@ -344,6 +359,7 @@ class Node extends React.Component<INodeProps, INodeState> {
         );
     }
 
+    //Render the node based on state
     render() {
         const {x, y, hovered, selected} = this.state;
         const {opacity, id, data} = this.props;

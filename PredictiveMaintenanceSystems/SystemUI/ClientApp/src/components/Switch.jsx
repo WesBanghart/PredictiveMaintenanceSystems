@@ -3,6 +3,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
+//Creates a switch to toggle the email notifications page for the user
 export default function SwitchLabels() {
     const [state, setState] = React.useState({
         checkedA: true,

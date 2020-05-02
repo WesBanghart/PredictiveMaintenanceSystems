@@ -14,6 +14,8 @@ import {red} from '@material-ui/core/colors';
 import {Chart} from "react-google-charts";
 import Table from "./Table";
 
+//Create the cards for the desktop view
+//This is the first graph and initial card
 const AppMenu: React.FC = () => {
     const classes = useStyles();
     return (
@@ -104,6 +106,7 @@ const AppMenu: React.FC = () => {
     )
 };
 
+//Define the styles to use
 const useStyles = makeStyles({
     card: {
         width: '90%',

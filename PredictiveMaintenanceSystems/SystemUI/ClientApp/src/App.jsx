@@ -17,7 +17,9 @@ import {makeStyles} from '@material-ui/core/styles';
 import './custom.css'
 import './components/Workflow.scss'
 
+//Main driver for the UI
 export default class App extends Component {
+    //Construct all the components
     constructor(props)
     {
         super(props);
@@ -35,6 +37,7 @@ export default class App extends Component {
 
     dashboardLogin = true;
 
+    //The UI is loading so need to pull data from API
     componentDidMount()
     {
         fetch("https://localhost:5001/api/User"
@@ -45,6 +48,7 @@ export default class App extends Component {
         this.getDataSources();
     };
 
+    //Loads the models from the database
     getModels() {
         fetch("https://localhost:5001/api/Model"
         ).then(function(response) {
@@ -52,6 +56,7 @@ export default class App extends Component {
         }).then(jsonData => this.setState({models: jsonData}))
     }
 
+    //Loads the data sources from the database
     getDataSources() {
         fetch("https://localhost:5001/api/DataSource"
         ).then(function(response) {
@@ -59,6 +64,7 @@ export default class App extends Component {
         }).then(jsonData => this.setState({dataSources: jsonData}))
     }
 
+    //Renders dashboard if the user is logged in
     render() {
         if (!this.dashboardLogin) {
             return (<UserLogin/>);
@@ -68,7 +74,7 @@ export default class App extends Component {
     }
 }
 
-
+//Old user login placeholder
 const UserLogin: React.FC = () => {
     const classes = useStyles();
     return (

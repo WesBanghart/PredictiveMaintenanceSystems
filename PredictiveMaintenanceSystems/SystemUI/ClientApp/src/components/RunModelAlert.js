@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
 
+//Alert styles
 const useStyles = (theme) => ({
     root: {
         width: '100%',
@@ -14,6 +15,7 @@ const useStyles = (theme) => ({
     },
 });
 
+//Shows the confirmation for the run model alert
 class RunModelAlert extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +30,7 @@ class RunModelAlert extends React.Component {
         this.setState({open: value});
     }
 
+    //Render the message based on the success/error code
     render() {
         const {classes} = this.props;
         if(this.state.status === "success") {

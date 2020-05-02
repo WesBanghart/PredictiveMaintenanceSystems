@@ -4,6 +4,7 @@ import * as dagre from 'dagre';
 import {type INode} from '../../components/Node';
 import SnapToGrid from './SnapToGrid';
 
+//Handles an alternate view of the graph (tree)
 class HorizontalTree extends SnapToGrid {
     adjustNodes(nodes: INode[], nodesMap?: any): INode[] {
         const {

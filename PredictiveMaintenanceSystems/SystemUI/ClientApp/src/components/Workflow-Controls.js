@@ -16,24 +16,28 @@ type IGraphControlProps = {
     modifyZoom: (delta: number) => boolean,
 };
 
+//Handles the buttons to control the workflow
 class WorkflowControls extends React.Component<IGraphControlProps> {
     static defaultProps = {
         maxZoom: 1.5,
         minZoom: 0.15,
     };
 
+    //Creates the slider
     sliderToZoom(val: number) {
         const {minZoom, maxZoom} = this.props;
 
         return (val * ((maxZoom || 0) - (minZoom || 0))) / steps + (minZoom || 0);
     }
 
+    //Translates the slider to zoom
     zoomToSlider(val: number) {
         const {minZoom, maxZoom} = this.props;
 
         return ((val - (minZoom || 0)) * steps) / ((maxZoom || 0) - (minZoom || 0));
     }
 
+    //Zoom the view of the graph
     zoom = (e: any) => {
         const {minZoom, maxZoom} = this.props;
         const sliderVal = e.target.value;
@@ -45,6 +49,7 @@ class WorkflowControls extends React.Component<IGraphControlProps> {
         }
     };
 
+    //Render the zoom controls
     render() {
         return (
             <div className="graph-controls">

@@ -77,6 +77,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
     graphControls: any;
     layoutEngine: any;
 
+    //Helps with the viewing and rendering of the workflow graph
     constructor(props: IGraphViewProps) {
         super(props);
 
@@ -91,7 +92,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         if (props.layoutEngineType) {
             this.layoutEngine = new LayoutEngines[props.layoutEngineType](props);
         }
-
+        //Monitor the state of the workflow graph
         this.state = {
             componentUpToDate: false,
             draggedEdge: null,
@@ -112,6 +113,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         };
     }
 
+    //Get the state from the props of other components
     static getDerivedStateFromProps(
         nextProps: IGraphViewProps,
         prevState: IGraphViewState
@@ -166,10 +168,10 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         return nextState;
     }
 
+    //Check that the component mounted
     componentDidMount() {
         const {initialBBox, zoomDelay, minZoom, maxZoom} = this.props;
 
-        // TODO: can we target the element rather than the document?
         document.addEventListener('keydown', this.handleWrapperKeydown);
         document.addEventListener('click', this.handleDocumentClick);
 
@@ -209,11 +211,13 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }, zoomDelay);
     }
 
+    //We are moving off the workflow
     componentWillUnmount() {
         document.removeEventListener('keydown', this.handleWrapperKeydown);
         document.removeEventListener('click', this.handleDocumentClick);
     }
 
+    //The workflow needs to be rendered again
     shouldComponentUpdate(
         nextProps: IGraphViewProps,
         nextState: IGraphViewState
@@ -232,6 +236,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         return false;
     }
 
+    //Something changed on the workflow and will rerender
     componentDidUpdate(prevProps: IGraphViewProps, prevState: IGraphViewState) {
         const {
             nodesMap,
@@ -276,24 +281,28 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     }
 
+    //Get the node by its index ID
     getNodeById(id: string | null, nodesMap: any | null): INodeMapNode | null {
         const nodesMapVar = nodesMap || this.state.nodesMap;
 
         return nodesMapVar ? nodesMapVar[`key-${id || ''}`] : null;
     }
 
+    //Get the edge based on the root node
     getEdgeBySourceTarget(source: string, target: string): IEdge | null {
         return this.state.edgesMap
             ? this.state.edgesMap[`${source}_${target}`]
             : null;
     }
 
+    //Delete the edge because the node was deleted
     deleteEdgeBySourceTarget(source: string, target: string) {
         if (this.state.edgesMap && this.state.edgesMap[`${source}_${target}`]) {
             delete this.state.edgesMap[`${source}_${target}`];
         }
     }
 
+    //Create a new node on the graph with the button
     addNewNodes(
         nodes: INode[],
         oldNodesMap: any,
@@ -328,6 +337,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     }
 
+    //Remove old nodes with the button
     removeOldNodes(prevNodes: any, prevNodesMap: any, nodesMap: any) {
         const nodeKey = this.props.nodeKey;
         for (let i = 0; i < prevNodes.length; i++) {
@@ -353,6 +363,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     }
 
+    //Add new edges when dragging between the nodes or clicking
     addNewEdges(
         edges: IEdge[],
         oldEdgesMap: any,
@@ -385,6 +396,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     }
 
+    //Remove old edges when moving the nodes
     removeOldEdges = (prevEdges: IEdge[], edgesMap: any) => {
         let edge = null;
         for (let i = 0; i < prevEdges.length; i++) {
@@ -400,12 +412,14 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Delete the selected elements on deletion
     removeEdgeElement(source: string, target: string) {
         const id = `${source}-${target}`;
 
         GraphUtils.removeElementFromDom(`edge-${id}-container`);
     }
 
+    //Swap the orientation of the edges
     canSwap(sourceNode: INode, hoveredNode: INode | null, swapEdge: any) {
         return (
             hoveredNode &&
@@ -415,6 +429,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     }
 
+    //Delete the node selected
     deleteNode(selectedNode: INode) {
         const {nodeKey} = this.props;
         const {nodes} = this.state;
@@ -432,6 +447,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         this.props.onDeleteNode(selectedNode, nodeId, newNodesArr);
     }
 
+    //Delete the edge selected
     deleteEdge(selectedEdge: IEdge) {
         const {edges} = this.state;
 
@@ -467,6 +483,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         this.props.onDeleteEdge(selectedEdge, newEdgesArr);
     }
 
+    //Perform the delete
     handleDelete = (selected: IEdge | INode) => {
         const {canDeleteNode, canDeleteEdge, readOnly} = this.props;
 
@@ -481,6 +498,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Check if the user is pressing a key
     handleWrapperKeydown: KeyboardEventListener = d => {
         const {selected, onUndo, onCopySelected, onPasteSelected} = this.props;
         const {focused, selectedNodeObj} = this.state;
@@ -527,6 +545,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Handle the selection of an edge
     handleEdgeSelected = e => {
         const {source, target} = e.target.dataset;
         let newState = {
@@ -558,6 +577,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //The graph has been clicked on the workflow
     handleSvgClicked = (d: any, i: any) => {
         const {
             onBackgroundClick,
@@ -611,6 +631,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Handle the SVG being clicked
     handleDocumentClick = (event: any) => {
         if (
             event &&
@@ -628,10 +649,12 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     };
 
+    //Find the parent of the edge SVG
     isPartOfEdge(element: any) {
         return !!GraphUtils.findParent(element, '.edge-container');
     }
 
+    //Handle moving the node
     handleNodeMove = (position: IPoint, nodeId: string, shiftKey: boolean) => {
         const {canCreateEdge, readOnly} = this.props;
         const nodeMapNode: INodeMapNode | null = this.getNodeById(nodeId);
@@ -660,6 +683,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Create a new egde
     createNewEdge() {
         const {canCreateEdge, nodeKey, onCreateEdge} = this.props;
         const {edgesMap, edgeEndNode, hoveredNodeData} = this.state;
@@ -698,6 +722,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     }
 
+    //Handle the node updating
     handleNodeUpdate = (position: any, nodeId: string, shiftKey: boolean) => {
         const {onUpdateNode, readOnly} = this.props;
 
@@ -724,6 +749,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     };
 
+    //Check when a mouse is over the node
     handleNodeMouseEnter = (event: any, data: any, hovered: boolean) => {
         if (hovered && !this.state.hoveredNode) {
             this.setState({
@@ -742,6 +768,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //The mouse is no longer over a node
     handleNodeMouseLeave = (event: any, data: any) => {
         if (
             (d3.event &&
@@ -765,6 +792,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Handle the node selection
     handleNodeSelected = (
         node: INode,
         nodeId: string,
@@ -786,6 +814,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Check if the arrow is highlighted (clicked)
     isArrowClicked(edge: IEdge | null) {
         const {edgeArrowSize} = this.props;
         const eventTarget = d3.event.sourceEvent.target;
@@ -817,6 +846,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     }
 
+    //Checks if zoom is applied
     zoomFilter() {
         if (d3.event.button || d3.event.ctrlKey) {
             return false;
@@ -825,6 +855,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         return true;
     }
 
+    //Stop the zoom on a restriction
     containZoom() {
         const stop = d3.event.button || d3.event.ctrlKey;
 
@@ -833,6 +864,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     }
 
+    //Handle when the zoom is happening
     handleZoomStart = (event: any) => {
 
         const sourceEvent = event.sourceEvent;
@@ -862,6 +894,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         this.dragEdge(edge, d3.mouse);
     };
 
+    //Track the mouse
     getMouseCoordinates(mouse: typeof d3.mouse) {
         let mouseCoordinates = [0, 0];
 
@@ -872,6 +905,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         return mouseCoordinates;
     }
 
+    //Dragging the edge
     dragEdge(draggedEdge?: IEdge, mouse: typeof d3.mouse) {
         const {nodeSize, nodeKey} = this.props;
 
@@ -903,6 +937,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     }
 
+    //Handle the zoom of the graph
     handleZoom = (event: any) => {
         const {draggingEdge} = this.state;
         const transform: IViewTransform = event.transform;
@@ -929,6 +964,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Check when the zoom is done
     handleZoomEnd = () => {
         const {draggingEdge, draggedEdge, edgeEndNode} = this.state;
 
@@ -980,6 +1016,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     };
 
+    //Zoom to fit the window
     handleZoomToFit = () => {
         const entities = d3.select(this.entities).node();
 
@@ -996,6 +1033,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         this.handleZoomToFitImpl(viewBBox, this.props.zoomDur);
     };
 
+    //Zoom to fit the view of the nodes
     handleZoomToFitImpl = (viewBBox: IBBox, zoomDur: number = 0) => {
         if (!this.viewWrapper.current) {
             return;
@@ -1079,6 +1117,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         return true;
     };
 
+    //Set the zoom to a certain value
     setZoom(k: number = 1, x: number = 0, y: number = 0, dur: number = 0) {
         const t = d3.zoomIdentity.translate(x, y).scale(k);
         d3.select(this.viewWrapper.current)
@@ -1088,12 +1127,14 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
             .call(this.zoom.transform, t);
     }
 
+    //Render the nodes onto the graph
     renderView() {
         this.selectedView.attr('transform', this.state.viewTransform);
         clearTimeout(this.renderNodesTimeout);
         this.renderNodesTimeout = setTimeout(this.renderNodes);
     }
 
+    //Get the nodes current state
     getNodeComponent = (id: string, node: INode) => {
         const {
             nodeTypes,
@@ -1130,6 +1171,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     };
 
+    //Render all the nodes
     renderNodes = () => {
         if (!this.entities) {
             return;
@@ -1140,6 +1182,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     };
 
+    //Render the nodes if something is happening before
     asyncRenderNode(node: INode) {
         const nodeKey = this.props.nodeKey;
         const timeoutId = `nodes-${node[nodeKey]}`;
@@ -1150,6 +1193,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     }
 
+    //Render the nodes at the same time
     syncRenderNode(node: INode) {
         const nodeKey = this.props.nodeKey;
         const id = `node-${node[nodeKey]}`;
@@ -1163,6 +1207,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     }
 
+    //Normal render
     renderNode(id: string, element: Element) {
         if (!this.entities) {
             return null;
@@ -1185,6 +1230,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         ReactDOM.render(anyElement, nodeContainer);
     }
 
+    //Render the connected edge after a node was created linking
     renderConnectedEdgesFromNode(
         node: INodeMapNode,
         nodeMoving: boolean = false
@@ -1201,6 +1247,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     }
 
+    //Check if an edge is selected
     isEdgeSelected = (edge: IEdge) => {
         return (
             !!this.state.selectedEdgeObj &&
@@ -1210,6 +1257,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     };
 
+    //Get the edge state
     getEdgeComponent = (edge: IEdge | any) => {
         const sourceNodeMapNode = this.getNodeById(edge.source);
         const sourceNode = sourceNodeMapNode ? sourceNodeMapNode.node : null;
@@ -1234,6 +1282,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     };
 
+    //Render all the edges
     renderEdge = (
         id: string,
         element: any,
@@ -1290,6 +1339,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Render the edge is something is happening first
     asyncRenderEdge = (edge: IEdge, nodeMoving: boolean = false) => {
         if (!edge.source || !edge.target) {
             return;
@@ -1303,6 +1353,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         });
     };
 
+    //Render the edge at the same time
     syncRenderEdge(edge: IEdge | any, nodeMoving: boolean = false) {
         if (!edge.source) {
             return;
@@ -1315,6 +1366,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         this.renderEdge(id, element, edge, nodeMoving);
     }
 
+    //Normal rendering for the edges
     renderEdges = () => {
         const {edges, draggingEdge} = this.state;
 
@@ -1327,6 +1379,7 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         }
     };
 
+    //Render the controls for the workflow
     renderGraphControls() {
         const {showGraphControls, minZoom, maxZoom} = this.props;
         const {viewTransform} = this.state;
@@ -1356,6 +1409,69 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
         );
     }
 
+    //Pan to a node/edge
+    panToEntity(entity: IEdge | INode, zoom: boolean) {
+        const {viewTransform} = this.state;
+        const parent = this.viewWrapper.current;
+        const entityBBox = entity ? entity.getBBox() : null;
+        const maxZoom = this.props.maxZoom || 2;
+
+        if (!parent || !entityBBox) {
+            return;
+        }
+
+        const width = parent.clientWidth;
+        const height = parent.clientHeight;
+
+        const next = {
+            k: viewTransform.k,
+            x: 0,
+            y: 0,
+        };
+
+        const x = entityBBox.x + entityBBox.width / 2;
+        const y = entityBBox.y + entityBBox.height / 2;
+
+        if (zoom) {
+            next.k =
+                0.9 / Math.max(entityBBox.width / width, entityBBox.height / height);
+
+            if (next.k > maxZoom) {
+                next.k = maxZoom;
+            }
+        }
+
+        next.x = width / 2 - next.k * x;
+        next.y = height / 2 - next.k * y;
+
+        this.setZoom(next.k, next.x, next.y, this.props.zoomDur);
+    }
+
+    //Pan to the selected node
+    panToNode(id: string, zoom: boolean = false) {
+        if (!this.entities) {
+            return;
+        }
+
+        const node = this.entities.querySelector(`#node-${id}-container`);
+
+        this.panToEntity(node, zoom);
+    }
+
+    //Pan to the selected edge
+    panToEdge(source: string, target: string, zoom: boolean = false) {
+        if (!this.entities) {
+            return;
+        }
+
+        const edge = this.entities.querySelector(
+            `#edge-${source}-${target}-container`
+        );
+
+        this.panToEntity(edge, zoom);
+    }
+
+    //Render the component into view
     render() {
         const {
             edgeArrowSize,
@@ -1398,65 +1514,6 @@ class WorkflowView extends React.Component<IGraphViewProps, IGraphViewState> {
                 />
             </div>
         );
-    }
-
-    panToEntity(entity: IEdge | INode, zoom: boolean) {
-        const {viewTransform} = this.state;
-        const parent = this.viewWrapper.current;
-        const entityBBox = entity ? entity.getBBox() : null;
-        const maxZoom = this.props.maxZoom || 2;
-
-        if (!parent || !entityBBox) {
-            return;
-        }
-
-        const width = parent.clientWidth;
-        const height = parent.clientHeight;
-
-        const next = {
-            k: viewTransform.k,
-            x: 0,
-            y: 0,
-        };
-
-        const x = entityBBox.x + entityBBox.width / 2;
-        const y = entityBBox.y + entityBBox.height / 2;
-
-        if (zoom) {
-            next.k =
-                0.9 / Math.max(entityBBox.width / width, entityBBox.height / height);
-
-            if (next.k > maxZoom) {
-                next.k = maxZoom;
-            }
-        }
-
-        next.x = width / 2 - next.k * x;
-        next.y = height / 2 - next.k * y;
-
-        this.setZoom(next.k, next.x, next.y, this.props.zoomDur);
-    }
-
-    panToNode(id: string, zoom: boolean = false) {
-        if (!this.entities) {
-            return;
-        }
-
-        const node = this.entities.querySelector(`#node-${id}-container`);
-
-        this.panToEntity(node, zoom);
-    }
-
-    panToEdge(source: string, target: string, zoom: boolean = false) {
-        if (!this.entities) {
-            return;
-        }
-
-        const edge = this.entities.querySelector(
-            `#edge-${source}-${target}-container`
-        );
-
-        this.panToEntity(edge, zoom);
     }
 }
 

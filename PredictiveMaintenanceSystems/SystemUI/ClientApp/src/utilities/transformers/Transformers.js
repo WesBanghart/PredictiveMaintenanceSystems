@@ -8,6 +8,7 @@ export type IGraphInput = {
     edges: IEdge[],
 };
 
+//Holds the transformations of the graph properties
 export default class Transformers {
     static transform(input: any): IGraphInput {
         return {

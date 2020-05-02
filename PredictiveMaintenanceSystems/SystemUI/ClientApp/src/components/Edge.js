@@ -26,7 +26,7 @@ export type ITargetPosition = {
 
 type IEdgeProps = {
     data: IEdge,
-    edgeTypes: any, // TODO: create an edgeTypes interface
+    edgeTypes: any,
     edgeHandleSize?: number,
     nodeSize?: number,
     sourceNode: INode | null,
@@ -37,6 +37,7 @@ type IEdgeProps = {
     rotateEdgeHandle: true,
 };
 
+//Handles the edges between the graphs
 class Edge extends React.Component<IEdgeProps> {
     static defaultProps = {
         edgeHandleSize: 50,
@@ -50,6 +51,7 @@ class Edge extends React.Component<IEdgeProps> {
         this.edgeOverlayRef = React.createRef();
     }
 
+    //Calculates theta for the edge angle
     static getTheta(pt1: any, pt2: any) {
         const xComp = (pt2.x || 0) - (pt1.x || 0);
         const yComp = (pt2.y || 0) - (pt1.y || 0);
@@ -58,6 +60,7 @@ class Edge extends React.Component<IEdgeProps> {
         return theta;
     }
 
+    //Calculates the distance for the line
     static lineFunction(srcTrgDataArray: any) {
         return d3
             .line()
@@ -69,6 +72,7 @@ class Edge extends React.Component<IEdgeProps> {
             })(srcTrgDataArray);
     }
 
+    //Calculates the arrow size on the edge based on the window size
     static getArrowSize(
         viewWrapperElem: HTMLDivElement | HTMLDocument = document
     ) {
@@ -79,6 +83,7 @@ class Edge extends React.Component<IEdgeProps> {
         return defEndArrowElement.getBoundingClientRect();
     }
 
+    //Draws the edge path
     static getEdgePathElement(
         edge: IEdge,
         viewWrapperElem: HTMLDivElement | HTMLDocument = document
@@ -88,6 +93,7 @@ class Edge extends React.Component<IEdgeProps> {
         );
     }
 
+    //Translates the path to a visual component with the location
     static parsePathToXY(edgePathElement: Element | null) {
         const response = {
             source: {x: 0, y: 0},
@@ -116,6 +122,7 @@ class Edge extends React.Component<IEdgeProps> {
         return response;
     }
 
+    //Find any intersections for the edges
     static getDefaultIntersectResponse() {
         return {
             xOff: 0,
@@ -130,6 +137,7 @@ class Edge extends React.Component<IEdgeProps> {
         };
     }
 
+    //Handles rotations for the edges
     static getRotatedRectIntersect(
         defSvgRotatedRectElement: any,
         src: any,
@@ -210,6 +218,7 @@ class Edge extends React.Component<IEdgeProps> {
         return response;
     }
 
+    //Checks for any edge intersects on the graph
     static getPathIntersect(
         defSvgPathElement: any,
         src: any,
@@ -292,6 +301,7 @@ class Edge extends React.Component<IEdgeProps> {
         return response;
     }
 
+    //Checks for any nodes that may intersect
     static getCircleIntersect(
         defSvgCircleElement: any,
         src: any,
@@ -347,6 +357,7 @@ class Edge extends React.Component<IEdgeProps> {
         return response;
     }
 
+    //Calculates moving the edges
     static calculateOffset(
         nodeSize: any,
         src: any,
@@ -440,6 +451,7 @@ class Edge extends React.Component<IEdgeProps> {
         return response;
     }
 
+    //Gets the connection between the edge and a node
     static getXlinkHref(edgeTypes: any, data: any) {
         if (data.type && edgeTypes[data.type]) {
             return edgeTypes[data.type].shapeId;
@@ -450,6 +462,7 @@ class Edge extends React.Component<IEdgeProps> {
         return null;
     }
 
+    //Handles the edge connection between the graphs
     getEdgeHandleTranslation = () => {
         const {data} = this.props;
 
@@ -468,12 +481,14 @@ class Edge extends React.Component<IEdgeProps> {
         return `translate(${x}, ${y})`;
     };
 
+    //Checks the offset of the visual component
     getEdgeHandleOffsetTranslation = () => {
         const offset = -(this.props.edgeHandleSize || 0) / 2;
 
         return `translate(${offset}, ${offset})`;
     };
 
+    //Check the rotation of the graph from the input
     getEdgeHandleRotation = (negate: any = false) => {
         let rotated = false;
         const src = this.props.sourceNode;
@@ -492,6 +507,7 @@ class Edge extends React.Component<IEdgeProps> {
         return [`rotate(${theta})`, rotated];
     };
 
+    //Sets the translation of the edge
     getEdgeHandleTransformation = () => {
         const translation = this.getEdgeHandleTranslation();
         const rotation = this.props.rotateEdgeHandle
@@ -502,6 +518,7 @@ class Edge extends React.Component<IEdgeProps> {
         return `${translation} ${rotation} ${offset}`;
     };
 
+    //The path from the nodes
     getPathDescription(edge: any) {
         const {
             sourceNode,
@@ -545,6 +562,7 @@ class Edge extends React.Component<IEdgeProps> {
         return Edge.lineFunction(linePoints);
     }
 
+    //Render the edge text
     renderHandleText(data: any) {
         return (
             <text
@@ -558,6 +576,7 @@ class Edge extends React.Component<IEdgeProps> {
         );
     }
 
+    //Render the label for the edge
     renderLabelText(data: any) {
         const [rotation, isRotated] = this.getEdgeHandleRotation();
         const title = isRotated
@@ -577,6 +596,7 @@ class Edge extends React.Component<IEdgeProps> {
         );
     }
 
+    //Render the edge when it is created on the graph
     render() {
         const {data, edgeTypes, edgeHandleSize, viewWrapperElem} = this.props;
 

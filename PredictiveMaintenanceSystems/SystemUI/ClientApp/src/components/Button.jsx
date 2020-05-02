@@ -11,9 +11,10 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
+//Defines the buttons for the settings page
 export default function ContainedButtons() {
     const classes = useStyles();
-
+    //Render the buttons on the settings page
     return (
         <div>
             <Button variant="contained" className={classes.button}>

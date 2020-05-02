@@ -19,6 +19,7 @@ type IDefsState = {
     graphConfigDefs: any,
 };
 
+//Holds definitions for the workflow
 class Definitions extends React.Component<IDefsProps, IDefsState> {
     static defaultProps = {
         gridDotSize: 2,
@@ -32,6 +33,7 @@ class Definitions extends React.Component<IDefsProps, IDefsState> {
         };
     }
 
+    //Create static properties for the workflow
     static getDerivedStateFromProps(nextProps: any, prevState: any) {
         const graphConfigDefs = [];
 
@@ -58,6 +60,7 @@ class Definitions extends React.Component<IDefsProps, IDefsState> {
         });
     }
 
+    //Render based on defined sizes
     render() {
         const {edgeArrowSize, gridSpacing, gridDotSize} = this.props;
 

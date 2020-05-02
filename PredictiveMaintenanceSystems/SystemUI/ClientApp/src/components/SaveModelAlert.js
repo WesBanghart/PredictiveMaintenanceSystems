@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Collapse from '@material-ui/core/Collapse';
 import CloseIcon from '@material-ui/icons/Close';
 
+//Styles for the save model
 const useStyles = (theme) => ({
     root: {
         width: '100%',
@@ -14,6 +15,7 @@ const useStyles = (theme) => ({
     },
 });
 
+//Shows a confirmation message when saving a model
 class SaveModelAlert extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +30,7 @@ class SaveModelAlert extends React.Component {
         this.setState({open: value});
     }
 
+    //Render the correct message based on success/error
     render() {
         const {classes} = this.props;
         if(this.state.status === "success") {

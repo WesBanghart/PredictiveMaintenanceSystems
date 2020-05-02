@@ -8,6 +8,7 @@ import NavigationMenuItem from './NavigationMenuItem';
 import DeviceHubIcon from '@material-ui/icons/DeviceHub';
 import InputIcon from '@material-ui/icons/Input';
 
+//Handles the redirection from the navigation bar and URLs
 const navigationMenuItems = [
     {
         name: 'Desktop',
@@ -36,6 +37,7 @@ const navigationMenuItems = [
     },
 ];
 
+//Render each navigation component
 const Navigation: React.FC = () => {
     const classes = useStyles();
 
@@ -48,8 +50,9 @@ const Navigation: React.FC = () => {
     )
 };
 
-const drawerWidth = 270;
 
+//Styles of the navigation bar
+const drawerWidth = 270;
 const useStyles = makeStyles(theme =>
     createStyles({
         appMenu: {

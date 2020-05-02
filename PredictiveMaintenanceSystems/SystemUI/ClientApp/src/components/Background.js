@@ -8,12 +8,14 @@ type IBackgroundProps = {
     renderBackground?: (gridSize?: number) => any,
 };
 
+//Render the grid background for the graph
 class Background extends React.Component<IBackgroundProps> {
     static defaultProps = {
         backgroundFillId: '#grid',
         gridSize: 40960,
     };
 
+    //Returns the rendering of the graph based on the size of the window
     render() {
         const {gridSize, backgroundFillId, renderBackground} = this.props;
 
