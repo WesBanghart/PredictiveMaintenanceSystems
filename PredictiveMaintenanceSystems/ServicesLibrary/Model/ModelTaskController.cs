@@ -14,19 +14,53 @@ using System.Threading.Tasks;
 
 namespace ServicesLibrary.Model
 {
+    /// <summary>
+    /// The class that controls the operation of model-related tasks.
+    /// </summary>
     public class ModelTaskController
     {
+        /// <summary>
+        /// The context class for the target database.
+        /// </summary>
         private EFSystemContext _context;
 
+        /// <summary>
+        /// The JSON string representing the configuration of the model.
+        /// </summary>
         public string ModelJson { get; set; }
+        /// <summary>
+        /// The ID of the data source from which training data should be received.
+        /// </summary>
         Guid TrainDataSourceId { get; set; }
+        /// <summary>
+        /// The ID of the data source from which testing data should be received. Optional.
+        /// </summary>
         Guid TestDataSourceId { get; set; }
+        /// <summary>
+        /// The MLContext object representing the ML.NET configuration for the model.
+        /// </summary>
         public MLContext MLContext { get; set; }
+        /// <summary>
+        /// The IDataView object representing the training data.
+        /// </summary>
         public IDataView TrainDataView { get; set; }
+        /// <summary>
+        /// The IDataView object representing the testing data.
+        /// </summary>
         public IDataView TestDataView { get; set; }
+        /// <summary>
+        /// The transformer representing the ML.NET data pipeline for the model.
+        /// </summary>
         public ITransformer Transformer { get; set; }
+        /// <summary>
+        /// The IDataView object representing the results received from running the data pipeline.
+        /// </summary>
         public IDataView Results { get; set; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context">The context class for the target database.</param>
         public ModelTaskController(EFSystemContext context)
         {
             _context = context;
@@ -34,6 +68,12 @@ namespace ServicesLibrary.Model
 
 
         //------------- PUBLIC OPERATIONS ----------------------------------------------------
+        /// <summary>
+        /// Task to update and run a model.
+        /// </summary>
+        /// <param name="ModelId">The model ID relating to the database entry for the model to be run.</param>
+        /// <param name="cancellationToken">The async cancellation token.</param>
+        /// <returns>True if successful, false otherwise.</returns>
         public async Task<bool> RunModel(Guid ModelId, CancellationToken cancellationToken)
         {
             try
@@ -42,6 +82,8 @@ namespace ServicesLibrary.Model
                 {
                     if (_ParseModelJson())
                     {
+                        if(TestDataView == null) Results = Transformer.Transform(TrainDataView); 
+                        else Results = Transformer.Transform(TestDataView);
                         byte[] modelZip = _SaveModel(ModelId);
                         var modelEntry = await _context.FindAsync<EFDataModels.ModelTable>(ModelId, cancellationToken);
                         modelEntry.File = modelZip;
@@ -70,6 +112,12 @@ namespace ServicesLibrary.Model
             }
         }
 
+        /// <summary>
+        /// Task to update a model.
+        /// </summary>
+        /// <param name="ModelId">The model ID relating to the database entry for the model to be updated.</param>
+        /// <param name="cancellationToken">The async cancellation token.</param>
+        /// <returns>True if successful, false otherwise.</returns>
         public async Task<bool> UpdateModel(Guid ModelId, CancellationToken cancellationToken)
         {
             try
@@ -78,7 +126,6 @@ namespace ServicesLibrary.Model
                 {
                     if (_ParseModelJson())
                     {
-                        Results = Transformer.Transform(TestDataView);
                         byte[] modelZip = _SaveModel(ModelId);
                         var modelEntry = await _context.FindAsync<EFDataModels.ModelTable>(ModelId, cancellationToken);
                         modelEntry.File = modelZip;
@@ -109,6 +156,11 @@ namespace ServicesLibrary.Model
 
 
         //--------------- PRIVATE DATABASE ACCESSORS -----------------------------------------
+        /// <summary>
+        /// Command to retrieve the model from the database.
+        /// </summary>
+        /// <param name="ModelId">The model ID relating to the database entry for the model to be updated.</param>
+        /// <returns>True if successful, false otherwise.</returns>
         private bool _RetrieveModel(Guid ModelId)
         {
             var modelEntry = _context.Find<EFDataModels.ModelTable>(ModelId);
@@ -120,6 +172,11 @@ namespace ServicesLibrary.Model
             return true;
         }
 
+        /// <summary>
+        /// Command to create the zip file of the model and results.
+        /// </summary>
+        /// <param name="ModelId">The model ID relating to the database entry for the model to be updated.</param>
+        /// <returns>A byte array representing the zip file of the model and results.</returns>
         private byte[] _SaveModel(Guid ModelId)
         {
             string tempZip = $"temp/{ModelId}_temp.zip";
@@ -158,6 +215,10 @@ namespace ServicesLibrary.Model
         }
 
         //--------------- PRIVATE PARSE FUNCTIONS --------------------------------------------
+        /// <summary>
+        /// Command to parse the model JSON and populate the MLContext configuration
+        /// </summary>
+        /// <returns>True if successful, false otherwise.</returns>
         private bool _ParseModelJson()
         {
             JObject modelObject = JObject.Parse(ModelJson);
@@ -208,6 +269,13 @@ namespace ServicesLibrary.Model
             return true;
         }
 
+        /// <summary>
+        /// Command to parse the data source from the model JSON and populate the train and test DataViews.
+        /// </summary>
+        /// <param name="dataSource">Reference to the data sources database table.</param>
+        /// <param name="dataSourceJson">The data source JSON configuration to parse.</param>
+        /// <param name="isTestData">True if this is the TestDataView, false if the TrainDataView.</param>
+        /// <returns>True if successful, false otherwise.</returns>
         private bool _ParseDataSourceJson(ref DataSourceTable dataSource, JToken dataSourceJson, bool isTestData)
         {
             string sourceType = dataSourceJson.Value<string>("Type");
@@ -243,6 +311,13 @@ namespace ServicesLibrary.Model
             }
         }
 
+        /// <summary>
+        /// Command to parse the model component from the model JSON and add it to the data pipeline.
+        /// </summary>
+        /// <param name="pipeline">Reference to the EstimatorChain that is being appended to.</param>
+        /// <param name="modelType">The string representing the type of component to add to the pipeline.</param>
+        /// <param name="componentObject">The JSON configuration of the model component being appended.</param>
+        /// <returns>True if successful, false otherwise.</returns>
         private bool _ParseComponentJson(ref EstimatorChain<ITransformer> pipeline, string modelType, JToken componentObject)
         {
             switch (modelType)
