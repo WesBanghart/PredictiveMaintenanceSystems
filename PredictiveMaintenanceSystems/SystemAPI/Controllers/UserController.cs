@@ -10,18 +10,30 @@ using Microsoft.AspNetCore.Cors;
 
 namespace SystemAPI.Controllers
 {
+    /// <summary>
+    /// API Controller for Users
+    /// </summary>
     [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
+        //System Context
         private readonly EFSystemContext _context;
 
+        /// <summary>
+        /// Constructor for the User controller
+        /// </summary>
+        /// <param name="context"></param>
         public UserController(EFSystemContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets all current Users.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/User
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserTable>>> GetUsers()
@@ -29,6 +41,11 @@ namespace SystemAPI.Controllers
             return await _context.Users.ToListAsync();
         }
 
+        /// <summary>
+        /// Gets a user given a User ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<UserTable>> GetUser(Guid id)
@@ -43,6 +60,12 @@ namespace SystemAPI.Controllers
             return userTable;
         }
 
+        /// <summary>
+        /// Updates an existing user given the UserID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedUser"></param>
+        /// <returns></returns>
         // PUT: api/User/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(Guid id, [FromBody] UserTable updatedUser)
@@ -83,6 +106,11 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates a new User.
+        /// </summary>
+        /// <param name="newUser"></param>
+        /// <returns></returns>
         // POST: api/User
         [HttpPost]
         public async Task<ActionResult<UserTable>> PostUser([FromBody] UserTable newUser)
@@ -111,6 +139,11 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetUser", new { id = newUser.UserId }, newUser);
         }
 
+        /// <summary>
+        /// Deletes a user given a User ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/User/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserTable>> DeleteUser(Guid id)

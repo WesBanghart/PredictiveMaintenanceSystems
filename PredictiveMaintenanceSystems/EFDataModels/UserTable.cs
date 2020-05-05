@@ -6,6 +6,9 @@ using System.Text;
 
 namespace EFDataModels
 {
+    /// <summary>
+    /// User Model
+    /// </summary>
     [Table("user_tbl")]
     public class UserTable
     {

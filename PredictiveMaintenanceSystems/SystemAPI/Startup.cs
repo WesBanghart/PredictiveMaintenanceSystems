@@ -33,16 +33,15 @@ namespace SystemAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        ///  This method gets called by the runtime. Used this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<EFSystemContext>(opt => 
                 opt.UseSqlServer(Configuration.GetConnectionString("Production")));
 
-
-
-            //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-           // services.AddSingleton(typeof(IBackgroundTaskQueue), typeof(BackgroundTaskQueue));
             services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
             services.AddHostedService<ModelQueueWorker>();
             services.AddScoped<IBackgroundWorker, ModelRunWorkItem.ModelRunWorker>();
@@ -70,7 +69,11 @@ namespace SystemAPI
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

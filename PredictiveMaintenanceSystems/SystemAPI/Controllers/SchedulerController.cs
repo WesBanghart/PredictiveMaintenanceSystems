@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Cors;
 
 namespace SystemAPI.Controllers
 {
+    /// <summary>
+    /// API controller for the scheduler
+    /// </summary>
     [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
@@ -17,11 +20,19 @@ namespace SystemAPI.Controllers
     {
         private readonly EFSystemContext _context;
 
+        /// <summary>
+        /// Constructor for the scheduler controller.
+        /// </summary>
+        /// <param name="context"></param>
         public SchedulerController(EFSystemContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets all current Schedules for a User.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Scheduler
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SchedulerTable>>> GetSchedulers()
@@ -29,6 +40,11 @@ namespace SystemAPI.Controllers
             return await _context.Schedulers.ToListAsync();
         }
 
+        /// <summary>
+        /// Gets a schedule given the schedule ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/Scheduler/5
         [HttpGet("{id}")]
         public async Task<ActionResult<SchedulerTable>> GetSchedulerTable(Guid id)
@@ -43,9 +59,13 @@ namespace SystemAPI.Controllers
             return schedulerTable;
         }
 
+        /// <summary>
+        /// Updates an existing schedule given a schedule ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="schedulerTable"></param>
+        /// <returns></returns>
         // PUT: api/Scheduler/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSchedulerTable(Guid id, [FromBody] SchedulerTable schedulerTable)
         {
@@ -82,6 +102,11 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates a new Schedule.
+        /// </summary>
+        /// <param name="schedulerTable"></param>
+        /// <returns></returns>
         // POST: api/Scheduler
         [HttpPost]
         public async Task<ActionResult<SchedulerTable>> PostSchedulerTable([FromBody] SchedulerTable schedulerTable)
@@ -111,6 +136,11 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetSchedulerTable", new { id = newSchedulerTable.ScheduleId }, newSchedulerTable);
         }
 
+        /// <summary>
+        /// Deletes a schedule given the schedule ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Scheduler/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<SchedulerTable>> DeleteSchedulerTable(Guid id)

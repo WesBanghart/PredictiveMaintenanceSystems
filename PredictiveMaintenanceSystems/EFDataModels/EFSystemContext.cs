@@ -5,6 +5,7 @@ using System.Text;
 
 namespace EFDataModels
 {
+
     public class EFSystemContext : DbContext
     {
         //The Tenant table entries
@@ -24,6 +25,10 @@ namespace EFDataModels
         {
         }
 
+        /// <summary>
+        /// Defines the relationships between each of the Models
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Tenant Table Relationships

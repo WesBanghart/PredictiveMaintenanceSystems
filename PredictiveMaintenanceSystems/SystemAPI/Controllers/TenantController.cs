@@ -11,18 +11,30 @@ using Microsoft.AspNetCore.Cors;
 
 namespace SystemAPI.Controllers
 {
+    /// <summary>
+    /// API Controller for Tenants
+    /// </summary>
     [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class TenantController : ControllerBase
     {
+        //System Context
         private readonly EFSystemContext _context;
 
+        /// <summary>
+        /// Constructor for the Tenant Controller.
+        /// </summary>
+        /// <param name="context"></param>
         public TenantController(EFSystemContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Returns all registered tenants.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Tenant
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TenantTable>>> GetTenants()
@@ -30,6 +42,11 @@ namespace SystemAPI.Controllers
             return await _context.Tenants.ToListAsync();
         }
 
+        /// <summary>
+        /// Returns a Tenant by the Tenant ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/Tenant/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TenantTable>> GetTenant(Guid id)
@@ -44,7 +61,11 @@ namespace SystemAPI.Controllers
             return tenantTable;
         }
 
-
+        /// <summary>
+        /// Gets all users of a Tenant given a tenant ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // Get: api/Tenant/{id}/Users
         [HttpGet("{id}/Users")]
         public async Task<ActionResult<IEnumerable<UserTable>>> GetTenantUsers(Guid id)
@@ -64,6 +85,12 @@ namespace SystemAPI.Controllers
             return tenantTable.Users.ToList();
         }
 
+        /// <summary>
+        /// Edits and existing tenant Given a Tenant ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tenantTable"></param>
+        /// <returns></returns>
         // PUT: api/Tenant/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTenant(Guid id, [FromBody] TenantTable tenantTable)
@@ -101,9 +128,13 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates and Registers a new Tenant
+        /// </summary>
+        /// <param name="tenant"></param>
+        /// <returns></returns>
         // POST: api/Tenant
         [HttpPost]
-      //  public async Task<ActionResult<TenantTable>> PostTenant(string company, string contactName, string contactPhone, string contactEmail)
         public async Task<ActionResult<TenantTable>> PostTenant([FromBody] TenantTable tenant)
         {
 
@@ -122,7 +153,11 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetTenant", new { id = newTable.TenantId }, newTable);
         }
 
-        //TODO: fix cascade deleting
+        /// <summary>
+        /// Deletes a Tenant given the Tenant ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Tenant/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<TenantTable>> DeleteTenant(Guid id)

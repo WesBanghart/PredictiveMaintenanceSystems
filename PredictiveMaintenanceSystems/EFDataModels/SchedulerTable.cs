@@ -6,6 +6,9 @@ using System.Text;
 
 namespace EFDataModels
 {
+    /// <summary>
+    /// Scheduler Model
+    /// </summary>
     [Table("scheduler_tbl")]
     public class SchedulerTable
     {

@@ -13,6 +13,10 @@ namespace SystemAPI
 {
     public class Program
     {
+        /// <summary>
+        /// Main entry Point for the Application
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
@@ -20,7 +24,11 @@ namespace SystemAPI
             host.Run();
         }
 
-
+        /// <summary>
+        /// Configures the Host Builder
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

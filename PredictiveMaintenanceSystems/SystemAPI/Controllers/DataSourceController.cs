@@ -12,18 +12,30 @@ using Microsoft.AspNetCore.Cors;
 
 namespace SystemAPI.Controllers
 {
+    /// <summary>
+    /// Controller for Datasources
+    /// </summary>
     [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class DataSourceController : ControllerBase
     {
+        //System Context
         private readonly EFSystemContext _context;
 
+        /// <summary>
+        /// DataSource controller constructor
+        /// </summary>
+        /// <param name="context"></param>
         public DataSourceController(EFSystemContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Gets All Data Sources/
+        /// </summary>
+        /// <returns></returns>
         // GET: api/DataSource
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DataSourceTable>>> GetDataSources()
@@ -31,6 +43,11 @@ namespace SystemAPI.Controllers
             return await _context.DataSources.ToListAsync();
         }
 
+        /// <summary>
+        /// Gets A Data Source given a Data Source ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/DataSource/5
         [HttpGet("{id}")]
         public async Task<ActionResult<DataSourceTable>> GetDataSourceTable(Guid id)
@@ -45,9 +62,13 @@ namespace SystemAPI.Controllers
             return dataSourceTable;
         }
 
+        /// <summary>
+        /// Updates a Datasource given a Data Source ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dataSourceTable"></param>
+        /// <returns></returns>
         // PUT: api/DataSource/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDataSourceTable(Guid id, [FromBody] DataSourceTable dataSourceTable)
         {
@@ -85,9 +106,13 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Creates a new Data Source.
+        /// </summary>
+        /// <param name="dataSourceTable"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         // POST: api/DataSource
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<DataSourceTable>> PostDataSourceTable([FromBody] DataSourceTable dataSourceTable, [FromForm]IFormFile body)
         {
@@ -131,6 +156,12 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetDataSourceTable", new { id = newDataSource.DataSourceId }, newDataSource);
         }
 
+        /// <summary>
+        /// Uploads a file to an existing Data Source.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         [HttpPatch("{id}")]
         public async Task<IActionResult> UploadDataSourceFile(Guid id, [FromForm] IFormFile body)
         {
@@ -175,6 +206,11 @@ namespace SystemAPI.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes a DataSource given a Data Source ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/DataSource/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<DataSourceTable>> DeleteDataSourceTable(Guid id)

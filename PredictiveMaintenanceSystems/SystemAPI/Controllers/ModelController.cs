@@ -17,22 +17,37 @@ using ServicesLibrary.Model.Update;
 
 namespace SystemAPI.Controllers
 {
+    /// <summary>
+    /// API Controller for Models
+    /// </summary>
     [EnableCors("SiteCorsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class ModelController : ControllerBase
     {
+        //System context
         private readonly EFSystemContext _context;
         //private readonly ServicesLibrary.Model.BackgroundTaskQueue backgroundTaskQueue;
+        //Background task queue interface
         private readonly IBackgroundTaskQueue backgroundTaskQueue;
+        //Model Option list
         private List<string> _modelOptions = new List<string> {"save", "saveandrun", "saveandtrain"};
 
+        /// <summary>
+        /// Constructor for the Model Controller.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="queue"></param>
         public ModelController(EFSystemContext context, IBackgroundTaskQueue queue)
         {
             _context = context;
             backgroundTaskQueue = queue;
         }
 
+        /// <summary>
+        /// Gets all Models.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Model
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ModelTable>>> GetModels()
@@ -40,6 +55,11 @@ namespace SystemAPI.Controllers
             return await _context.Models.ToListAsync();
         }
 
+        /// <summary>
+        /// Gets a Model Given a Model ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: api/Model/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ModelTable>> GetModel(Guid id)
@@ -54,6 +74,12 @@ namespace SystemAPI.Controllers
             return modelTable;
         }
 
+        /// <summary>
+        /// Creates a new Model and allows the user to run, train, or save the model.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
         // POST: api/Model
         [HttpPost("{option}")]
         public async Task<ActionResult<ModelTable>> PostModel([FromBody] ModelTable model, string option = "save")
@@ -118,8 +144,13 @@ namespace SystemAPI.Controllers
             return CreatedAtAction("GetModel", new { id = newModel.ModelId }, newModel);
         }
 
+        /// <summary>
+        /// Updates an existing model. Allows the user to Run, Train, or save the updated Model.
+        /// </summary>
+        /// <param name="updatedModel"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
         // PUT: api/Model/save
-        //List<Guid> dataSourceIdList = null
         [HttpPut("{option}")]
         public async Task<ActionResult<ModelTable>> PutModel([FromBody] ModelTable updatedModel, string option = "save")
         {
@@ -194,6 +225,11 @@ namespace SystemAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes a Model given a model ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Model/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<ModelTable>> DeleteModelTable(Guid id)
